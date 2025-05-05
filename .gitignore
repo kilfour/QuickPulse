@@ -1,0 +1,9 @@
+elm-stuff
+*/bin/*
+*/obj/*
+_ReSharper.*/
+*.user
+*.suo
+/.vs/QuickMGenerate/v15/Server/sqlite3
+pbt-inspector.ndjson
+*log.txt
