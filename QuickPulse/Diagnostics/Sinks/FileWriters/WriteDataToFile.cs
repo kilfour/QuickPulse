@@ -2,13 +2,13 @@ using QuickPulse.Diagnostics.Instruments;
 
 namespace QuickPulse.Diagnostics.Sinks.FileWriters;
 
-public class WriteDataToFile
+public class WriteDataToFile : IPulse
 {
     private readonly string logFilePath;
 
     public WriteDataToFile(string? maybePath = null)
     {
-        var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/mgen-log.txt";
+        var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/log.txt";
         logFilePath = Path.GetFullPath(path);
     }
 

@@ -14,20 +14,10 @@ Pulse/
 ├── Flow/         → ETL transforms, processors
 └── Pulse.csproj  → meta entry
 
-Concept	
-Your Code	    Pulse Name Idea
-Nurse<T>	    A processing step	            Pulse<T> or Step<T>
-State	        Context/env	                    PulseState, Signal, FlowContext
-QDiagnosis<T>	Result wrapper	                Reading<T>, PulseResult<T>, Signal<T>
-.Track()	    Logging	                        .Trace(), .Observe(), .Echo()
-.Shape()	    Transform	                    .Map(), .Morph(), .Transmute()
-
-
-Diagnose.This   => Open.Book
-Nurse<T>        => Bibliophile
-State           => Glasses
-QDiagnosis<T>   => Draft
-Re.Shape        => Re.Vise
-Keep.Track()    => Pub.Lish
-
- pulse = signal = flow
+# PulseContext.FromFlow
+PulseContext.FromFlow(
+    from x in Pulse.From<char[]>()
+            from y in Pulse.Shape(() => new string(x))
+            from z in Sink.To(() => result = y)
+            select x);
+Should set PulseContext.Current;

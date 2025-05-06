@@ -4,13 +4,13 @@ using QuickPulse.Diagnostics.Instruments;
 
 namespace QuickPulse.Diagnostics.Sinks.FileWriters;
 
-public class WriteToJsonFile
+public class WriteToJsonFile : IPulse
 {
     private readonly string logFilePath;
 
     public WriteToJsonFile(string? maybePath = null)
     {
-        var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/pbt-inspector.ndjson";
+        var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/log.json";//"/pbt-inspector.ndjson";
         logFilePath = Path.GetFullPath(path);
     }
 
