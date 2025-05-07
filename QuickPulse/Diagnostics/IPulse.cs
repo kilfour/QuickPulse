@@ -1,3 +1,3 @@
 namespace QuickPulse.Diagnostics;
 
-public interface IPulse { public void Log(object data); }
+public interface IPulse { public void Monitor(object data); }

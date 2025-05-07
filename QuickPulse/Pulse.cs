@@ -13,3 +13,4 @@ public static class Pulse
     public static Flow<TOut> Shape<TOut>(Func<TOut> func) =>
         _ => Cask.Some(func());
 }
+

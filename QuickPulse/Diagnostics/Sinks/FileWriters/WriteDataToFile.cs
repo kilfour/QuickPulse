@@ -4,23 +4,46 @@ namespace QuickPulse.Diagnostics.Sinks.FileWriters;
 
 public class WriteDataToFile : IPulse
 {
-    private readonly string logFilePath;
+    private readonly string filePath;
+    private bool hardCodedPath = false;
 
-    public WriteDataToFile(string? maybePath = null)
+    public WriteDataToFile(string? maybeFileName = null)
     {
-        var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/log.txt";
-        logFilePath = Path.GetFullPath(path);
+        if (hardCodedPath)
+        {
+            if (maybeFileName == null)
+            {
+                ComputerSays.No("You must supply a filename when using a hard coded path.");
+            }
+            else
+            {
+                filePath = Path.GetFullPath(maybeFileName);
+            }
+        }
+        var fileName = maybeFileName ?? "/log.txt";
+        if (!fileName.StartsWith(Path.DirectorySeparatorChar))
+            fileName = Path.DirectorySeparatorChar + fileName;
+        var path = SolutionLocator.FindSolutionRoot() + fileName;
+        filePath = Path.GetFullPath(path);
     }
-    public WriteDataToFile ClearLog()
+
+    public WriteDataToFile HardCodedPath()
     {
-        File.WriteAllText(logFilePath, "");
+        hardCodedPath = true;
         return this;
     }
-    public void Log(object data)
+
+    public WriteDataToFile ClearFile()
+    {
+        File.WriteAllText(filePath, "");
+        return this;
+    }
+
+    public void Monitor(object data)
     {
         try
         {
-            File.AppendAllText(logFilePath, data.ToString() + Environment.NewLine);
+            File.AppendAllText(filePath, data.ToString() + Environment.NewLine);
         }
         catch (Exception ex)
         {

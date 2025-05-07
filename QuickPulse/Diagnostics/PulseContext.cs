@@ -15,7 +15,7 @@ public static class PulseContext
 
     public static void Log(object data)
     {
-        Current?.Log(data);
+        Current?.Monitor(data);
     }
 
     public static IPulse ToPulse<T>(this Flow<T> flow)

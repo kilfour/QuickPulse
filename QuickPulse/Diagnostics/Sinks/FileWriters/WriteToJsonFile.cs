@@ -14,7 +14,7 @@ public class WriteToJsonFile : IPulse
         logFilePath = Path.GetFullPath(path);
     }
 
-    public void Log(object data)
+    public void Monitor(object data)
     {
         try
         {

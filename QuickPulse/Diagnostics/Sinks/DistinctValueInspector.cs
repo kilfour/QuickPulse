@@ -24,7 +24,7 @@ public class DistinctValueInspector<T> : IPulse
         return predicates.All(predicate => Seen.Any(value => predicate(value)));
     }
 
-    public void Log(object data)
+    public void Monitor(object data)
     {
         if (data is T || data == null)
             Seen.Add((T?)data!);
