@@ -1,4 +1,6 @@
-﻿namespace QuickPulse.Tests;
+﻿using QuickPulse.Diagnostics;
+
+namespace QuickPulse.Tests;
 
 public class ProofOfConcept
 {
@@ -26,6 +28,20 @@ public class ProofOfConcept
             from z in Sink.To(() => result = y)
             select x;
         pulse.RunBoundPulse();
+        Assert.Equal("ch", result);
+    }
+
+    [Fact]
+    public void WithContext()
+    {
+        var result = "";
+        PulseContext.Current =
+            (from x in Pulse.From<char[]>(['c', 'h'])
+             from y in Pulse.Shape(() => new string(x))
+             from z in Sink.To(() => result = y)
+             select x).ToPulse();
+        char[] input = ['c', 'h'];
+        PulseContext.Current.Log(input);
         Assert.Equal("ch", result);
     }
 }

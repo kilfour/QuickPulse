@@ -1,3 +1,5 @@
+using QuickPulse.Bolts;
+
 namespace QuickPulse.Diagnostics;
 
 public static class PulseContext
@@ -14,5 +16,10 @@ public static class PulseContext
     public static void Log(object data)
     {
         Current?.Log(data);
+    }
+
+    public static IPulse ToPulse<T>(this Flow<T> flow)
+    {
+        return new DiagnosticPulse(a => flow(new Signal(a)));
     }
 }

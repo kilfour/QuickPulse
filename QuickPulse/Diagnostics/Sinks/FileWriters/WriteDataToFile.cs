@@ -11,16 +11,16 @@ public class WriteDataToFile : IPulse
         var path = maybePath ?? SolutionLocator.FindSolutionRoot() + "/log.txt";
         logFilePath = Path.GetFullPath(path);
     }
-
+    public WriteDataToFile ClearLog()
+    {
+        File.WriteAllText(logFilePath, "");
+        return this;
+    }
     public void Log(object data)
     {
         try
         {
-            File.AppendAllText(logFilePath,
-                data +
-                Environment.NewLine +
-                "-------------------------" +
-                Environment.NewLine);
+            File.AppendAllText(logFilePath, data.ToString() + Environment.NewLine);
         }
         catch (Exception ex)
         {
