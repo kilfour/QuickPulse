@@ -1,4 +1,5 @@
-﻿using QuickPulse.Diagnostics;
+﻿using QuickPulse.Bolts;
+using QuickPulse.Diagnostics;
 
 namespace QuickPulse.Tests;
 
@@ -9,10 +10,10 @@ public class ProofOfConcept
     {
         var result = "";
         var pulse =
-            from x in Pulse.From<char[]>()
-            from y in Pulse.Shape(() => new string(x))
-            from z in Sink.To(() => result = y)
-            select x;
+            from x in Pulse.Start<char[]>()
+            let y = new string(x)
+            from z in Pulse.Trace(() => result = y)
+            select Pulse.Stop;
         char[] input = ['c', 'h'];
         pulse.Run(input);
         Assert.Equal("ch", result);
@@ -23,10 +24,10 @@ public class ProofOfConcept
     {
         var result = "";
         var pulse =
-            from x in Pulse.From<char[]>(['c', 'h'])
-            from y in Pulse.Shape(() => new string(x))
-            from z in Sink.To(() => result = y)
-            select x;
+            from x in Pulse.Start<char[]>(['c', 'h'])
+            let y = new string(x)
+            from z in Pulse.Trace(() => result = y)
+            select Unit.Instance;
         pulse.RunBoundPulse();
         Assert.Equal("ch", result);
     }
@@ -36,9 +37,9 @@ public class ProofOfConcept
     {
         var result = "";
         PulseContext.Current =
-            (from x in Pulse.From<char[]>(['c', 'h'])
-             from y in Pulse.Shape(() => new string(x))
-             from z in Sink.To(() => result = y)
+            (from x in Pulse.Start<char[]>(['c', 'h'])
+             let y = new string(x)
+             from z in Pulse.Trace(() => result = y)
              select x).ToPulse();
         char[] input = ['c', 'h'];
         PulseContext.Log(input);
@@ -50,9 +51,9 @@ public class ProofOfConcept
     {
         var result = "";
         PulseContext.Current =
-            (from x in Pulse.From<char[]>(['c', 'h', 'a', 'r'])
-             from y in Pulse.Shape(() => new string(x))
-             from z in Sink.To(() => result = y)
+            (from x in Pulse.Start<char[]>(['c', 'h', 'a', 'r'])
+             let y = new string(x)
+             from z in Pulse.Trace(() => result = y)
              where x.Contains('a')
              select x).ToPulse();
         char[] input = ['c', 'h'];
@@ -61,15 +62,15 @@ public class ProofOfConcept
     }
 
     [Fact]
-    public void WhereFailed()
+    public void Where()
     {
         var result = "";
         PulseContext.Current =
-            (from x in Pulse.From<char[]>(['c', 'h', 'a', 'r'])
-             from y in Pulse.Shape(() => new string(x))
-             from z in Sink.To(() => result = y)
+            (from x in Pulse.Start<char[]>(['c', 'h', 'a', 'r'])
+             let y = new string(x)
+             from z in Pulse.Trace(() => result = y)
              where x.Contains('q')
-             select x).ToPulse();
+             select Pulse.Stop).ToPulse();
         char[] input = ['c', 'h'];
         PulseContext.Log(input);
         Assert.Equal("char", result);
@@ -80,10 +81,10 @@ public class ProofOfConcept
     {
         var result = "";
         PulseContext.Current =
-            (from x in Pulse.From<char[]>(['c', 'h', 'a', 'r'])
+            (from x in Pulse.Start<char[]>(['c', 'h', 'a', 'r'])
              where x.Contains('q')
-             from y in Pulse.Shape(() => new string(x))
-             from z in Sink.To(() => result = y)
+             let y = new string(x)
+             from z in Pulse.Trace(() => result = y)
              select x).ToPulse();
         char[] input = ['c', 'h'];
         PulseContext.Log(input);

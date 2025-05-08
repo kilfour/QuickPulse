@@ -2,7 +2,7 @@ using QuickPulse.Diagnostics.Instruments;
 
 namespace QuickPulse.Diagnostics.Sinks.FileWriters;
 
-public class WriteDataToFile : IPulse
+public class WriteDataToFile : IPulse, IPulser
 {
     private readonly string filePath;
     private bool hardCodedPath = false;
@@ -48,6 +48,14 @@ public class WriteDataToFile : IPulse
         catch (Exception ex)
         {
             Console.Error.WriteLine($"[FileInspector] Failed to log entry: {ex.Message}");
+        }
+    }
+
+    public void Monitor(params object[] data)
+    {
+        foreach (var item in data)
+        {
+            File.AppendAllText(filePath, item.ToString() + Environment.NewLine);
         }
     }
 }

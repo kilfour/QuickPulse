@@ -18,8 +18,13 @@ public static class PulseContext
         Current?.Monitor(data);
     }
 
+    public static void FromFlow<T>(this Flow<T> flow)
+    {
+        Current = ToPulse(flow);
+    }
+
     public static IPulse ToPulse<T>(this Flow<T> flow)
     {
-        return new DiagnosticPulse(a => flow(new Signal(a)));
+        return new DiagnosticPulse(a => flow(new State(a)));
     }
 }
