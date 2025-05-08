@@ -1,4 +1,4 @@
-namespace QuickPulse.Bolts;
+namespace QuickPulse.Instruments;
 
 public class DisposableAction : IDisposable
 {

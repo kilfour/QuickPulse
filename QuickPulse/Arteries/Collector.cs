@@ -1,6 +1,6 @@
-namespace QuickPulse.Diagnostics.Sinks.FileWriters;
+namespace QuickPulse.Arteries;
 
-public class Collector<T> : IPulse, IPulser
+public class Collector<T> : IArtery
 {
     public readonly List<T> Exhibit = [];
 
@@ -9,7 +9,7 @@ public class Collector<T> : IPulse, IPulser
         Exhibit.Add((T)data);
     }
 
-    public void Monitor(params object[] data)
+    public void Flow(params object[] data)
     {
         foreach (var item in data)
         {

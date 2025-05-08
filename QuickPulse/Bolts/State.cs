@@ -11,9 +11,9 @@ public class State
 
     public readonly Dictionary<Type, object> Memory = [];
 
-    public IPulser? CurrentPulser { get; private set; }
-    public void SetPulser(IPulser pulser)
+    public IArtery? CurrentArtery { get; private set; }
+    public void SetArtery(IArtery artery)
     {
-        CurrentPulser = pulser;
+        CurrentArtery = artery;
     }
 }

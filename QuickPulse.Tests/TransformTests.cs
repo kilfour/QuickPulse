@@ -1,5 +1,5 @@
-﻿using QuickPulse.Bolts;
-using QuickPulse.Diagnostics.Sinks.FileWriters;
+﻿using QuickPulse.Arteries;
+using QuickPulse.Bolts;
 
 namespace QuickPulse.Tests;
 
@@ -13,8 +13,9 @@ public class TransformTests
             from str in Pulse.Start<string>()
             from _ in Pulse.Trace(() => collector.Add(str))
             select Pulse.Stop;
-        flow.Run("One");
-        flow.Run("Two");
+        var signal = Signal.From<string>(flow);
+        signal.Pulse("One");
+        signal.Pulse("Two");
         Assert.Equal(2, collector.Count);
         Assert.Equal("One", collector[0]);
         Assert.Equal("Two", collector[1]);
@@ -29,8 +30,9 @@ public class TransformTests
             from c in Pulse.Using(collector)
             from _ in Pulse.Trace(str)
             select Pulse.Stop;
-        flow.Run("One");
-        flow.Run("Two");
+        var signal = Signal.From<string>(flow);
+        signal.Pulse("One");
+        signal.Pulse("Two");
         Assert.Equal(2, collector.Exhibit.Count);
         Assert.Equal("One", collector.Exhibit[0]);
         Assert.Equal("Two", collector.Exhibit[1]);
@@ -42,10 +44,12 @@ public class TransformTests
         var collector = new Collector<string>();
         var flow =
             from str in Pulse.Start<string>()
+            from a in Pulse.Using(collector)
             from _ in Pulse.Trace(str)
             select Pulse.Stop;
-        flow.RunWith(collector, "One");
-        flow.RunWith(collector, "Two");
+        var signal = Signal.From<string>(flow);
+        signal.Pulse("One");
+        signal.Pulse("Two");
         Assert.Equal(2, collector.Exhibit.Count);
         Assert.Equal("One", collector.Exhibit[0]);
         Assert.Equal("Two", collector.Exhibit[1]);
@@ -73,8 +77,6 @@ public class TransformTests
         Assert.Equal("One", collector[0]);
         Assert.Equal("Three", collector[1]);
     }
-
-
 }
 
 

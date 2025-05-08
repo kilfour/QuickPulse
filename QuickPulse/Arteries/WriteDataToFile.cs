@@ -1,8 +1,8 @@
-using QuickPulse.Diagnostics.Instruments;
+using QuickPulse.Instruments;
 
-namespace QuickPulse.Diagnostics.Sinks.FileWriters;
+namespace QuickPulse.Arteries;
 
-public class WriteDataToFile : IPulse, IPulser
+public class WriteDataToFile : IArtery
 {
     private readonly string filePath;
     private bool hardCodedPath = false;
@@ -39,19 +39,7 @@ public class WriteDataToFile : IPulse, IPulser
         return this;
     }
 
-    public void Monitor(object data)
-    {
-        try
-        {
-            File.AppendAllText(filePath, data.ToString() + Environment.NewLine);
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[FileInspector] Failed to log entry: {ex.Message}");
-        }
-    }
-
-    public void Monitor(params object[] data)
+    public void Flow(params object[] data)
     {
         foreach (var item in data)
         {

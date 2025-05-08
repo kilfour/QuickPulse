@@ -1,4 +1,4 @@
-namespace QuickPulse.Diagnostics.Instruments;
+namespace QuickPulse.Instruments;
 
 public static class SolutionLocator
 {

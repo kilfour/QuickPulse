@@ -1,4 +1,4 @@
-namespace QuickPulse;
+namespace QuickPulse.Instruments;
 
 public class ComputerSaysNo : InvalidOperationException
 {

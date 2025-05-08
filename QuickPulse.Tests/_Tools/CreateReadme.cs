@@ -1,6 +1,6 @@
 using System.Globalization;
 using QuickPulse.Bolts;
-using QuickPulse.Diagnostics.Sinks.FileWriters;
+using QuickPulse.Arteries;
 
 namespace QuickPulse.Tests._Tools;
 
@@ -9,9 +9,11 @@ public class CreateReadme
     [Fact]
     public void FromDocAttributes()
     {
-        var pulser = new WriteDataToFile("README.md").ClearFile();
+        var artery = new WriteDataToFile("README.md").ClearFile();
         var attrs = GetDocAttributes().ToList();
-        RenderMarkdown.Batched(attrs).RunWith(pulser);
+        Signal.From<IEnumerable<DocAttribute>>(RenderMarkdown.Batched(attrs))
+            .SetArtery(artery)
+            .Pulse(null!);
     }
 
     public static Flow<Unit> RenderMarkdown =
