@@ -1,6 +1,7 @@
+using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Bolts;
+namespace QuickPulse;
 
 public static class Signal
 {
@@ -52,5 +53,24 @@ public class Signal<T>
         var existing = (Box<TValue>)state.Memory[typeof(TValue)]!;
         existing.Value = enter(existing.Value);
         return new DisposableAction(() => { existing.Value = exit(existing.Value); });
+    }
+
+    public IArtery AsArtery()
+    {
+        return new GenericArtery(a => Pulse((T)a));
+    }
+
+    public class GenericArtery : IArtery
+    {
+        private readonly Action<object> action;
+
+        public GenericArtery(Action<object> action)
+        {
+            this.action = action;
+        }
+        public void Flow(params object[] data)
+        {
+            data.ToList().ForEach(a => action(a));
+        }
     }
 }

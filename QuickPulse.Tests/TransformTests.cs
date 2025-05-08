@@ -1,5 +1,4 @@
 ﻿using QuickPulse.Arteries;
-using QuickPulse.Bolts;
 
 namespace QuickPulse.Tests;
 
@@ -11,7 +10,7 @@ public class TransformTests
         List<string> collector = [];
         var flow =
             from str in Pulse.Start<string>()
-            from _ in Pulse.Trace(() => collector.Add(str))
+            from _ in Pulse.Effect(() => collector.Add(str))
             select Pulse.Stop;
         var signal = Signal.From<string>(flow);
         signal.Pulse("One");
@@ -24,7 +23,7 @@ public class TransformTests
     [Fact]
     public void CollectStringsAgain()
     {
-        var collector = new Collector<string>();
+        var collector = new TheCollector<string>();
         var flow =
             from str in Pulse.Start<string>()
             from c in Pulse.Using(collector)
@@ -41,7 +40,7 @@ public class TransformTests
     [Fact]
     public void CollectStringsAgainAgain()
     {
-        var collector = new Collector<string>();
+        var collector = new TheCollector<string>();
         var flow =
             from str in Pulse.Start<string>()
             from a in Pulse.Using(collector)
@@ -59,11 +58,10 @@ public class TransformTests
     public void PullingInState()
     {
         List<string> collector = [];
-        Func<Box<int>, Box<int>> adjust = b => { b.Value++; return b; };
         var flow =
             from str in Pulse.Start<string>()
             from box in Pulse.Gather(0)
-            from _ in Pulse.TraceIf(
+            from _ in Pulse.EffectIf(
                 box.Value == 0,
                 () => collector.Add(str))
             select Pulse.Stop;

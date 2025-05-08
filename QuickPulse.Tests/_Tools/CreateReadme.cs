@@ -1,6 +1,7 @@
 using System.Globalization;
 using QuickPulse.Bolts;
 using QuickPulse.Arteries;
+using QuickPulse;
 
 namespace QuickPulse.Tests._Tools;
 

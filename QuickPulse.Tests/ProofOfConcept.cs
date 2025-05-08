@@ -1,6 +1,4 @@
-﻿using QuickPulse.Bolts;
-
-namespace QuickPulse.Tests;
+﻿namespace QuickPulse.Tests;
 
 public class ProofOfConcept
 {
@@ -11,7 +9,7 @@ public class ProofOfConcept
         var flow =
             from x in Pulse.Start<char[]>()
             let y = new string(x)
-            from z in Pulse.Trace(() => result = y)
+            from z in Pulse.Effect(() => result = y)
             select Pulse.Stop;
         var signal = Signal.From<char[]>(flow);
         signal.Pulse(['c', 'h']);

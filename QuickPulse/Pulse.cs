@@ -27,21 +27,6 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
-    // public static Flow<Unit> TraceIf(bool flag, Action action) =>
-    //     state =>
-    //     {
-    //         if (flag)
-    //             action();
-    //         return Cask.Empty(state);
-    //     };
-
-    // public static Flow<Unit> Trace(Action action) =>
-    //     state =>
-    //     {
-    //         action();
-    //         return Cask.Empty(state);
-    //     };
-
     public static Flow<Box<T>> Gather<T>(T value) =>
         state =>
         {
@@ -53,10 +38,19 @@ public static class Pulse
             }
             return Cask.Some(state, (Box<T>)obj!);
         };
+
     public static Flow<Unit> Effect(Action action) =>
         state => { action(); return Cask.Empty(state); };
 
-    public static Flow<Unit> NoOp() => state => Cask.Empty(state);
+    public static Flow<Unit> EffectIf(bool flag, Action action) =>
+        state =>
+        {
+            if (flag)
+                action();
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> NoOp() => Cask.Empty;
 
     public static Flow<Unit> Batched<T>(this Flow<Unit> flow, IEnumerable<T> items) =>
     state =>
