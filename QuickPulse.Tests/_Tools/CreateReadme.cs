@@ -20,13 +20,13 @@ public class CreateReadme
     public static Flow<DocAttribute> RenderMarkdown =
         from doc in Pulse.Start<DocAttribute>()
         from previousLevel in Pulse.Gather(0)
-        from first in Pulse.Gather(true)
-        from rline in Pulse
-            .NoOp(/* ---------------- Render Line  ---------------- */ )
         let headingLevel = doc.Order.Split('-').Length
-        let needsLine = !first.Value && headingLevel <= previousLevel.Value
-        from _t1 in Pulse.TraceIf(needsLine, "---")
-        from _a1 in Pulse.Effect(() => { first.Value = false; previousLevel.Value = headingLevel; })
+        from first in Pulse.Gather(true)
+            // from rline in Pulse
+            //     .NoOp(/* ---------------- Render Line  ---------------- */ )
+            // let needsLine = !first.Value && headingLevel <= previousLevel.Value
+            // from _t1 in Pulse.TraceIf(needsLine, "---")
+            // from _a1 in Pulse.Effect(() => { first.Value = false; previousLevel.Value = headingLevel; })
         from rcaption in Pulse
             .NoOp(/* ---------------- Render Caption  ---------------- */ )
         let caption = doc.Caption
