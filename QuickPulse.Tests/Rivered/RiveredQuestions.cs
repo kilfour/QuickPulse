@@ -1,7 +1,7 @@
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.TextTransforms.Rivered;
+namespace QuickPulse.Tests.Rivered;
 public class RiveredQuestions
 {
     [Fact(Skip = "Demo")]
@@ -31,7 +31,7 @@ public class RiveredQuestions
             from rb in Pulse.Trace("]")
             select start;
 
-        var whereWeAre = "/QuickPulse.Tests/TextTransforms/Rivered/";
+        var whereWeAre = "/QuickPulse.Tests/Rivered/";
         var path = SolutionLocator.FindSolutionRoot() + whereWeAre + "MyQuestions.md";
         var writer = new WriteDataToFile(whereWeAre + "Questions.json").HardCodedPath().ClearFile();
 

@@ -22,11 +22,6 @@ public class CreateReadme
         from previousLevel in Pulse.Gather(0)
         let headingLevel = doc.Order.Split('-').Length
         from first in Pulse.Gather(true)
-            // from rline in Pulse
-            //     .NoOp(/* ---------------- Render Line  ---------------- */ )
-            // let needsLine = !first.Value && headingLevel <= previousLevel.Value
-            // from _t1 in Pulse.TraceIf(needsLine, "---")
-            // from _a1 in Pulse.Effect(() => { first.Value = false; previousLevel.Value = headingLevel; })
         from rcaption in Pulse
             .NoOp(/* ---------------- Render Caption  ---------------- */ )
         let caption = doc.Caption
@@ -39,6 +34,8 @@ public class CreateReadme
         let content = doc.Content
         let hasContent = !string.IsNullOrEmpty(content)
         from _t3 in Pulse.TraceIf(hasContent, content, "")
+        from end in Pulse
+            .NoOp(/* ---------------- End of content  ---------------- */ )
         select doc;
 
     private IOrderedEnumerable<DocAttribute> GetDocAttributes()

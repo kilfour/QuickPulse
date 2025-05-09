@@ -1,6 +1,6 @@
 ﻿using QuickPulse.Tests._Tools;
 
-namespace QuickPulse.Tests;
+namespace QuickPulse.Tests.Docs.NoWhereTests;
 
 [Doc(Order = Chapters.NoWhere, Caption = "No Where")]
 public class PulseNoWhereTests
@@ -19,8 +19,7 @@ let y = x.SomeProperty // NRE: still evaluated even if x is null!
 ```
 
 The `let` runs *before* the `where`, causing runtime exceptions — even though it looks safe.
-
----")]
+")]
     public void WhyThereIsNoWhere() { /*placeholder*/}
 
     [Doc(Order = Chapters.NoWhere + "-2", Caption = "Instead of `where`, use:", Content =

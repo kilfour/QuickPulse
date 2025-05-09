@@ -1,6 +1,6 @@
 using QuickPulse.Tests._Tools;
 
-namespace QuickPulse.Tests.IntroTests;
+namespace QuickPulse.Tests.Docs.IntroTests;
 
 
 [Doc(Order = Chapters.Introduction, Caption = "QuickPulse", Content =

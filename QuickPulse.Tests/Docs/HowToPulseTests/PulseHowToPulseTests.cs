@@ -2,11 +2,24 @@ using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Tests._Tools;
 
-namespace QuickPulse.Tests.BuildFlowTests;
+namespace QuickPulse.Tests.Docs.HowToPulseTests;
 
 
 [Doc(Order = Chapters.HowToPulse, Caption = "How To Pulse", Content =
-@"")]
+@"**Cheat Sheet:**
+| Combinator         | Role/Purpose                                                               |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Start<T>()**     | Entry point for a flow. Required to begin any LINQ chain.                  |
+| **Using(...)**     | Assigns an `IArtery` to the flow context — enables tracing.                |
+| **Trace(...)**     | Emits trace data unconditionally to the current artery.                    |
+| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                   |
+| **Effect(...)**    | Executes a side-effect (logging, mutation, etc.) without yielding a value. |
+| **EffectIf(...)**  | Same as above, but conditional.                                            |
+| **Gather<T>(...)** | Binds a mutable box into flow memory (first write wins).                   |
+| **ToFlow(...)**    | Executes a flow over a value or collection — useful for subflows.          |
+| **ToFlowIf(...)**  | Executes a subflow conditionally, using a supplier for the input.          |
+| **NoOp()**         | A do-nothing flow (useful for conditional branches).                       |
+")]
 public class PulseHowToPulseTests
 {
     [Doc(Order = Chapters.HowToPulse + "-1", Caption = "Start", Content =
