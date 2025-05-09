@@ -123,7 +123,7 @@ var signal = Signal.From(flow);
 
 ### Pulse
 **`Signal<T>.Pulse(...)`** is the only way a flow can be instructed to do useful work.
-<<<Explain how signal wraps state as well>>>
+**Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
 **Example:**
 ```csharp
@@ -153,8 +153,8 @@ This behaves exactly like the previous example.
 
 
 ### Set Artery
-**`Signal<T> SetArtery(IArtery artery)`** is used to inject an  into the flow.
-All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this `IArtery`.
+**`Signal<T> SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
+All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
