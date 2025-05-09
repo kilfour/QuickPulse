@@ -118,8 +118,132 @@ This strongly types the flow itself.
 
 **Example:**
 ```csharp
-from anInt in Pulse.Start<int>()
+from anInt in Pulse.Start<int>() // <=
 select anInt;
+```
+
+
+## Using
+
+**`Pulse.Using(...)`** Assigns an `IArtery` to the flow context, and thus enables tracing. 
+
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from _ in Pulse.Using(collector) // <= 
+    from t in Pulse.Trace(anInt)
+    select anInt;
+```
+
+
+## Trace
+
+**`Pulse.Trace(...)`** Emits trace data unconditionally to the current artery.
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from _ in Pulse.Trace(anInt) // <=
+select anInt;
+```
+
+
+## TraceIf
+
+**`Pulse.TraceIf(...)`** Emits trace data conditionally, based on a boolean flag.
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from _ in Pulse.TraceIf(anInt != 42, anInt) // <=
+select anInt;
+```
+
+
+## Gather
+
+**`Pulse.Gather(...)`** Binds a mutable box into flow memory (first write wins).
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from box in Pulse.Gather(1) // <=
+select anInt;
+```
+
+
+## Effect
+
+**`Pulse.Effect(...)`** Executes a side-effect without yielding a value.
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from box in Pulse.Gather(1)
+from eff in Pulse.Effect(() => box.Value++) // <=
+select anInt;
+```
+
+
+## EffectIf
+
+**`Pulse.EffectIf(...)`** Same as above, but conditional. 
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from seen42 in Pulse.Gather(false)
+from eff in Pulse.EffectIf(anInt == 42, () => seen42.Value = true) // <=
+select anInt;
+```
+
+
+## ToFlow
+
+**`Pulse.ToFlow(...)`** Executes a subflow over a value or collection.
+
+**Example:**
+```csharp
+var subFlow =
+    from anInt in Pulse.Start<int>()
+    from _ in Pulse.Trace(anInt)
+    select anInt;
+var flow =
+    from box in Pulse.Start<Box<int>>()
+    from _ in Pulse.ToFlow(subFlow, box.Value) // <=
+    select box;
+```
+
+
+## ToFlowIf
+
+**`Pulse.ToFlowIf(...)`** Executes a subflow over a value or collection, conditionally.
+
+**Example:**
+```csharp
+var subFlow =
+    from anInt in Pulse.Start<int>()
+    from _ in Pulse.Trace(anInt)
+    select anInt;
+var flow =
+    from box in Pulse.Start<Box<int>>()
+    from _ in Pulse.ToFlowIf(box.Value != 42, subFlow, () => box.Value) // <=
+    select box;
+```
+
+
+## NoOp
+
+**`Pulse.NoOp(...)`** A do-nothing operation (useful for conditional branches). 
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+    from _ in Pulse
+        .NoOp(/* --- Also useful for Comments --- */)
+    select anInt;
 ```
 
 
