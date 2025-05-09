@@ -305,7 +305,6 @@ var signal = Signal.From(flow);
 
 ## Pulse
 **`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
-**Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
 **Example:**
 ```csharp

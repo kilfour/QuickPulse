@@ -57,7 +57,6 @@ var signal = Signal.From(flow);
 
     [Doc(Order = Chapters.Signalling + "-2", Caption = "Pulse", Content =
 @"**`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
-**Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
 **Example:**
 ```csharp
