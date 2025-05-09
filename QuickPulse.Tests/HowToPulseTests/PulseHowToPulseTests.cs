@@ -11,9 +11,9 @@ public class PulseHowToPulseTests
 {
     [Doc(Order = Chapters.HowToPulse + "-1", Caption = "Start", Content =
 @"
-**`Pulse.Start<T>()`** is explained in a previous chapter, but for completeness sake, here's a quick recap.
+**`Pulse.Start()`** is explained in a previous chapter, but for completeness sake, here's a quick recap.
 
-Every flow definition needs to start with a call to `Pulse.Start<T>()`.
+Every flow definition needs to start with a call to `Pulse.Start()`.
 This strongly types the values that the flow can receive.
 In adition the result of the call needs to be used in the select part of the LINQ expression.
 This strongly types the flow itself.

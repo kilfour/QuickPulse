@@ -109,9 +109,9 @@ public void Adding_an_artery()
 # How To Pulse
 ## Start
 
-**`Pulse.Start<T>()`** is explained in a previous chapter, but for completeness sake, here's a quick recap.
+**`Pulse.Start()`** is explained in a previous chapter, but for completeness sake, here's a quick recap.
 
-Every flow definition needs to start with a call to `Pulse.Start<T>()`.
+Every flow definition needs to start with a call to `Pulse.Start()`.
 This strongly types the values that the flow can receive.
 In adition the result of the call needs to be used in the select part of the LINQ expression.
 This strongly types the flow itself.
@@ -123,10 +123,36 @@ select anInt;
 ```
 
 
-# Signalling
+# Pulsing a Flow: One Signal, One State
+
+In QuickPulse, a `Signal<T>` is more than just a way to push values into a flow;
+it's a **stateful conduit**. Each `Signal<T>` instance wraps a specific `Flow<T>` and carries its own **internal state**,
+including any `Gather(...)` values or scoped manipulations applied along the way.
+
+When you call `Signal.Pulse(...)`, you're not broadcasting into some shared pipeline,
+you're feeding **a single stateful flow machine**,
+which responds, remembers, and evolves with each input.
+
+This means:
+
+* You can create **multiple signals** from the same flow definition, each with **independent state**.
+* Or, reuse one signal to process a sequence of values, with state accumulating over time.
+
+In short: **one signal, one evolving state**.
+
+```
+[ Signal<T> ] ---> [ Flow<T> + internal state ]
+       |                    ^
+       |                    |
+       +---- Pulse(x) ------+
+```
+
+This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
+
+
 ## From
 
-**`Signal.From<T>(Flow<T> flow)`** is a simple factory method used to get hold of a `Signal<T>` instance
+**`Signal.From(...)`** is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.
 
 
@@ -139,7 +165,7 @@ var signal = Signal.From(flow);
 
 
 ## Pulse
-**`Signal<T>.Pulse(...)`** is the only way a flow can be instructed to do useful work.
+**`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
 **Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
 **Example:**
@@ -170,14 +196,14 @@ This behaves exactly like the previous example.
 
 
 ## Set Artery
-**`Signal<T>.SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
+**`Signal.SetArtery(...)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
 
 ## Manipulate
-**`Signal<T.Manipulate<TValue>(Func<TValue, TValue> update)`** is used in conjunction with `Pulse.Gather(...)`,
+**`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
 **Given this setup:**
 ```csharp
@@ -197,7 +223,7 @@ produces `42 : 1`.
 
 
 ## Scoped
-**`Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)`** is sugaring for 'scoped' usage of the `Manipulate` method.
+**`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
 Given the same setup as before, we can write :
 
@@ -218,8 +244,7 @@ And the trace values will be:
 
 
 # No Where
-###  Why There Is No `.Where(...)` in QuickPulse LINQ
-
+## Why There Is No `.Where(...)` in QuickPulse LINQ
 In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
 
 But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses — and **evaluates them eagerly**.
@@ -236,7 +261,7 @@ The `let` runs *before* the `where`, causing runtime exceptions — even though 
 
 ---
 
-### Instead of `where`, use:
+## Instead of `where`, use:
 
 * `Pulse.TraceIf(...)`
 * `Pulse.NoOp()`
@@ -252,9 +277,8 @@ from _ in diag.Tags.Contains("Phase")
     : Pulse.NoOp()
 ```
 
----
 
-### ✅ Why This Matters
+## Why This Matters
 
 Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidental crashes in:
 

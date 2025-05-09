@@ -1,54 +1,26 @@
-# Metaphor
-Doctors Et All
-examination of the symptoms
-Anaphylactic shock
-If an illness or problem is diagnosed, it is identified.
-identify, determine, recognize, distinguish
---- slide --- 
-# DOC
-where we start
---- slide --- 
-Pulse/
-├── Core/         → base abstractions
-├── Diagnostics/  → logging, shape, test
-├── Flow/         → ETL transforms, processors
-└── Pulse.csproj  → meta entry
+# Combinator Doc
+| Combinator         | Role/Purpose                                                               |
+| ------------------ | -------------------------------------------------------------------------- |
+| **Start<T>()**     | Entry point for a flow. Required to begin any LINQ chain.                  |
+| **Using(...)**     | Assigns an `IArtery` to the flow context — enables tracing.                |
+| **Trace(...)**     | Emits trace data unconditionally to the current artery.                    |
+| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                   |
+| **Effect(...)**    | Executes a side-effect (logging, mutation, etc.) without yielding a value. |
+| **EffectIf(...)**  | Same as above, but conditional.                                            |
+| **Gather<T>(...)** | Binds a mutable box into flow memory (first write wins).                   |
+| **ToFlow(...)**    | Executes a flow over a value or collection — useful for subflows.          |
+| **ToFlowIf(...)**  | Executes a subflow conditionally, using a supplier for the input.          |
+| **NoOp()**         | A do-nothing flow (useful for conditional branches).                       |
 
-# PulseContext.FromFlow
-PulseContext.FromFlow(
-    from x in Pulse.From<char[]>()
-            from y in Pulse.Shape(() => new string(x))
-            from z in Sink.To(() => result = y)
-            select x);
-Should set PulseContext.Current;
+--- slide ---
+# Combinator Doc 2
+### Pulse.Trace(...)
 
+Emits values to the current artery.
 
-Pulse.Tap(...) (side-effects but not terminal)
+**Use when:** You want to observe values flowing through the pipeline.
 
-Pulse.Observe(...) (passive data watching)
-
-Pulse.Throw(...) (fail pipeline intentionally)
-
-
-
-Start for input
-Shape for light transformation
-TraceIf for conditional side effects
-Effect for internal state tracking
-Stop to declare unit completion
-
-Pulse.NoOp(...)
-A zero-effect combinator used to mark logical structure inside a flow.
-It executes nothing, returns start, and is most useful for visually separating sections in long or expressive flows.
-
-csharp
-Copy
-Edit
-from _ in Pulse.NoOp("Render Heading")
-Useful for:
-
-Documentation
-
-Readability
-
-Debug-friendly anchors (if extended)
+```csharp
+from _ in Pulse.Trace("Hello", someValue)
+```
+--- slide ---

@@ -2,12 +2,11 @@
 
 namespace QuickPulse.Tests;
 
-[Doc(Order = Chapters.NoWhere, Caption = "No Where", Content = noWhere)]
+[Doc(Order = Chapters.NoWhere, Caption = "No Where")]
 public class PulseNoWhereTests
 {
-    const string noWhere = @"###  Why There Is No `.Where(...)` in QuickPulse LINQ
-
-In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
+    [Doc(Order = Chapters.NoWhere + "-1", Caption = "Why There Is No `.Where(...)` in QuickPulse LINQ", Content =
+@"In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
 
 But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses — and **evaluates them eagerly**.
 
@@ -21,10 +20,11 @@ let y = x.SomeProperty // NRE: still evaluated even if x is null!
 
 The `let` runs *before* the `where`, causing runtime exceptions — even though it looks safe.
 
----
+---")]
+    public void WhyThereIsNoWhere() { /*placeholder*/}
 
-### Instead of `where`, use:
-
+    [Doc(Order = Chapters.NoWhere + "-2", Caption = "Instead of `where`, use:", Content =
+@"
 * `Pulse.TraceIf(...)`
 * `Pulse.NoOp()`
 * Custom `.If(...)` / `.Guard(...)` combinators
@@ -38,11 +38,11 @@ from _ in diag.Tags.Contains(""Phase"")
     ? Pulse.Trace(""..."")
     : Pulse.NoOp()
 ```
+")]
+    public void InsteadOfWhere() { /*placeholder*/}
 
----
-
-### ✅ Why This Matters
-
+    [Doc(Order = Chapters.NoWhere + "-3", Caption = "Why This Matters", Content =
+@"
 Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidental crashes in:
 
 * Diagnostic flows
@@ -50,7 +50,8 @@ Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidenta
 * Custom combinators and trace sequences
 
 It's a minor trade-off in exchange for greater composability and correctness.
-";
+")]
+    public void WhyThisMatters() { /*placeholder*/}
 }
 
 

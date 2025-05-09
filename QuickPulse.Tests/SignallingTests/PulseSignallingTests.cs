@@ -1,17 +1,40 @@
 using QuickPulse.Arteries;
-using QuickPulse.Bolts;
 using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.BuildFlowTests;
 
 
-[Doc(Order = Chapters.Signalling, Caption = "Signalling", Content =
-@"")]
+[Doc(Order = Chapters.Signalling, Caption = "Pulsing a Flow: One Signal, One State", Content =
+@"
+In QuickPulse, a `Signal<T>` is more than just a way to push values into a flow;
+it's a **stateful conduit**. Each `Signal<T>` instance wraps a specific `Flow<T>` and carries its own **internal state**,
+including any `Gather(...)` values or scoped manipulations applied along the way.
+
+When you call `Signal.Pulse(...)`, you're not broadcasting into some shared pipeline,
+you're feeding **a single stateful flow machine**,
+which responds, remembers, and evolves with each input.
+
+This means:
+
+* You can create **multiple signals** from the same flow definition, each with **independent state**.
+* Or, reuse one signal to process a sequence of values, with state accumulating over time.
+
+In short: **one signal, one evolving state**.
+
+```
+[ Signal<T> ] ---> [ Flow<T> + internal state ]
+       |                    ^
+       |                    |
+       +---- Pulse(x) ------+
+```
+
+This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
+")]
 public class PulseSignallingTests
 {
     [Doc(Order = Chapters.Signalling + "-1", Caption = "From", Content =
 @"
-**`Signal.From<T>(Flow<T> flow)`** is a simple factory method used to get hold of a `Signal<T>` instance
+**`Signal.From(...)`** is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.
 
 
@@ -33,7 +56,7 @@ var signal = Signal.From(flow);
     }
 
     [Doc(Order = Chapters.Signalling + "-2", Caption = "Pulse", Content =
-@"**`Signal<T>.Pulse(...)`** is the only way a flow can be instructed to do useful work.
+@"**`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
 **Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
 **Example:**
@@ -109,7 +132,7 @@ This behaves exactly like the previous example.
     }
 
     [Doc(Order = Chapters.Signalling + "-3", Caption = "Set Artery", Content =
-@"**`Signal<T>.SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
+@"**`Signal.SetArtery(...)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
@@ -130,7 +153,7 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
     }
 
     [Doc(Order = Chapters.Signalling + "-4", Caption = "Manipulate", Content =
-@"**`Signal<T.Manipulate<TValue>(Func<TValue, TValue> update)`** is used in conjunction with `Pulse.Gather(...)`,
+@"**`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
 **Given this setup:**
 ```csharp
@@ -168,7 +191,7 @@ produces `42 : 1`.
     }
 
     [Doc(Order = Chapters.Signalling + "-5", Caption = "Scoped", Content =
-@"**`Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)`** is sugaring for 'scoped' usage of the `Manipulate` method.
+@"**`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
 Given the same setup as before, we can write :
 
