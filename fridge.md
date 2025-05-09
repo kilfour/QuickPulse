@@ -39,7 +39,7 @@ Stop to declare unit completion
 
 Pulse.NoOp(...)
 A zero-effect combinator used to mark logical structure inside a flow.
-It executes nothing, returns Pulse.Stop, and is most useful for visually separating sections in long or expressive flows.
+It executes nothing, returns start, and is most useful for visually separating sections in long or expressive flows.
 
 csharp
 Copy

@@ -12,12 +12,12 @@ public class CreateReadme
     {
         var artery = new WriteDataToFile("README.md").ClearFile();
         var attrs = GetDocAttributes().ToList();
-        Signal.From<IEnumerable<DocAttribute>>(RenderMarkdown.Batched(attrs))
+        Signal.From(RenderMarkdown)
             .SetArtery(artery)
-            .Pulse(null!);
+            .Pulse(attrs);
     }
 
-    public static Flow<Unit> RenderMarkdown =
+    public static Flow<DocAttribute> RenderMarkdown =
         from doc in Pulse.Start<DocAttribute>()
         from previousLevel in Pulse.Gather(0)
         from first in Pulse.Gather(true)
@@ -39,7 +39,7 @@ public class CreateReadme
         let content = doc.Content
         let hasContent = !string.IsNullOrEmpty(content)
         from _t3 in Pulse.TraceIf(hasContent, content, "")
-        select Pulse.Stop;
+        select doc;
 
     private IOrderedEnumerable<DocAttribute> GetDocAttributes()
     {

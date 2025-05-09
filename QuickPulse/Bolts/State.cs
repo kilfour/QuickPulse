@@ -7,7 +7,7 @@ public class State
 
     public object? CurrentInput { get; private set; }
     public T GetValue<T>() { return (T)CurrentInput!; }
-    public void SetValue<T>(T value) { CurrentInput = value!; }
+    public State SetValue<T>(T value) { CurrentInput = value!; return this; }
 
     public readonly Dictionary<Type, object> Memory = [];
 

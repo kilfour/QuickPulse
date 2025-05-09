@@ -2,13 +2,13 @@ namespace QuickPulse.Arteries;
 
 public class TheCollector<T> : IArtery
 {
-    public readonly List<T> Exhibit = [];
+    public readonly List<T> TheExhibit = [];
 
     public void Flow(params object[] data)
     {
         foreach (var item in data)
         {
-            Exhibit.Add((T)item);
+            TheExhibit.Add((T)item);
         }
     }
 }

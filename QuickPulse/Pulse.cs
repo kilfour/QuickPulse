@@ -10,8 +10,6 @@ public static class Pulse
     public static Flow<Unit> Using(IArtery artery) =>
         state => { state.SetArtery(artery); return Cask.Empty(state); };
 
-    public static Unit Stop { get { return Unit.Instance; } }
-
     public static Flow<Unit> Trace(params object[] data) =>
         state =>
         {
@@ -51,15 +49,4 @@ public static class Pulse
         };
 
     public static Flow<Unit> NoOp() => Cask.Empty;
-
-    public static Flow<Unit> Batched<T>(this Flow<Unit> flow, IEnumerable<T> items) =>
-    state =>
-        {
-            foreach (var item in items)
-            {
-                state.SetValue(item);
-                flow(state);
-            }
-            return Cask.Empty(state);
-        };
 }

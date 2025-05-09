@@ -11,8 +11,8 @@ public class TransformTests
         var flow =
             from str in Pulse.Start<string>()
             from _ in Pulse.Effect(() => collector.Add(str))
-            select Pulse.Stop;
-        var signal = Signal.From<string>(flow);
+            select str;
+        var signal = Signal.From(flow);
         signal.Pulse("One");
         signal.Pulse("Two");
         Assert.Equal(2, collector.Count);
@@ -28,13 +28,13 @@ public class TransformTests
             from str in Pulse.Start<string>()
             from c in Pulse.Using(collector)
             from _ in Pulse.Trace(str)
-            select Pulse.Stop;
-        var signal = Signal.From<string>(flow);
+            select str;
+        var signal = Signal.From(flow);
         signal.Pulse("One");
         signal.Pulse("Two");
-        Assert.Equal(2, collector.Exhibit.Count);
-        Assert.Equal("One", collector.Exhibit[0]);
-        Assert.Equal("Two", collector.Exhibit[1]);
+        Assert.Equal(2, collector.TheExhibit.Count);
+        Assert.Equal("One", collector.TheExhibit[0]);
+        Assert.Equal("Two", collector.TheExhibit[1]);
     }
 
     [Fact]
@@ -45,13 +45,13 @@ public class TransformTests
             from str in Pulse.Start<string>()
             from a in Pulse.Using(collector)
             from _ in Pulse.Trace(str)
-            select Pulse.Stop;
-        var signal = Signal.From<string>(flow);
+            select str;
+        var signal = Signal.From(flow);
         signal.Pulse("One");
         signal.Pulse("Two");
-        Assert.Equal(2, collector.Exhibit.Count);
-        Assert.Equal("One", collector.Exhibit[0]);
-        Assert.Equal("Two", collector.Exhibit[1]);
+        Assert.Equal(2, collector.TheExhibit.Count);
+        Assert.Equal("One", collector.TheExhibit[0]);
+        Assert.Equal("Two", collector.TheExhibit[1]);
     }
 
     [Fact]
@@ -64,8 +64,8 @@ public class TransformTests
             from _ in Pulse.EffectIf(
                 box.Value == 0,
                 () => collector.Add(str))
-            select Pulse.Stop;
-        var signal = Signal.From<string>(flow);
+            select str;
+        var signal = Signal.From(flow);
         signal.Pulse("One");
         signal.Manipulate<int>(a => a + 1);
         signal.Pulse("Two");

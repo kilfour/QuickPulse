@@ -5,7 +5,7 @@ namespace QuickPulse;
 
 public static class Signal
 {
-    public static Signal<T> From<T>(Flow<Unit> flow)
+    public static Signal<T> From<T>(Flow<T> flow)
     {
         return new Signal<T>(flow);
     }
@@ -14,9 +14,9 @@ public static class Signal
 public class Signal<T>
 {
     private readonly State state;
-    private readonly Flow<Unit> flow;
+    private readonly Flow<T> flow;
 
-    public Signal(Flow<Unit> flow)
+    public Signal(Flow<T> flow)
     {
         state = new State();
         this.flow = flow;
@@ -28,15 +28,15 @@ public class Signal<T>
         return this;
     }
 
-    public void Pulse()
+    public void Pulse(params T[] input)
     {
-        flow(state);
+        Pulse((IEnumerable<T>)input);
     }
 
-    public void Pulse(T input)
+    public void Pulse(IEnumerable<T> inputs)
     {
-        state.SetValue(input);
-        flow(state);
+        foreach (var item in inputs)
+            flow(state.SetValue(item));
     }
 
     public void Manipulate<TValue>(Func<TValue, TValue> update)

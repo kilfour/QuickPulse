@@ -20,20 +20,20 @@ building up a flow, for a real world use case.
 
 The minimal definition of a flow :
 ```csharp
-from _ in Pulse.Start<DocAttribute>()
-select Pulse.Stop;
+from start in Pulse.Start<string>()
+select start;
 ```
 The type generic in `Pulse.Start` defines the **input type** to the flow.  
 This means you'll call it like this:
 ```csharp
-flow.Run(new DocAttribute());
+Signal.From(flow).Pulse("a string value");
 ```
 
 
 ---
-`Pulse.Stop` is just semantic sugar, a readable way to express that the return value is irrelevant.  
+`start` is just semantic sugar, a readable way to express that the return value is irrelevant.  
 While you could select anything (including real return values),
-using Pulse.Stop makes your intent clear to both the compiler and future readers.
+using start makes your intent clear to both the compiler and future readers.
 
 ---
 **Adding a Trace:**
