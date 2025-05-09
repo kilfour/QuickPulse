@@ -109,13 +109,13 @@ This behaves exactly like the previous example.
     }
 
     [Doc(Order = Chapters.Signalling + "-3", Caption = "Set Artery", Content =
-@"**`Signal<T> SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
+@"**`Signal<T>.SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 ")]
     [Fact]
-    public void Signal_set_artery() //Manipulate // Scoped
+    public void Signal_set_artery()
     {
         var collector = new TheCollector<int>();
         var flow =
@@ -127,5 +127,86 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         signal.Pulse(42);
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-4", Caption = "Manipulate", Content =
+@"**`Signal<T.Manipulate<TValue>(Func<TValue, TValue> update)`** is used in conjunction with `Pulse.Gather(...)`,
+and allows for manipulating the flow in between pulses.
+**Given this setup:**
+```csharp
+ var flow =
+    from anInt in Pulse.Start<int>()
+    from gathered in Pulse.Gather(0)
+    from _ in Pulse.Trace($""{anInt} : {gathered.Value}"")
+    select anInt;
+var signal = Signal.From(flow);
+```
+And we pulse once like so : `signal.Pulse(42);` the flow will gather the input in the gathered range variable and
+trace output is : `42 : 0`.
+
+If we then call `Manipulate` like so: `signal.Manipulate<int>(a => a + 1);`, the next pulse: `signal.Pulse(42);`,
+produces `42 : 1`.
+
+")]
+    [Fact]
+    public void Signal_set_manipulate()
+    {
+        var collector = new TheCollector<string>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from gathered in Pulse.Gather(0)
+            from _ in Pulse.Trace($"{anInt} : {gathered.Value}")
+            select anInt;
+        var signal = Signal.From(flow);
+        signal.SetArtery(collector);
+        signal.Pulse(42);
+        signal.Manipulate<int>(a => a + 1);
+        signal.Pulse(42);
+        Assert.Equal(2, collector.TheExhibit.Count);
+        Assert.Equal("42 : 0", collector.TheExhibit[0]);
+        Assert.Equal("42 : 1", collector.TheExhibit[1]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-5", Caption = "Scoped", Content =
+@"**`Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)`** is sugaring for 'scoped' usage of the `Manipulate` method.
+
+Given the same setup as before, we can write :
+
+```csharp
+signal.Pulse(42);
+using (signal.Scoped<int>(a => a + 1, a => a - 1))
+{
+    signal.Pulse(42);
+}
+signal.Pulse(42);
+```
+And the trace values will be:
+```
+42 : 0
+42 : 1
+42 : 0
+```
+")]
+    [Fact]
+    public void Signal_set_scoped() // Scoped
+    {
+        var collector = new TheCollector<string>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from gathered in Pulse.Gather(0)
+            from _ in Pulse.Trace($"{anInt} : {gathered.Value}")
+            select anInt;
+        var signal = Signal.From(flow);
+        signal.SetArtery(collector);
+        signal.Pulse(42);
+        using (signal.Scoped<int>(a => a + 1, a => a - 1))
+        {
+            signal.Pulse(42);
+        }
+        signal.Pulse(42);
+        Assert.Equal(3, collector.TheExhibit.Count);
+        Assert.Equal("42 : 0", collector.TheExhibit[0]);
+        Assert.Equal("42 : 1", collector.TheExhibit[1]);
+        Assert.Equal("42 : 0", collector.TheExhibit[2]);
     }
 }
