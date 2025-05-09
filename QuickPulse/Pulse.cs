@@ -47,9 +47,8 @@ public static class Pulse
                 action();
             return Cask.Empty(state);
         };
-    // public static Flow<T> ToFlow<T>(Flow<T> flow, T value) =>
-    //     state => { state.SetValue(value); return flow(state); };
-    public static Flow<T> ToFlow<T>(Flow<T> flow, T value) =>
+
+    public static Flow<T> ToFlow<T>(Flow<T> flow, T value) => // T[] input maybe ?
         state => { state.SetValue(value); return flow(state); };
 
     public static Flow<T> ToFlow<T>(Flow<T> flow, IEnumerable<T> values) =>
@@ -59,10 +58,6 @@ public static class Pulse
                 flow(state.SetValue(item));
             return Cask.None<T>(state);
         };
-    // public void Pulse(params T[] input)
-    // {
-    //     Pulse((IEnumerable<T>)input);
-    // }
 
     public static Flow<T> ToFlowIf<T>(bool flag, Flow<T> flow, Func<T> func) =>
         state =>
@@ -73,8 +68,6 @@ public static class Pulse
                 return flow(state);
             }
             return Cask.None<T>(state);
-
-
         };
 
     public static Flow<Unit> NoOp() => Cask.Empty;

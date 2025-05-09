@@ -1,4 +1,4 @@
-## QuickPulse
+# QuickPulse
 Do you know how you sometimes leave your house—maybe to get some cigarettes—and start thinking about something?
 Your brain takes over.
 You walk straight past the shop, and the legs just keep going.
@@ -12,10 +12,10 @@ It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
 And yes, it did *literally* involve Trees.
 
-## Building a Flow
+# Building a Flow
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.
 
-### The Minimal Flow
+## The Minimal Flow
 
 ```csharp
 from anInt in Pulse.Start<int>()
@@ -25,7 +25,7 @@ select anInt;
 The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.
 
-### Doing Something with the Input
+## Doing Something with the Input
 Let's trace the values as they pass through:
 
 ```csharp
@@ -35,7 +35,7 @@ select anInt;
 ```
 
 
-### Executing a Flow
+## Executing a Flow
 To execute a flow, we need a `Signal<T>`, which is created via:
 
 ```csharp
@@ -54,7 +54,7 @@ var signal = Signal.From(flow);
 ```
 
 
-### Sending Values Through the Flow
+## Sending Values Through the Flow
 Once you have a signal, you can push values into the flow by calling:
 
 ```csharp
@@ -76,11 +76,11 @@ signal.Pulse(42);
 This sends the value `42` into the flow.
 
 
-### Capturing the Trace
+## Capturing the Trace
 **Capturing the trace**
 
 To observe what flows through, we can add an `IArtery`.
-There are a few ways to do this—here's one using `SetArtery` directly on the signal.
+There are a few ways to do this, here's one using `SetArtery` directly on the signal.
 
 ```csharp
 [Fact]
@@ -106,8 +106,8 @@ public void Adding_an_artery()
 
 
 
-## How To Pulse
-### Start
+# How To Pulse
+## Start
 
 **`Pulse.Start<T>()`** is explained in a previous chapter, but for completeness sake, here's a quick recap.
 
@@ -123,8 +123,8 @@ select anInt;
 ```
 
 
-## Signalling
-### From
+# Signalling
+## From
 
 **`Signal.From<T>(Flow<T> flow)`** is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.
@@ -138,7 +138,7 @@ var signal = Signal.From(flow);
 ```
 
 
-### Pulse
+## Pulse
 **`Signal<T>.Pulse(...)`** is the only way a flow can be instructed to do useful work.
 **Todo:** *Explain how signal wraps state.*
 In its simplest form this looks like the following.
@@ -169,14 +169,14 @@ signal.Pulse(new List<int> { 42, 43, 44 });
 This behaves exactly like the previous example.
 
 
-### Set Artery
+## Set Artery
 **`Signal<T>.SetArtery(IArtery artery)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
 
-### Manipulate
+## Manipulate
 **`Signal<T.Manipulate<TValue>(Func<TValue, TValue> update)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
 **Given this setup:**
@@ -196,7 +196,7 @@ produces `42 : 1`.
 
 
 
-### Scoped
+## Scoped
 **`Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
 Given the same setup as before, we can write :
@@ -217,7 +217,7 @@ And the trace values will be:
 ```
 
 
-## No Where
+# No Where
 ###  Why There Is No `.Where(...)` in QuickPulse LINQ
 
 In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.

@@ -112,7 +112,7 @@ This sends the value `42` into the flow.
 @"**Capturing the trace**
 
 To observe what flows through, we can add an `IArtery`.
-There are a few ways to do this—here's one using `SetArtery` directly on the signal.
+There are a few ways to do this, here's one using `SetArtery` directly on the signal.
 
 ```csharp
 [Fact]
