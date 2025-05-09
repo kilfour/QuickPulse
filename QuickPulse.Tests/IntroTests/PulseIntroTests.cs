@@ -4,23 +4,16 @@ namespace QuickPulse.Tests.IntroTests;
 
 
 [Doc(Order = Chapters.Introduction, Caption = "QuickPulse", Content =
-@"Do you know how you sometimes leave your house, to get some cigarettes for instance.  
-But you start thinking about something and your brain just takes over. 
-So you walk straight past the shop and the legs keep going.  
-An hour later you look up, and you're in the next village wondering how you got there.  
+@"Do you know how you sometimes leave your house—maybe to get some cigarettes—and start thinking about something?
+Your brain takes over.
+You walk straight past the shop, and the legs just keep going.
+An hour later, you look up, and you're in the next village wondering how you got there.
 
-No ? ... Just me ?  
-Well, ok.  
+No? Just me?
 
-It happens in code too though, ... quite a lot.  
-This library is the result of one of those walks through a dark forest, 
-and yes it did *literally* involved Trees.
-")]
-public class PulseIntroTests
-{
-    [Fact]
-    public void Foo()
-    {
+Well, okay.
 
-    }
-}
+It happens in code too, ... quite a lot.
+This library is the result of one of those walks through a dark forest.
+And yes, it did *literally* involve Trees.")]
+public class PulseIntroTests { } // placeholder for now

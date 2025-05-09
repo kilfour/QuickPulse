@@ -1,49 +1,113 @@
 ## QuickPulse
-Do you know how you sometimes leave your house, to get some cigarettes for instance.  
-But you start thinking about something and your brain just takes over. 
-So you walk straight past the shop and the legs keep going.  
-An hour later you look up, and you're in the next village wondering how you got there.  
+Do you know how you sometimes leave your house—maybe to get some cigarettes—and start thinking about something?
+Your brain takes over.
+You walk straight past the shop, and the legs just keep going.
+An hour later, you look up, and you're in the next village wondering how you got there.
 
-No ? ... Just me ?  
-Well, ok.  
+No? Just me?
 
-It happens in code too though, ... quite a lot.  
-This library is the result of one of those walks through a dark forest, 
-and yes it did *literally* involved Trees.
+Well, okay.
 
+It happens in code too, ... quite a lot.
+This library is the result of one of those walks through a dark forest.
+And yes, it did *literally* involve Trees.
 
 ---
 ## Building a Flow
-In order to explain how QuickPulse works, not in the least to myself, let's walk through 
-building up a flow, for a real world use case.
+To explain how QuickPulse works (not least to myself), let's build up a flow step by step.
 
+### The Minimal Flow
 
-The minimal definition of a flow :
 ```csharp
-from start in Pulse.Start<string>()
-select start;
-```
-The type generic in `Pulse.Start` defines the **input type** to the flow.  
-This means you'll call it like this:
-```csharp
-Signal.From(flow).Pulse("a string value");
+from anInt in Pulse.Start<int>()
+select anInt;
 ```
 
+The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
+**Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.
 
 ---
-`start` is just semantic sugar, a readable way to express that the return value is irrelevant.  
-While you could select anything (including real return values),
-using start makes your intent clear to both the compiler and future readers.
+### Doing Something with the Input
+Let's trace the values as they pass through:
+
+```csharp
+from anInt in Pulse.Start<int>()
+from trace in Pulse.Trace(anInt)
+select anInt;
+```
+
 
 ---
-**Adding a Trace:**
-You might have guessed were building a document generator thingy, 
+### Executing a Flow
+To execute a flow, we need a `Signal<T>`, which is created via:
 
+```csharp
+Signal.From<T>(Flow<T> flow)
+```
+
+Example:
+
+```csharp
+var flow =
+    from anInt in Pulse.Start<int>()
+    from trace in Pulse.Trace(anInt)
+    select anInt;
+
+var signal = Signal.From(flow);
+```
 
 
 ---
-**Adding a Shape:**
+### Sending Values Through the Flow
+Once you have a signal, you can push values into the flow by calling:
 
+```csharp
+Signal.Pulse(params T[] input)
+```
+
+Example:
+
+```csharp
+var flow =
+    from anInt in Pulse.Start<int>()
+    from trace in Pulse.Trace(anInt)
+    select anInt;
+
+var signal = Signal.From(flow);
+signal.Pulse(42);
+```
+
+This sends the value `42` into the flow.
+
+
+---
+### Capturing the Trace
+**Capturing the trace**
+
+To observe what flows through, we can add an `IArtery`.
+There are a few ways to do this—here’s one using `SetArtery` directly on the signal.
+
+```csharp
+[Fact]
+public void Adding_an_artery()
+{
+    var flow =
+        from anInt in Pulse.Start<int>()
+        from trace in Pulse.Trace(anInt)
+        select anInt;
+
+    var collector = new TheCollector<int>();
+
+    Signal.From(flow)
+        .SetArtery(collector)
+        .Pulse(42, 43, 44);
+
+    Assert.Equal(3, collector.TheExhibit.Count);
+    Assert.Equal(42, collector.TheExhibit[0]);
+    Assert.Equal(43, collector.TheExhibit[1]);
+    Assert.Equal(44, collector.TheExhibit[2]);
+}
+```
 
 
 
