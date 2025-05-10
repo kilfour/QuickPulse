@@ -36,7 +36,7 @@ public class Signal<T>
     public void Pulse(IEnumerable<T> inputs)
     {
         foreach (var item in inputs)
-            flow(state.SetValue(item));
+            flow(state.SetValue(item));// ← Re-invokes the entire flow
     }
 
     public void Manipulate<TValue>(Func<TValue, TValue> update)

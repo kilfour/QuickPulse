@@ -108,10 +108,8 @@ This sends the value `42` into the flow.
         Assert.IsType<Flow<int>>(flow);
     }
 
-    [Doc(Order = Chapters.BuildFlow + "-4", Caption = "Capturing the Trace", Content =
-@"**Capturing the trace**
-
-To observe what flows through, we can add an `IArtery`.
+    [Doc(Order = Chapters.BuildFlow + "-5", Caption = "Capturing the Trace", Content =
+@"To observe what flows through, we can add an `IArtery`.
 There are a few ways to do this, here's one using `SetArtery` directly on the signal.
 
 ```csharp
@@ -153,4 +151,34 @@ public void Adding_an_artery()
         Assert.Equal(43, collector.TheExhibit[1]);
         Assert.Equal(44, collector.TheExhibit[2]);
     }
+
+    [Doc(Order = Chapters.BuildFlow + "-6", Caption = "The Life and Times of a Single Pulse", Content =
+@"```                   
+                     +-----------------------------+
+Input via            |     Signal<T> instance      |
+Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
+                     +-------------┬---------------+
+                                   │
+                                   ▼
+                      +------------------------+
+                      |    Flow<T> via LINQ    |
+                      | (Start → Gather → ...) |
+                      +------------------------+
+                                   │
+                  +----------------+----------------+
+                  |                |                |
+                  ▼                ▼                ▼
+            +----------+     +-----------+     +-----------+
+            | Gather() |     | Trace()   |     | ToFlow()  |
+            | (state)  |     | (emit)    |     | (subflow) |
+            +----------+     +-----------+     +-----------+
+                                   │
+                                   ▼
+                        +------------------+
+                        | Artery (optional) |
+                        | Receives traces   |
+                        +------------------+
+```")]
+    [Fact]
+    public void The_life_and_times_of_a_single_ulse() { }
 }

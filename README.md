@@ -77,8 +77,6 @@ This sends the value `42` into the flow.
 
 
 ## Capturing the Trace
-**Capturing the trace**
-
 To observe what flows through, we can add an `IArtery`.
 There are a few ways to do this, here's one using `SetArtery` directly on the signal.
 
@@ -106,20 +104,50 @@ public void Adding_an_artery()
 
 
 
+## The Life and Times of a Single Pulse
+```                   
+                     +-----------------------------+
+Input via            |     Signal<T> instance      |
+Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
+                     +-------------┬---------------+
+                                   │
+                                   ▼
+                      +------------------------+
+                      |    Flow<T> via LINQ    |
+                      | (Start → Gather → ...) |
+                      +------------------------+
+                                   │
+                  +----------------+----------------+
+                  |                |                |
+                  ▼                ▼                ▼
+            +----------+     +-----------+     +-----------+
+            | Gather() |     | Trace()   |     | ToFlow()  |
+            | (state)  |     | (emit)    |     | (subflow) |
+            +----------+     +-----------+     +-----------+
+                                   │
+                                   ▼
+                        +------------------+
+                        | Artery (optional) |
+                        | Receives traces   |
+                        +------------------+
+```
+
 # How To Pulse
 **Cheat Sheet:**
-| Combinator         | Role/Purpose                                                               |
-| ------------------ | -------------------------------------------------------------------------- |
-| **Start<T>()**     | Entry point for a flow. Required to begin any LINQ chain.                  |
-| **Using(...)**     | Assigns an `IArtery` to the flow context — enables tracing.                |
-| **Trace(...)**     | Emits trace data unconditionally to the current artery.                    |
-| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                   |
-| **Effect(...)**    | Executes a side-effect (logging, mutation, etc.) without yielding a value. |
-| **EffectIf(...)**  | Same as above, but conditional.                                            |
-| **Gather<T>(...)** | Binds a mutable box into flow memory (first write wins).                   |
-| **ToFlow(...)**    | Executes a flow over a value or collection — useful for subflows.          |
-| **ToFlowIf(...)**  | Executes a subflow conditionally, using a supplier for the input.          |
-| **NoOp()**         | A do-nothing flow (useful for conditional branches).                       |
+
+| Combinator         | Role / Purpose                                                                |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
+| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                   |
+| **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
+| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
+| **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
+| **EffectIf(...)**  | Performs a side-effect conditionally.                                         |
+| **Gather<T>(...)** | Captures a mutable box into flow memory (first write wins).                   |
+| **ToFlow(...)**    | Invokes a subflow over a value or collection.                                 |
+| **ToFlowIf(...)**  | Invokes a subflow conditionally, using a supplier for the input.              |
+| **NoOp()**         | Applies a do-nothing operation (for conditional branches or comments). |
+
 
 
 ## Start
@@ -128,7 +156,7 @@ public void Adding_an_artery()
 
 Every flow definition needs to start with a call to `Pulse.Start()`.
 This strongly types the values that the flow can receive.
-In adition the result of the call needs to be used in the select part of the LINQ expression.
+In addition, the result of the call needs to be used in the select part of the LINQ expression.
 This strongly types the flow itself.
 
 **Example:**
@@ -187,6 +215,8 @@ from anInt in Pulse.Start<int>()
 from box in Pulse.Gather(1) // <=
 select anInt;
 ```
+**Warning:** `Gather` is thread-hostile by design, like a chainsaw. Use accordingly.  
+Useful, powerful, and absolutely the wrong tool to wield in a multithreaded environment.
 
 
 ## Effect
@@ -200,6 +230,9 @@ from box in Pulse.Gather(1)
 from eff in Pulse.Effect(() => box.Value++) // <=
 select anInt;
 ```
+**Warning:** `Effect` performs side-effects.
+It is eager, observable, and runs even if you ignore the result.
+Use when you mean it.
 
 
 ## EffectIf
@@ -356,8 +389,11 @@ And we pulse once like so : `signal.Pulse(42);` the flow will gather the input i
 trace output is : `42 : 0`.
 
 If we then call `Manipulate` like so: `signal.Manipulate<int>(a => a + 1);`, the next pulse: `signal.Pulse(42);`,
-produces `42 : 1`.
+produces `42 : 1`.  
 
+
+**Warning:** `Manipulate` mutates state between pulses. Sharp tool, like a scalpel.
+Don't cut yourself.
 
 
 ## Scoped
@@ -378,6 +414,46 @@ And the trace values will be:
 42 : 0
 42 : 1
 42 : 0
+```
+**Warning:** `Scoped` Temporarily alters state.  
+Like setting a trap, stepping into it, and then dismantling it.  
+Make sure you spring it though.
+
+
+## Recap
+State manipulation occurs before flow evaluation. Scoped reverses it afterward.
+```
+                     +-----------------------------+
+Input via            |     Signal<T> instance      |
+Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
+                     +-------------┬---------------+
+                                   │
+                      .------------+-------------.
+                     /                          \
+          Scoped / Manipulate                Normal Flow
+        (adjust state before)               (start as-is)
+                     \                          /
+                      '------------┬-----------'
+                                   ▼
+                      +------------------------+
+                      |    Flow<T> via LINQ    |
+                      | (Start → Gather → ...) |
+                      +------------------------+
+                                   │
+                  +----------------+----------------+
+                  |                |                |
+                  ▼                ▼                ▼
+            +----------+     +-----------+     +-----------+
+            | Gather() |     | Trace()   |     | ToFlow()  |
+            | (state)  |     | (emit)    |     | (subflow) |
+            +----------+     +-----------+     +-----------+
+                                   │
+                                   ▼
+                        +------------------+
+                        | Artery (optional) |
+                        | Receives traces   |
+                        +------------------+
+
 ```
 
 
@@ -475,8 +551,9 @@ public static Flow<DocAttribute> RenderMarkdown =
 ```
 
 
-## Transorming Markdown to Json
+## Transforming Markdown to Json
 
+I'd advise against doing the following, but it _is_ possible.
 ```csharp
 var json =
     from intAndTextAndBool in Pulse.Start<((int, string), bool)>()
@@ -487,14 +564,23 @@ var json =
     select intAndTextAndBool;
 
 var question =
-    from line in Pulse.Start<string>()
+    from input in Pulse.Start<string>()
     from isFirstQuestion in Pulse.Gather(true)
-    let trimmed = line.Trim()
-    let numberAndTextOrNull = GetLeadingNumberIfFollowedByDot(line)
+    from trimmed in Pulse.Gather("") // reuse later for tail
+    from _ in Pulse.Effect(() => trimmed.Value = input.Trim())
+    let i = trimmed.Value.TakeWhile(char.IsDigit).Count()
+    let hasDot = i > 0 && i < trimmed.Value.Length && trimmed.Value[i] == '.'
+    let numberText = i > 0 ? trimmed.Value.Substring(0, i) : null
+    let rest = i + 1 < trimmed.Value.Length
+        ? new string(trimmed.Value.Skip(i + 1).ToArray()).Trim().Replace("*", "")
+        : ""
+    let numberAndTextOrNull = int.TryParse(numberText, out var number)
+        ? new (int, string)?((number, rest))
+        : null
     let isQuestion = numberAndTextOrNull != null
     from flowed in Pulse.ToFlowIf(isQuestion, json, () => (numberAndTextOrNull.Value, isFirstQuestion.Value))
     from effect in Pulse.EffectIf(isQuestion, () => isFirstQuestion.Value = false)
-    select line;
+    select input;
 
 var flow =
     from start in Pulse.Start<string[]>()
@@ -526,5 +612,51 @@ var flow =
 , { "id": 3, "text": "Als je het woord \"algoritme\" aan een kind moest uitleggen, wat zou je zeggen?" }
 ]
 ```
+
+
+# Why QuickPulse Exists
+*A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
+
+A little while back I was writing a test for a method that took some JSON as input.
+I got out my fuzzers out and went to work. And then... my fuzzers gave up.
+
+So I added the following to **QuickMGenerate**:
+```csharp
+    var generator =
+        from _ in MGen.For<Tree>().Depth(2, 5)
+        from __ in MGen.For<Tree>().GenerateAsOneOf(typeof(Branch), typeof(Leaf))
+        from ___ in MGen.For<Tree>().TreeLeaf<Leaf>()
+        from tree in MGen.One<Tree>().Inspect()
+        select tree;
+```
+Which can generate output like this:
+```
+    └── Node
+        ├── Leaf(60)
+        └── Node
+            ├── Node
+            │   ├── Node
+            │   │   ├── Leaf(6)
+            │   │   └── Node
+            │   │       ├── Leaf(30)
+            │   │       └── Leaf(21)
+            │   └── Leaf(62)
+            └── Leaf(97)
+```
+Neat. But this story isn't about the output, it's about the journey.  
+Implementing this wasn't trivial. And I was, let's say, a muppet, more than once along the way.
+
+Writing a unit test for a fixed depth like `(min:1, max:1)` or `(min:2, max:2)`? Not a problem.  
+But when you're fuzzing with a range like `(min:2, max:5).` Yeah, ... good luck.
+
+Debugging this kind of behavior was as much fun as writing an F# compiler in JavaScript.  
+So I wrote a few diagnostic helpers: visualizers, inspectors, and composable tools
+that could take a generated value and help me see why things were behaving oddly.
+
+Eventually, I nailed the last bug and got tree generation working fine.
+
+Then I looked at this little helper I'd written for combining stuff and thought: **"Now *that's* a nice-looking rabbit hole."**
+
+One week and exactly nine combinators later, I had this surprisingly useful, lightweight little library.
 
 

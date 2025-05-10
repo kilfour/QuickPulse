@@ -7,18 +7,20 @@ namespace QuickPulse.Tests.Docs.HowToPulseTests;
 
 [Doc(Order = Chapters.HowToPulse, Caption = "How To Pulse", Content =
 @"**Cheat Sheet:**
-| Combinator         | Role/Purpose                                                               |
-| ------------------ | -------------------------------------------------------------------------- |
-| **Start<T>()**     | Entry point for a flow. Required to begin any LINQ chain.                  |
-| **Using(...)**     | Assigns an `IArtery` to the flow context — enables tracing.                |
-| **Trace(...)**     | Emits trace data unconditionally to the current artery.                    |
-| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                   |
-| **Effect(...)**    | Executes a side-effect (logging, mutation, etc.) without yielding a value. |
-| **EffectIf(...)**  | Same as above, but conditional.                                            |
-| **Gather<T>(...)** | Binds a mutable box into flow memory (first write wins).                   |
-| **ToFlow(...)**    | Executes a flow over a value or collection — useful for subflows.          |
-| **ToFlowIf(...)**  | Executes a subflow conditionally, using a supplier for the input.          |
-| **NoOp()**         | A do-nothing flow (useful for conditional branches).                       |
+
+| Combinator         | Role / Purpose                                                                |
+| ------------------ | ----------------------------------------------------------------------------- |
+| **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
+| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                   |
+| **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
+| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
+| **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
+| **EffectIf(...)**  | Performs a side-effect conditionally.                                         |
+| **Gather<T>(...)** | Captures a mutable box into flow memory (first write wins).                   |
+| **ToFlow(...)**    | Invokes a subflow over a value or collection.                                 |
+| **ToFlowIf(...)**  | Invokes a subflow conditionally, using a supplier for the input.              |
+| **NoOp()**         | Applies a do-nothing operation (for conditional branches or comments). |
+
 ")]
 public class PulseHowToPulseTests
 {
@@ -28,7 +30,7 @@ public class PulseHowToPulseTests
 
 Every flow definition needs to start with a call to `Pulse.Start()`.
 This strongly types the values that the flow can receive.
-In adition the result of the call needs to be used in the select part of the LINQ expression.
+In addition, the result of the call needs to be used in the select part of the LINQ expression.
 This strongly types the flow itself.
 
 **Example:**
@@ -137,6 +139,8 @@ from anInt in Pulse.Start<int>()
 from box in Pulse.Gather(1) // <=
 select anInt;
 ```
+**Warning:** `Gather` is thread-hostile by design, like a chainsaw. Use accordingly.  
+Useful, powerful, and absolutely the wrong tool to wield in a multithreaded environment.
 ")]
     [Fact]
     public void Pulse_gather()
@@ -164,6 +168,9 @@ from box in Pulse.Gather(1)
 from eff in Pulse.Effect(() => box.Value++) // <=
 select anInt;
 ```
+**Warning:** `Effect` performs side-effects.
+It is eager, observable, and runs even if you ignore the result.
+Use when you mean it.
 ")]
     [Fact]
     public void Pulse_effect()

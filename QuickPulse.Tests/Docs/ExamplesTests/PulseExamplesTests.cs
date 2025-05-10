@@ -55,8 +55,9 @@ public static Flow<DocAttribute> RenderMarkdown =
 ")]
     public void RenderingThisDocument() { /*placeholder*/}
 
-    [Doc(Order = Chapters.Examples + "-3", Caption = "Transorming Markdown to Json", Content =
+    [Doc(Order = Chapters.Examples + "-3", Caption = "Transforming Markdown to Json", Content =
 @"
+I'd advise against doing the following, but it _is_ possible.
 ```csharp
 var json =
     from intAndTextAndBool in Pulse.Start<((int, string), bool)>()
@@ -67,14 +68,23 @@ var json =
     select intAndTextAndBool;
 
 var question =
-    from line in Pulse.Start<string>()
+    from input in Pulse.Start<string>()
     from isFirstQuestion in Pulse.Gather(true)
-    let trimmed = line.Trim()
-    let numberAndTextOrNull = GetLeadingNumberIfFollowedByDot(line)
+    from trimmed in Pulse.Gather("""") // reuse later for tail
+    from _ in Pulse.Effect(() => trimmed.Value = input.Trim())
+    let i = trimmed.Value.TakeWhile(char.IsDigit).Count()
+    let hasDot = i > 0 && i < trimmed.Value.Length && trimmed.Value[i] == '.'
+    let numberText = i > 0 ? trimmed.Value.Substring(0, i) : null
+    let rest = i + 1 < trimmed.Value.Length
+        ? new string(trimmed.Value.Skip(i + 1).ToArray()).Trim().Replace(""*"", """")
+        : """"
+    let numberAndTextOrNull = int.TryParse(numberText, out var number)
+        ? new (int, string)?((number, rest))
+        : null
     let isQuestion = numberAndTextOrNull != null
     from flowed in Pulse.ToFlowIf(isQuestion, json, () => (numberAndTextOrNull.Value, isFirstQuestion.Value))
     from effect in Pulse.EffectIf(isQuestion, () => isFirstQuestion.Value = false)
-    select line;
+    select input;
 
 var flow =
     from start in Pulse.Start<string[]>()
@@ -107,7 +117,7 @@ var flow =
 ]
 ```
 ")]
-    public void TransormingMarkdownToJson() { /*placeholder*/}
+    public void TransformingMarkdownToJson() { /*placeholder*/}
 }
 
 

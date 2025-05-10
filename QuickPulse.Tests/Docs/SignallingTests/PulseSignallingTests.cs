@@ -167,8 +167,11 @@ And we pulse once like so : `signal.Pulse(42);` the flow will gather the input i
 trace output is : `42 : 0`.
 
 If we then call `Manipulate` like so: `signal.Manipulate<int>(a => a + 1);`, the next pulse: `signal.Pulse(42);`,
-produces `42 : 1`.
+produces `42 : 1`.  
 
+
+**Warning:** `Manipulate` mutates state between pulses. Sharp tool, like a scalpel.
+Don't cut yourself.
 ")]
     [Fact]
     public void Signal_set_manipulate()
@@ -208,6 +211,9 @@ And the trace values will be:
 42 : 1
 42 : 0
 ```
+**Warning:** `Scoped` Temporarily alters state.  
+Like setting a trap, stepping into it, and then dismantling it.  
+Make sure you spring it though.
 ")]
     [Fact]
     public void Signal_set_scoped() // Scoped
@@ -231,4 +237,43 @@ And the trace values will be:
         Assert.Equal("42 : 1", collector.TheExhibit[1]);
         Assert.Equal("42 : 0", collector.TheExhibit[2]);
     }
+
+    [Doc(Order = Chapters.Signalling + "-6", Caption = "Recap", Content =
+@"State manipulation occurs before flow evaluation. Scoped reverses it afterward.
+```
+                     +-----------------------------+
+Input via            |     Signal<T> instance      |
+Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
+                     +-------------┬---------------+
+                                   │
+                      .------------+-------------.
+                     /                          \
+          Scoped / Manipulate                Normal Flow
+        (adjust state before)               (start as-is)
+                     \                          /
+                      '------------┬-----------'
+                                   ▼
+                      +------------------------+
+                      |    Flow<T> via LINQ    |
+                      | (Start → Gather → ...) |
+                      +------------------------+
+                                   │
+                  +----------------+----------------+
+                  |                |                |
+                  ▼                ▼                ▼
+            +----------+     +-----------+     +-----------+
+            | Gather() |     | Trace()   |     | ToFlow()  |
+            | (state)  |     | (emit)    |     | (subflow) |
+            +----------+     +-----------+     +-----------+
+                                   │
+                                   ▼
+                        +------------------+
+                        | Artery (optional) |
+                        | Receives traces   |
+                        +------------------+
+
+```
+")]
+    [Fact]
+    public void Signal_recap() { /* Place holder*/ }
 }
