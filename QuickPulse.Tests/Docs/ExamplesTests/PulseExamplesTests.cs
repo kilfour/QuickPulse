@@ -11,7 +11,7 @@ public class PulseExamplesTests
 ```csharp
 public record DiagnosticInfo(string[] Tags, string Message, int PhaseLevel);
 ```
-We can filter this by tags and indent output based on PhaseLevel like so : 
+We can filter this by tags and indent output based on PhaseLevel like so: 
 ```csharp
 public static Signal<DiagnosticInfo> FilterOnTags(IArtery artery, params string[] filter)
 {

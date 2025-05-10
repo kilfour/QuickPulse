@@ -385,7 +385,7 @@ and allows for manipulating the flow in between pulses.
     select anInt;
 var signal = Signal.From(flow);
 ```
-And we pulse once like so : `signal.Pulse(42);` the flow will gather the input in the gathered range variable and
+And we pulse once like so: `signal.Pulse(42);` the flow will gather the input in the gathered range variable and
 trace output is : `42 : 0`.
 
 If we then call `Manipulate` like so: `signal.Manipulate<int>(a => a + 1);`, the next pulse: `signal.Pulse(42);`,
@@ -464,7 +464,7 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 ```csharp
 public record DiagnosticInfo(string[] Tags, string Message, int PhaseLevel);
 ```
-We can filter this by tags and indent output based on PhaseLevel like so : 
+We can filter this by tags and indent output based on PhaseLevel like so: 
 ```csharp
 public static Signal<DiagnosticInfo> FilterOnTags(IArtery artery, params string[] filter)
 {
