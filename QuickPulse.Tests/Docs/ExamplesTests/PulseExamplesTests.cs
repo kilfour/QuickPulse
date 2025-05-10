@@ -58,6 +58,7 @@ public static Flow<DocAttribute> RenderMarkdown =
     [Doc(Order = Chapters.Examples + "-3", Caption = "Transforming Markdown to Json", Content =
 @"
 I'd advise against doing the following, but it _is_ possible. 
+
 *This example exists to test QuickPulse's limits, **not as a recommendation**.  
 For real work, use a proper markdown parser like [Markdig](https://github.com/xoofx/markdig).* 
 ```csharp
