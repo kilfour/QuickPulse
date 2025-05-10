@@ -28,6 +28,11 @@ public class Signal<T>
         return this;
     }
 
+    public IArtery? GetArtery()
+    {
+        return state.CurrentArtery;
+    }
+
     public void Pulse(params T[] input)
     {
         Pulse((IEnumerable<T>)input);

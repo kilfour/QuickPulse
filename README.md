@@ -373,6 +373,15 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
 
+## Get Artery
+**`Signal.GetArtery(...)`** is used to extract the current `IArtery` from the flow.
+I only use it in 'set and return' scenario's but instead of implementing that, I choose to do it in two seperate steps.  
+```csharp
+Signal.From(flow).SetArtery(collector)
+    .GetArtery(); // <=
+```
+
+
 ## Manipulate
 **`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.

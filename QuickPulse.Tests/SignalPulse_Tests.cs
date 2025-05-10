@@ -10,10 +10,11 @@ public class SignalPulse_Tests
         var result = 0;
         var flow =
             from anInt in Pulse.Start<int>()
-            from _ in Pulse.Effect(() => result = anInt)
+            from _ in Pulse.Effect(() => result = 42)
             select anInt;
         var signal = Signal.From(flow);
         signal.Pulse();
+        Assert.Equal(0, result);
     }
 
     [Fact]
@@ -27,6 +28,7 @@ public class SignalPulse_Tests
             select anInt;
         var signal = Signal.From(flow);
         signal.Pulse();
+        Assert.Equal(0, result);
     }
 }
 

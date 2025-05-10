@@ -151,7 +151,31 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-4", Caption = "Manipulate", Content =
+    [Doc(Order = Chapters.Signalling + "-4", Caption = "Get Artery", Content =
+@"**`Signal.GetArtery(...)`** is used to extract the current `IArtery` from the flow.
+I only use it in 'set and return' scenario's but instead of implementing that, I choose to do it in two seperate steps.  
+```csharp
+Signal.From(flow).SetArtery(collector)
+    .GetArtery(); // <=
+```
+")]
+    [Fact]
+    public void Signal_get_artery()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from _ in Pulse.Trace(anInt)
+            select anInt;
+        var signal = Signal.From(flow);
+        var artery = signal.SetArtery(collector).GetArtery();
+        var typedArtery = Assert.IsType<TheCollector<int>>(artery);
+        signal.Pulse(42);
+        Assert.Single(typedArtery.TheExhibit);
+        Assert.Equal(42, typedArtery.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-5", Caption = "Manipulate", Content =
 @"**`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
 **Given this setup:**
@@ -192,7 +216,7 @@ Don't cut yourself.
         Assert.Equal("42 : 1", collector.TheExhibit[1]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-5", Caption = "Scoped", Content =
+    [Doc(Order = Chapters.Signalling + "-6", Caption = "Scoped", Content =
 @"**`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
 Given the same setup as before, we can write:
@@ -216,7 +240,7 @@ Like setting a trap, stepping into it, and then dismantling it.
 Make sure you spring it though.
 ")]
     [Fact]
-    public void Signal_set_scoped() // Scoped
+    public void Signal_set_scoped()
     {
         var collector = new TheCollector<string>();
         var flow =
@@ -238,7 +262,7 @@ Make sure you spring it though.
         Assert.Equal("42 : 0", collector.TheExhibit[2]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-6", Caption = "Recap", Content =
+    [Doc(Order = Chapters.Signalling + "-7", Caption = "Recap", Content =
 @"State manipulation occurs before flow evaluation. Scoped reverses it afterward.
 ```
                      +-----------------------------+
