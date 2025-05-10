@@ -164,7 +164,7 @@ and allows for manipulating the flow in between pulses.
 var signal = Signal.From(flow);
 ```
 And we pulse once like so: `signal.Pulse(42);` the flow will gather the input in the gathered range variable and
-trace output is : `42 : 0`.
+trace output is: `42 : 0`.
 
 If we then call `Manipulate` like so: `signal.Manipulate<int>(a => a + 1);`, the next pulse: `signal.Pulse(42);`,
 produces `42 : 1`.  
@@ -195,7 +195,7 @@ Don't cut yourself.
     [Doc(Order = Chapters.Signalling + "-5", Caption = "Scoped", Content =
 @"**`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
-Given the same setup as before, we can write :
+Given the same setup as before, we can write:
 
 ```csharp
 signal.Pulse(42);
