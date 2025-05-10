@@ -57,10 +57,11 @@ public static Flow<DocAttribute> RenderMarkdown =
 
     [Doc(Order = Chapters.Examples + "-3", Caption = "Transforming Markdown to Json", Content =
 @"
-I'd advise against doing the following, but it _is_ possible. 
+I'd advise against doing the following, but it _is_ possible. QuickPulse can manipulate strings, but it feels like chopping lumber with a scalpel.  
 
 *This example exists to test QuickPulse's limits, **not as a recommendation**.  
 For real work, use a proper markdown parser like [Markdig](https://github.com/xoofx/markdig).* 
+
 ```csharp
 var json =
     from intAndTextAndBool in Pulse.Start<((int, string), bool)>()
