@@ -151,28 +151,24 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-4", Caption = "Get Artery", Content =
-@"**`Signal.GetArtery(...)`** is used to extract the current `IArtery` from the flow.
-I only use it in 'set and return' scenario's but instead of implementing that, I choose to do it in two seperate steps.  
+    [Doc(Order = Chapters.Signalling + "-4", Caption = "Set And Return Artery", Content =
+@"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
-Signal.From(flow).SetArtery(collector)
-    .GetArtery(); // <=
+var collector = signal.SetAndReturnArtery(new TheCollector<int>());
 ```
 ")]
     [Fact]
-    public void Signal_get_artery()
+    public void Signal_set_and_return_artery()
     {
-        var collector = new TheCollector<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from _ in Pulse.Trace(anInt)
             select anInt;
         var signal = Signal.From(flow);
-        var artery = signal.SetArtery(collector).GetArtery();
-        var typedArtery = Assert.IsType<TheCollector<int>>(artery);
+        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
         signal.Pulse(42);
-        Assert.Single(typedArtery.TheExhibit);
-        Assert.Equal(42, typedArtery.TheExhibit[0]);
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(42, collector.TheExhibit[0]);
     }
 
     [Doc(Order = Chapters.Signalling + "-5", Caption = "Manipulate", Content =

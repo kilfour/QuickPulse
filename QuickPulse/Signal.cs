@@ -28,9 +28,10 @@ public class Signal<T>
         return this;
     }
 
-    public IArtery? GetArtery()
+    public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery
     {
-        return state.CurrentArtery;
+        state.SetArtery(artery);
+        return artery;
     }
 
     public void Pulse(params T[] input)

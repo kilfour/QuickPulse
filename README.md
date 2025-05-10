@@ -373,12 +373,10 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
 
-## Get Artery
-**`Signal.GetArtery(...)`** is used to extract the current `IArtery` from the flow.
-I only use it in 'set and return' scenario's but instead of implementing that, I choose to do it in two seperate steps.  
+## Set And Return Artery
+**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
-Signal.From(flow).SetArtery(collector)
-    .GetArtery(); // <=
+var collector = signal.SetAndReturnArtery(new TheCollector<int>());
 ```
 
 
