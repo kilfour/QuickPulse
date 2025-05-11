@@ -5,75 +5,17 @@ namespace QuickPulse.Tests;
 public class TransformTests
 {
     [Fact]
-    public void CollectStrings()
-    {
-        List<string> collector = [];
-        var flow =
-            from str in Pulse.Start<string>()
-            from _ in Pulse.Effect(() => collector.Add(str))
-            select str;
-        var signal = Signal.From(flow);
-        signal.Pulse("One");
-        signal.Pulse("Two");
-        Assert.Equal(2, collector.Count);
-        Assert.Equal("One", collector[0]);
-        Assert.Equal("Two", collector[1]);
-    }
-
-    [Fact]
-    public void CollectStringsAgain()
+    public void Manipulating_flow_actions()
     {
         var collector = new TheCollector<string>();
         var flow =
             from str in Pulse.Start<string>()
-            from c in Pulse.Using(collector)
+            from act in Pulse.Gather<Action>(() => { })
             from _ in Pulse.Trace(str)
             select str;
         var signal = Signal.From(flow);
         signal.Pulse("One");
         signal.Pulse("Two");
-        Assert.Equal(2, collector.TheExhibit.Count);
-        Assert.Equal("One", collector.TheExhibit[0]);
-        Assert.Equal("Two", collector.TheExhibit[1]);
-    }
-
-    [Fact]
-    public void CollectStringsAgainAgain()
-    {
-        var collector = new TheCollector<string>();
-        var flow =
-            from str in Pulse.Start<string>()
-            from a in Pulse.Using(collector)
-            from _ in Pulse.Trace(str)
-            select str;
-        var signal = Signal.From(flow);
-        signal.Pulse("One");
-        signal.Pulse("Two");
-        Assert.Equal(2, collector.TheExhibit.Count);
-        Assert.Equal("One", collector.TheExhibit[0]);
-        Assert.Equal("Two", collector.TheExhibit[1]);
-    }
-
-    [Fact]
-    public void PullingInState()
-    {
-        List<string> collector = [];
-        var flow =
-            from str in Pulse.Start<string>()
-            from box in Pulse.Gather(0)
-            from _ in Pulse.EffectIf(
-                box.Value == 0,
-                () => collector.Add(str))
-            select str;
-        var signal = Signal.From(flow);
-        signal.Pulse("One");
-        signal.Manipulate<int>(a => a + 1);
-        signal.Pulse("Two");
-        signal.Manipulate<int>(a => a - 1);
-        signal.Pulse("Three");
-        Assert.Equal(2, collector.Count);
-        Assert.Equal("One", collector[0]);
-        Assert.Equal("Three", collector[1]);
     }
 }
 

@@ -1,4 +1,5 @@
 using QuickPulse.Arteries;
+using QuickPulse.Instruments;
 using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.Docs.SignallingTests;
@@ -53,6 +54,29 @@ var signal = Signal.From(flow);
             select anInt;
         var signal = Signal.From(flow);
         Assert.IsType<Signal<int>>(signal);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-1.5", Caption = "Tracing", Content =
+@"
+**`Signal.Tracing(...)`** is sugaring for: 
+**Example:**
+```csharp
+var flow =
+    from start in Pulse.Start<T>()
+    from _ in Pulse.Trace(start)
+    select start;
+return new Signal<T>(flow);
+```
+Useful if you want to just quickly grab a tracer.
+")]
+    [Fact]
+    public void Signal_tracing()
+    {
+        var signal = Signal.Tracing<int>();
+        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+        signal.Pulse(42);
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(42, collector.TheExhibit[0]);
     }
 
     [Doc(Order = Chapters.Signalling + "-2", Caption = "Pulse", Content =
@@ -128,6 +152,59 @@ This behaves exactly like the previous example.
         Assert.Equal(42, collector[0]);
         Assert.Equal(43, collector[1]);
         Assert.Equal(44, collector[2]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-2.5", Content =
+@"There is also the following helper function: **`Signal.PulseUntil(...)`**.
+Best explained by example i reckon:
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseUntil(() => collector.TheExhibit.Contains(42), 39);
+```
+Trace output: `40, 41, 42`.
+")]
+    [Fact]
+    public void Signal_pulse_until()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from g in Pulse.Gather(0)
+            from t in Pulse.Trace(anInt + g.Value)
+            from e in Pulse.Effect(() => g.Value++)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.PulseUntil(() => collector.TheExhibit.Contains(42), 40);
+        Assert.Equal(3, collector.TheExhibit.Count);
+        Assert.Equal(40, collector.TheExhibit[0]);
+        Assert.Equal(41, collector.TheExhibit[1]);
+        Assert.Equal(42, collector.TheExhibit[2]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-2.6", Content =
+@"**Warning:** Make sure you stop pulsing. `Signal.PulseUntil(...)` throws an exception if you try to pulse over 256 times.
+")]
+    [Fact]
+    public void Signal_pulse_until_exception()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from g in Pulse.Gather(0)
+            from t in Pulse.Trace(g.Value)
+            from e in Pulse.Effect(() => g.Value++)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        var exception = Assert.Throws<ComputerSaysNo>(() => signal.PulseUntil(() => false, 0));
+        Assert.Equal(255, collector.TheExhibit.Last());
     }
 
     [Doc(Order = Chapters.Signalling + "-3", Caption = "Set Artery", Content =

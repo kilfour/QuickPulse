@@ -19,7 +19,7 @@ public static class ToLinq
         state =>
         {
             var result = source(state);
-            if (Cask.IsNone(result)) return Cask.None<TResult>(result.state);
+            //if (Cask.IsNone(result)) return Cask.None<TResult>(result.state);
             return selector(result.Value)(result.state);
         };
 

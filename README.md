@@ -336,6 +336,20 @@ var signal = Signal.From(flow);
 ```
 
 
+## Tracing
+
+**`Signal.Tracing(...)`** is sugaring for: 
+**Example:**
+```csharp
+var flow =
+    from start in Pulse.Start<T>()
+    from _ in Pulse.Trace(start)
+    select start;
+return new Signal<T>(flow);
+```
+Useful if you want to just quickly grab a tracer.
+
+
 ## Pulse
 **`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
@@ -364,6 +378,26 @@ an overload exists: `Pulse(IEnumerable<T> inputs)`.
 signal.Pulse(new List<int> { 42, 43, 44 });
 ```
 This behaves exactly like the previous example.
+
+
+There is also the following helper function: **`Signal.PulseUntil(...)`**.
+Best explained by example i reckon:
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseUntil(() => collector.TheExhibit.Contains(42), 39);
+```
+Trace output: `40, 41, 42`.
+
+
+**Warning:** Make sure you stop pulsing. `Signal.PulseUntil(...)` throws an exception if you try to pulse over 256 times.
 
 
 ## Set Artery
