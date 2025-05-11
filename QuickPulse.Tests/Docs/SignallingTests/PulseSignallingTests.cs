@@ -241,7 +241,7 @@ Trace output: `40, 41, 42`.
     }
 
     [Doc(Order = Chapters.Signalling + "-5", Caption = "Pulse Multiple Until", Content =
-@"**`Signal.PulseUntil(...)`** is a combination of the previous two methods.
+@"**`Signal.PulseMultipleUntil(...)`** is a combination of the previous two methods.
 Pulses N amount of times, N being the method's first parameter.
 **Example:**
 ```csharp
