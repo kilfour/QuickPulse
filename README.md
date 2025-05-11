@@ -618,7 +618,7 @@ var flow =
 *A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
 
 A little while back I was writing a test for a method that took some JSON as input.
-I got out my fuzzers out and went to work. And then... my fuzzers gave up.
+I got my fuzzers out and went to work. And then... my fuzzers gave up.
 
 So I added the following to **QuickMGenerate**:
 ```csharp
