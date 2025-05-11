@@ -80,7 +80,7 @@ Useful if you want to just quickly grab a tracer.
     }
 
     [Doc(Order = Chapters.Signalling + "-2", Caption = "Pulse", Content =
-@"**`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
+@"**`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
 **Example:**
 ```csharp
@@ -154,9 +154,42 @@ This behaves exactly like the previous example.
         Assert.Equal(44, collector[2]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-2.5", Content =
-@"There is also the following helper function: **`Signal.PulseUntil(...)`**.
-Best explained by example i reckon:
+    [Doc(Order = Chapters.Signalling + "-3", Caption = "Pulse Multiple", Content =
+@"**`Signal.PulseMultiple(...)`** is a helper method that sugars a `for(int i = ...)` type structure.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultiple(3, 39);
+```
+Trace output: `40, 41, 42`.
+")]
+    [Fact]
+    public void Signal_pulse_Multiple()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from g in Pulse.Gather(0)
+            from t in Pulse.Trace(anInt + g.Value)
+            from e in Pulse.Effect(() => g.Value++)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.PulseMultiple(3, 40);
+        Assert.Equal(3, collector.TheExhibit.Count);
+        Assert.Equal(40, collector.TheExhibit[0]);
+        Assert.Equal(41, collector.TheExhibit[1]);
+        Assert.Equal(42, collector.TheExhibit[2]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-4", Caption = "Pulse Until", Content =
+@"**`Signal.PulseUntil(...)`** is a helper method that sugars a `while(...)` type structure.
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
@@ -189,7 +222,7 @@ Trace output: `40, 41, 42`.
         Assert.Equal(42, collector.TheExhibit[2]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-2.6", Content =
+    [Doc(Order = Chapters.Signalling + "-4-1", Content =
 @"**Warning:** Make sure you stop pulsing. `Signal.PulseUntil(...)` throws an exception if you try to pulse over 256 times.
 ")]
     [Fact]
@@ -207,7 +240,74 @@ Trace output: `40, 41, 42`.
         Assert.Equal(255, collector.TheExhibit.Last());
     }
 
-    [Doc(Order = Chapters.Signalling + "-3", Caption = "Set Artery", Content =
+    [Doc(Order = Chapters.Signalling + "-5", Caption = "Pulse Multiple Until", Content =
+@"**`Signal.PulseUntil(...)`** is a combination of the previous two methods.
+Pulses N amount of times, N being the method's first parameter.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultipleUntil(3, () => false, 40);
+```
+Trace output: `40, 41, 42`.
+")]
+    [Fact]
+    public void Signal_pulse_multiple_until()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from g in Pulse.Gather(0)
+            from t in Pulse.Trace(anInt + g.Value)
+            from e in Pulse.Effect(() => g.Value++)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.PulseMultipleUntil(3, () => false, 40);
+        Assert.Equal(3, collector.TheExhibit.Count);
+        Assert.Equal(40, collector.TheExhibit[0]);
+        Assert.Equal(41, collector.TheExhibit[1]);
+        Assert.Equal(42, collector.TheExhibit[2]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-5-1", Content =
+    @"But if the condition supplied is satisfied it will stop pulsing early.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultipleUntil(3, () => false, 40);
+```
+Trace output: `40, 41, 42`.
+")]
+    [Fact]
+    public void Signal_pulse_multiple_until_early_exit()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from g in Pulse.Gather(0)
+            from t in Pulse.Trace(anInt + g.Value)
+            from e in Pulse.Effect(() => g.Value++)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.PulseMultipleUntil(3, () => collector.TheExhibit.Contains(40), 40);
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(40, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-6", Caption = "Set Artery", Content =
 @"**`Signal.SetArtery(...)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
@@ -228,7 +328,7 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-4", Caption = "Set And Return Artery", Content =
+    [Doc(Order = Chapters.Signalling + "-7", Caption = "Set And Return Artery", Content =
 @"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
 var collector = signal.SetAndReturnArtery(new TheCollector<int>());
@@ -248,7 +348,7 @@ var collector = signal.SetAndReturnArtery(new TheCollector<int>());
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-5", Caption = "Manipulate", Content =
+    [Doc(Order = Chapters.Signalling + "-8", Caption = "Manipulate", Content =
 @"**`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
 **Given this setup:**
@@ -289,7 +389,7 @@ Don't cut yourself.
         Assert.Equal("42 : 1", collector.TheExhibit[1]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-6", Caption = "Scoped", Content =
+    [Doc(Order = Chapters.Signalling + "-9", Caption = "Scoped", Content =
 @"**`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
 Given the same setup as before, we can write:
@@ -335,7 +435,7 @@ Make sure you spring it though.
         Assert.Equal("42 : 0", collector.TheExhibit[2]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-7", Caption = "Recap", Content =
+    [Doc(Order = Chapters.Signalling + "-10", Caption = "Recap", Content =
 @"State manipulation occurs before flow evaluation. Scoped reverses it afterward.
 ```
                      +-----------------------------+

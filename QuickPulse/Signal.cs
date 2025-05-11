@@ -62,6 +62,14 @@ public class Signal<T>
             flow(state.SetValue(item));// ← Re-invokes the entire flow
     }
 
+    public void PulseMultiple(int times, T input)
+    {
+        for (int i = 0; i < times; i++)
+        {
+            Pulse(input);
+        }
+    }
+
     public void PulseUntil(Func<bool> shouldStop, T input)
     {
         var times = 0;
@@ -71,6 +79,15 @@ public class Signal<T>
             if (times >= 255)
                 ComputerSays.No("You can only pulse a max of 256 times, using Pulse.Until");
             times++;
+        }
+    }
+    public void PulseMultipleUntil(int times, Func<bool> shouldStop, T input)
+    {
+        for (int i = 0; i < times; i++)
+        {
+            if (shouldStop())
+                break;
+            Pulse(input);
         }
     }
 

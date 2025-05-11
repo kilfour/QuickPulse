@@ -351,7 +351,7 @@ Useful if you want to just quickly grab a tracer.
 
 
 ## Pulse
-**`Signal.Pulse(...)`** is the only way a flow can be instructed to do useful work.
+**`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
 **Example:**
 ```csharp
@@ -380,8 +380,25 @@ signal.Pulse(new List<int> { 42, 43, 44 });
 This behaves exactly like the previous example.
 
 
-There is also the following helper function: **`Signal.PulseUntil(...)`**.
-Best explained by example i reckon:
+## Pulse Multiple
+**`Signal.PulseMultiple(...)`** is a helper method that sugars a `for(int i = ...)` type structure.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultiple(3, 39);
+```
+Trace output: `40, 41, 42`.
+
+
+## Pulse Until
+**`Signal.PulseUntil(...)`** is a helper method that sugars a `while(...)` type structure.
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
@@ -398,6 +415,40 @@ Trace output: `40, 41, 42`.
 
 
 **Warning:** Make sure you stop pulsing. `Signal.PulseUntil(...)` throws an exception if you try to pulse over 256 times.
+
+
+## Pulse Multiple Until
+**`Signal.PulseUntil(...)`** is a combination of the previous two methods.
+Pulses N amount of times, N being the method's first parameter.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultipleUntil(3, () => false, 40);
+```
+Trace output: `40, 41, 42`.
+
+
+But if the condition supplied is satisfied it will stop pulsing early.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var flow =
+    from anInt in Pulse.Start<int>()
+    from g in Pulse.Gather(0)
+    from t in Pulse.Trace(anInt + g.Value)
+    from e in Pulse.Effect(() => g.Value++)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.PulseMultipleUntil(3, () => false, 40);
+```
+Trace output: `40, 41, 42`.
 
 
 ## Set Artery
