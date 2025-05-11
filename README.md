@@ -419,7 +419,8 @@ Trace output: `40, 41, 42`.
 
 ## Pulse Multiple Until
 **`Signal.PulseMultipleUntil(...)`** is a combination of the previous two methods.
-Pulses N amount of times, N being the method's first parameter.
+Pulses N amount of times, N being the method's first parameter.  
+
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
