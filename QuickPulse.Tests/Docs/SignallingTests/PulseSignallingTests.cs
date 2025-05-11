@@ -277,7 +277,8 @@ Trace output: `40, 41, 42`.
     }
 
     [Doc(Order = Chapters.Signalling + "-5-1", Content =
-    @"But if the condition supplied is satisfied it will stop pulsing early.
+@"But if the condition supplied is satisfied it will stop pulsing early.  
+
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();

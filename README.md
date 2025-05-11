@@ -436,7 +436,8 @@ signal.PulseMultipleUntil(3, () => false, 40);
 Trace output: `40, 41, 42`.
 
 
-But if the condition supplied is satisfied it will stop pulsing early.
+But if the condition supplied is satisfied it will stop pulsing early.  
+
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
