@@ -17,7 +17,7 @@ public class AsciiRenderer
         // Naive horizontal row layout
         int x = 0, y = 0;
         foreach (var node in diagram.Nodes)
-            _positions[node.Name] = (x++, y);
+            _positions[node.Name] = (x++, y++);
     }
 
     public IEnumerable<string> Render()

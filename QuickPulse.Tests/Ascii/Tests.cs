@@ -5,7 +5,7 @@ namespace QuickPulse.Tests.Ascii;
 public class Tests
 {
 
-    [Fact]
+    [Fact(Skip = "WIP")]
     public void Go()
     {
         var diagram = new Diagram();

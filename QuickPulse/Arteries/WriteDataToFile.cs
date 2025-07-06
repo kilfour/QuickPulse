@@ -5,9 +5,8 @@ namespace QuickPulse.Arteries;
 public class WriteDataToFile : IArtery
 {
     private readonly string filePath;
-    private bool hardCodedPath = false;
 
-    public WriteDataToFile(string? maybeFileName = null)
+    public WriteDataToFile(string? maybeFileName = null, bool hardCodedPath = false)
     {
         if (hardCodedPath)
         {
@@ -25,12 +24,6 @@ public class WriteDataToFile : IArtery
             fileName = Path.DirectorySeparatorChar + fileName;
         var path = SolutionLocator.FindSolutionRoot() + fileName;
         filePath = Path.GetFullPath(path);
-    }
-
-    public WriteDataToFile HardCodedPath()
-    {
-        hardCodedPath = true;
-        return this;
     }
 
     public WriteDataToFile ClearFile()

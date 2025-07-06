@@ -138,7 +138,7 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 | Combinator         | Role / Purpose                                                                |
 | ------------------ | ----------------------------------------------------------------------------- |
 | **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
-| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                   |
+| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                    |
 | **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
 | **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
 | **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
@@ -146,7 +146,7 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 | **Gather<T>(...)** | Captures a mutable box into flow memory (first write wins).                   |
 | **ToFlow(...)**    | Invokes a subflow over a value or collection.                                 |
 | **ToFlowIf(...)**  | Invokes a subflow conditionally, using a supplier for the input.              |
-| **NoOp()**         | Applies a do-nothing operation (for conditional branches or comments). |
+| **NoOp()**         | Applies a do-nothing operation (for conditional branches or comments).        |
 
 
 
