@@ -2,9 +2,10 @@ using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
 namespace QuickPulse.Tests.Rivered;
+
 public class RiveredQuestions
 {
-    [Fact]
+    [Fact(Skip = "demo")]
     public void All_questions()
     {
         var json =
@@ -13,6 +14,20 @@ public class RiveredQuestions
             let escaped = intAndText.Item2.Replace("\"", "\\\"")
             let comma = !intAndTextAndBool.Item2 ? ", " : "[ "
             from lb in Pulse.Trace($"{comma}{{ \"id\": {intAndText.Item1}, \"text\": \"{escaped}\" }}")
+            select intAndTextAndBool;
+        // { id : Int
+        // , text : String
+
+        // -- , tags : List String
+        // -- , note : String
+        // , asked : Bool
+        // }
+        var elm =
+            from intAndTextAndBool in Pulse.Start<((int, string), bool)>()
+            let intAndText = intAndTextAndBool.Item1
+            let escaped = intAndText.Item2.Replace("\"", "\\\"")
+            let comma = !intAndTextAndBool.Item2 ? ", " : "[ "
+            from lb in Pulse.Trace($"{comma}{{ id = {intAndText.Item1}, text = \"{escaped}\", asked = False }}")
             select intAndTextAndBool;
 
         var question =
@@ -30,7 +45,7 @@ public class RiveredQuestions
                 ? new (int, string)?((number, rest))
                 : null
             let isQuestion = numberAndTextOrNull != null
-            from flowed in Pulse.ToFlowIf(isQuestion, json, () => (numberAndTextOrNull.Value, isFirstQuestion.Value))
+            from flowed in Pulse.ToFlowIf(isQuestion, elm, () => (numberAndTextOrNull.Value, isFirstQuestion.Value))
             from effect in Pulse.EffectIf(isQuestion, () => isFirstQuestion.Value = false)
             select input;
 
@@ -42,7 +57,7 @@ public class RiveredQuestions
 
         var whereWeAre = "/QuickPulse.Tests/Rivered/";
         var path = SolutionLocator.FindSolutionRoot() + whereWeAre + "MyQuestions.md";
-        var writer = new WriteDataToFile(whereWeAre + "Questions.json").HardCodedPath().ClearFile();
+        var writer = new WriteDataToFile(whereWeAre + "Questions.json", true).ClearFile();
 
         Signal.From(flow)
             .SetArtery(writer)
