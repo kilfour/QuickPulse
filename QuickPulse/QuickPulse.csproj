@@ -1,9 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>0.1.0</Version>
+    <Authors>Kilfour</Authors>
+    <PackageId>QuickPulse</PackageId>
+    <Description>LINQ with a heartbeat.</Description>
+    <RepositoryUrl>https://github.com/kilfour/QuickPulse</RepositoryUrl>
+    <PackageTags>LINQ;Flows;Diagnostics</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
   
 </Project>
