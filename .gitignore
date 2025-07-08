@@ -6,3 +6,5 @@ _ReSharper.*/
 *.suo
 *log.txt
 /.vscode/
+temp*.md
+
