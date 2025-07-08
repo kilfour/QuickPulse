@@ -16,8 +16,4 @@ public class State
     {
         CurrentArtery = artery;
     }
-
-    // public bool FlowHalted { get; private set; } = false;
-
-    // public void StopFlow() { }
 }
