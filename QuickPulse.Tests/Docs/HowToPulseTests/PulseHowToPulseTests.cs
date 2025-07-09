@@ -11,7 +11,6 @@ namespace QuickPulse.Tests.Docs.HowToPulseTests;
 | Combinator         | Role / Purpose                                                                |
 | ------------------ | ----------------------------------------------------------------------------- |
 | **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
-| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                    |
 | **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
 | **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
 | **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
@@ -47,35 +46,6 @@ select anInt;
             select anInt;
 
         Assert.IsType<Flow<int>>(flow);
-    }
-
-    [Doc(Order = Chapters.HowToPulse + "-2", Caption = "Using", Content =
-@"
-**`Pulse.Using(...)`** Assigns an `IArtery` to the flow context, and thus enables tracing. 
-
-**Example:**
-```csharp
-var collector = new TheCollector<int>();
-var flow =
-    from anInt in Pulse.Start<int>()
-    from _ in Pulse.Using(collector) // <= 
-    from t in Pulse.Trace(anInt)
-    select anInt;
-```
-")]
-    [Fact]
-    public void Pulse_using()
-    {
-        var collector = new TheCollector<int>();
-        var flow =
-            from anInt in Pulse.Start<int>()
-            from _ in Pulse.Using(collector)
-            from t in Pulse.Trace(anInt) // <= 
-            select anInt;
-        var signal = Signal.From(flow);
-        signal.Pulse(42);
-        Assert.Single(collector.TheExhibit);
-        Assert.Equal(42, collector.TheExhibit[0]);
     }
 
     [Doc(Order = Chapters.HowToPulse + "-3", Caption = "Trace", Content =

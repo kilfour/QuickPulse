@@ -138,7 +138,6 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 | Combinator         | Role / Purpose                                                                |
 | ------------------ | ----------------------------------------------------------------------------- |
 | **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
-| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                    |
 | **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
 | **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
 | **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
@@ -163,21 +162,6 @@ This strongly types the flow itself.
 ```csharp
 from anInt in Pulse.Start<int>() // <=
 select anInt;
-```
-
-
-## Using
-
-**`Pulse.Using(...)`** Assigns an `IArtery` to the flow context, and thus enables tracing. 
-
-**Example:**
-```csharp
-var collector = new TheCollector<int>();
-var flow =
-    from anInt in Pulse.Start<int>()
-    from _ in Pulse.Using(collector) // <= 
-    from t in Pulse.Trace(anInt)
-    select anInt;
 ```
 
 
