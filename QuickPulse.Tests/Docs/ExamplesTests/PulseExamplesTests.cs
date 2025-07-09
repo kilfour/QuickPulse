@@ -33,9 +33,7 @@ public static Signal<DiagnosticInfo> FilterOnTags(IArtery artery, params string[
 ```csharp
 public static Flow<DocAttribute> RenderMarkdown =
     from doc in Pulse.Start<DocAttribute>()
-    from previousLevel in Pulse.Gather(0)
     let headingLevel = doc.Order.Split('-').Length
-    from first in Pulse.Gather(true)
     from rcaption in Pulse
         .NoOp(/* ---------------- Render Caption  ---------------- */ )
     let caption = doc.Caption
