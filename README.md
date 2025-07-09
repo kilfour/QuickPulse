@@ -551,6 +551,71 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 ```
 
 
+# Arteries Included
+QuickPulse comes with *only* two build in arteries:
+
+## TheCollector
+This is the artery used throughout the documentation examples, and it's especially useful in testing scenarios.
+
+Example:
+```csharp
+var collector = new TheCollector<string>();
+Signal.Tracing<string>()
+    .SetArtery(collector)
+    .Pulse("hello", "collector");
+Assert.Equal("hello", collector.TheExhibit[0]);
+Assert.Equal("collector", collector.TheExhibit[1]);
+```
+
+
+## WriteDataToFile
+This artery is included because writing trace output to a file is one of the most common use cases.
+Example:
+```csharp
+Signal.Tracing<string>()
+    .SetArtery(new WriteDataToFile())
+    .Pulse("hello", "collector");
+```
+By default, this creates a `log.txt` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
+The file will contain:
+```
+hello
+collector
+```
+
+
+You can, of course, pass in a custom filename.
+Example:
+```csharp
+Signal.Tracing<string>()
+    .SetArtery(new WriteDataToFile("myfilename.log"))
+    .Pulse("hello", "collector");
+```
+In that case, a `myfilename.log` file is created, still in the nearest parent directory that contains a `.sln` file.
+
+
+Note that the `WriteDataToFile` constructor will throw an exception if no `.sln` file can be found.
+
+To avoid solution root detection altogether, use the following factory method:
+```csharp
+Signal.Tracing<string>()
+    .SetArtery(WriteDataToFile.UsingHardCodedPath("hard.txt"))
+    .Pulse("hello", "collector");
+```
+
+
+`WriteDataToFile` appends all entries to the file; each pulse adds new lines to the end.
+
+
+The `ClearFile` method does exactly what it says: it clears the file before logging.
+This is an idiomatic way to log repeatedly to a file that should start out empty:
+```csharp
+Signal.Tracing<string>()
+    .SetArtery(new WriteDataToFile().ClearFile())
+    .Pulse("hello", "collector");
+```
+
+
 # Some Examples
 ## Log Filtering
 

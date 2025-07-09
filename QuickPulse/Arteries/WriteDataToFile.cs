@@ -2,33 +2,52 @@ using QuickPulse.Instruments;
 
 namespace QuickPulse.Arteries;
 
+public interface IAmAFilingCabinet
+{
+    char DirectorySeparatorChar { get; }
+    void AppendAllText(string path, string? contents);
+    string GetFullPath(string path);
+    void WriteAllText(string path, string? contents);
+    public string? FindSolutionRoot(string? startDirectory = null);
+    string Combine(params string[] paths);
+}
+
+public class TheFilingCabinet : IAmAFilingCabinet
+{
+    public char DirectorySeparatorChar { get { return Path.DirectorySeparatorChar; } }
+    public string GetFullPath(string path) => Path.GetFullPath(path);
+    public void WriteAllText(string path, string? contents) => File.WriteAllText(path, contents);
+    public void AppendAllText(string path, string? contents) => File.AppendAllText(path, contents);
+    public string? FindSolutionRoot(string? startDirectory = null) => SolutionLocator.FindSolutionRoot();
+    public string Combine(params string[] paths) => Path.Combine(paths);
+}
+
 public class WriteDataToFile : IArtery
 {
-    private readonly string filePath;
+    private IAmAFilingCabinet filingCabinet;
 
-    public WriteDataToFile(string? maybeFileName = null, bool hardCodedPath = false)
+    private string filePath;
+
+    public WriteDataToFile(string? maybeFileName = null, IAmAFilingCabinet cabinet = null!)
     {
-        if (hardCodedPath)
-        {
-            if (maybeFileName == null)
-            {
-                ComputerSays.No("You must supply a filename when using a hard coded path.");
-            }
-            else
-            {
-                filePath = Path.GetFullPath(maybeFileName);
-            }
-        }
-        var fileName = maybeFileName ?? "/log.txt";
-        if (!fileName.StartsWith(Path.DirectorySeparatorChar))
-            fileName = Path.DirectorySeparatorChar + fileName;
-        var path = SolutionLocator.FindSolutionRoot() + fileName;
-        filePath = Path.GetFullPath(path);
+        filingCabinet = cabinet ?? new TheFilingCabinet();
+        var fileName = maybeFileName ?? "log.txt";
+        var root = filingCabinet.FindSolutionRoot();
+        if (root == null)
+            ComputerSays.No("Cannot find solution root.");
+        var combined = filingCabinet.Combine(root!, fileName);
+        filePath = filingCabinet.GetFullPath(combined);
+    }
+
+    public static WriteDataToFile UsingHardCodedPath(string filename, IAmAFilingCabinet cabinet = null!)
+    {
+        var filingCabinet = cabinet ?? new TheFilingCabinet();
+        return new WriteDataToFile() { filingCabinet = filingCabinet, filePath = filingCabinet.GetFullPath(filename) };
     }
 
     public WriteDataToFile ClearFile()
     {
-        File.WriteAllText(filePath, "");
+        filingCabinet.WriteAllText(filePath, "");
         return this;
     }
 
@@ -36,7 +55,7 @@ public class WriteDataToFile : IArtery
     {
         foreach (var item in data)
         {
-            File.AppendAllText(filePath, item.ToString() + Environment.NewLine);
+            filingCabinet.AppendAllText(filePath, item.ToString() + Environment.NewLine);
         }
     }
 }
