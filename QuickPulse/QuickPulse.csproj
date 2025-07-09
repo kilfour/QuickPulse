@@ -9,6 +9,7 @@
     <PackageId>QuickPulse</PackageId>
     <Description>LINQ with a heartbeat.</Description>
     <RepositoryUrl>https://github.com/kilfour/QuickPulse</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>LINQ;Flows;Diagnostics</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
