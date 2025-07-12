@@ -110,8 +110,7 @@ This sends the value `42` into the flow.
     }
 
     [Doc(Order = Chapters.BuildFlow + "-5", Caption = "Capturing the Trace", Content =
-@"To observe what flows through, we can add an `IArtery`.
-There are a few ways to do this, here's one using `SetArtery` directly on the signal.
+@"To observe what flows through, we can add an `IArtery` by using `SetArtery` directly on the signal.
 
 ```csharp
 [Fact]
