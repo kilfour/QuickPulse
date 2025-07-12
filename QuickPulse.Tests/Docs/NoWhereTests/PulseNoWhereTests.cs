@@ -1,4 +1,5 @@
-﻿using QuickPulse.Tests._Tools;
+﻿using QuickExplainIt;
+using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.Docs.NoWhereTests;
 
