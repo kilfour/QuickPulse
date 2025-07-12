@@ -323,6 +323,7 @@ var signal = Signal.From(flow);
 ## Tracing
 
 **`Signal.Tracing(...)`** is sugaring for: 
+
 **Example:**
 ```csharp
 var flow =
@@ -337,6 +338,7 @@ Useful if you want to just quickly grab a tracer.
 ## Pulse
 **`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
+
 **Example:**
 ```csharp
 from anInt in Pulse.Start<int>()
@@ -348,6 +350,7 @@ This sends the int `42` into the flow.
 
 
 The argument of this method is actually `params T[] input`, so you can send multiple values in, in one call.
+
 **Example:**
 ```csharp
 signal.Pulse(42, 43, 44);
@@ -357,6 +360,7 @@ This will execute the flow three times, once for each value passed in.
 
 For ease of use, when dealing with `IEnumerable` return values from various sources,
 an overload exists: `Pulse(IEnumerable<T> inputs)`. 
+
 **Example:**
 ```csharp
 signal.Pulse(new List<int> { 42, 43, 44 });
@@ -366,6 +370,7 @@ This behaves exactly like the previous example.
 
 ## Pulse Multiple
 **`Signal.PulseMultiple(...)`** is a helper method that sugars a `for(int i = ...)` type structure.
+
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
@@ -383,6 +388,7 @@ Trace output: `40, 41, 42`.
 
 ## Pulse Until
 **`Signal.PulseUntil(...)`** is a helper method that sugars a `while(...)` type structure.
+
 **Example:**
 ```csharp
 var collector = new TheCollector<int>();
@@ -454,6 +460,7 @@ var collector = signal.SetAndReturnArtery(new TheCollector<int>());
 ## Manipulate
 **`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
 and allows for manipulating the flow in between pulses.
+
 **Given this setup:**
 ```csharp
  var flow =
