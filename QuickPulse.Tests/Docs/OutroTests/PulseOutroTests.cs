@@ -1,5 +1,4 @@
 using QuickExplainIt;
-using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.Docs.IntroTests;
 

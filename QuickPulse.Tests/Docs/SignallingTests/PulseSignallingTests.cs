@@ -1,7 +1,6 @@
 using QuickExplainIt;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
-using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.Docs.SignallingTests;
 
