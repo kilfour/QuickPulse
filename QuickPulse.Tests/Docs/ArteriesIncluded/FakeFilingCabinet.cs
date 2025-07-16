@@ -25,4 +25,14 @@ public class FakeFilingCabinet : IAmAFilingCabinet
     public string? FindSolutionRoot(string? startDirectory = null) => SolutionRoot;
 
     public string Combine(params string[] paths) => string.Join("/", paths);
+
+    public string? GetDirectoryName(string path)
+    {
+        return path;
+    }
+
+    public bool DirectoryExists(string directory)
+    {
+        return true;
+    }
 }
