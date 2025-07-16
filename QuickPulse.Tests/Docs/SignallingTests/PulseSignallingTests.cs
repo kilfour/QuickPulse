@@ -58,15 +58,17 @@ var signal = Signal.From(flow);
 
     [Doc(Order = Chapters.Signalling + "-1.5", Caption = "Tracing", Content =
 @"
-**`Signal.Tracing(...)`** is sugaring for: 
-
-**Example:**
+**`Signal.Tracing<T>()`** is sugaring for: 
 ```csharp
 var flow =
     from start in Pulse.Start<T>()
     from _ in Pulse.Trace(start)
     select start;
 return new Signal<T>(flow);
+```
+**Example:**
+```csharp
+Signal.Tracing<string>();
 ```
 Useful if you want to just quickly grab a tracer.
 ")]

@@ -43,34 +43,36 @@ public class Signal<T>
         return artery;
     }
 
-    public void Pulse(params T[] input)
+    public Signal<T> Pulse(params T[] input)
     {
-
         if (input == null)
         {
             flow(state.SetValue<T>(default!));
-            return;
+            return this;
         }
         if (!input.Any())
-            return;
+            return this;
         Pulse((IEnumerable<T>)input);
+        return this;
     }
 
-    public void Pulse(IEnumerable<T> inputs)
+    public Signal<T> Pulse(IEnumerable<T> inputs)
     {
         foreach (var item in inputs)
-            flow(state.SetValue(item));// ← Re-invokes the entire flow
+            flow(state.SetValue(item));// <= Re-invokes the entire flow
+        return this;
     }
 
-    public void PulseMultiple(int times, T input)
+    public Signal<T> PulseMultiple(int times, T input)
     {
         for (int i = 0; i < times; i++)
         {
             Pulse(input);
         }
+        return this;
     }
 
-    public void PulseUntil(Func<bool> shouldStop, T input)
+    public Signal<T> PulseUntil(Func<bool> shouldStop, T input)
     {
         var times = 0;
         while (!shouldStop())
@@ -80,8 +82,9 @@ public class Signal<T>
                 ComputerSays.No("You can only pulse a max of 256 times, using Pulse.Until");
             times++;
         }
+        return this;
     }
-    public void PulseMultipleUntil(int times, Func<bool> shouldStop, T input)
+    public Signal<T> PulseMultipleUntil(int times, Func<bool> shouldStop, T input)
     {
         for (int i = 0; i < times; i++)
         {
@@ -89,14 +92,16 @@ public class Signal<T>
                 break;
             Pulse(input);
         }
+        return this;
     }
 
-    public void Manipulate<TValue>(Func<TValue, TValue> update)
+    public Signal<T> Manipulate<TValue>(Func<TValue, TValue> update)
         where TValue : notnull, new()
     {
         var existing = (Box<TValue>)state.Memory[typeof(TValue)]!;
         var updated = update(existing.Value);
         existing.Value = updated;
+        return this;
     }
 
     public IDisposable Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)

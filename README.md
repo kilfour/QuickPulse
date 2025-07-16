@@ -137,6 +137,7 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 | Combinator         | Role / Purpose                                                                |
 | ------------------ | ----------------------------------------------------------------------------- |
 | **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
+| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                    |
 | **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
 | **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
 | **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
@@ -321,15 +322,17 @@ var signal = Signal.From(flow);
 
 ## Tracing
 
-**`Signal.Tracing(...)`** is sugaring for: 
-
-**Example:**
+**`Signal.Tracing<T>()`** is sugaring for: 
 ```csharp
 var flow =
     from start in Pulse.Start<T>()
     from _ in Pulse.Trace(start)
     select start;
 return new Signal<T>(flow);
+```
+**Example:**
+```csharp
+Signal.Tracing<string>();
 ```
 Useful if you want to just quickly grab a tracer.
 

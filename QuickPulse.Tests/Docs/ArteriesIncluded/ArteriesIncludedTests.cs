@@ -57,7 +57,7 @@ collector
         Signal.Tracing<string>()
             .SetArtery(collector)
             .Pulse("hello", "collector");
-        var expectedPath = fake.GetFullPath("/solution/log.txt");
+        var expectedPath = fake.GetFullPath("/solution/quick-pulse.log");
         Assert.Collection(fake.Appends,
            item => Assert.Equal((expectedPath, "hello" + Environment.NewLine), item),
            item => Assert.Equal((expectedPath, "collector" + Environment.NewLine), item)
