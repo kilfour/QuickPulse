@@ -1,4 +1,4 @@
-using QuickPulse.Arteries;
+using QuickPulse.Arteries.WriteDataBolts;
 
 namespace QuickPulse.Tests.Docs.BuildFlowTests;
 

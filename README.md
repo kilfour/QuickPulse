@@ -569,7 +569,7 @@ Signal.Tracing<string>()
     .SetArtery(new WriteDataToFile())
     .Pulse("hello", "collector");
 ```
-By default, this creates a `log.txt` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
+By default, this creates a `quick-pulse.log` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
 The file will contain:
 ```
 hello
@@ -607,6 +607,12 @@ Signal.Tracing<string>()
     .SetArtery(new WriteDataToFile().ClearFile())
     .Pulse("hello", "collector");
 ```
+
+
+### Sugaring
+I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
+-  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
+-  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.
 
 
 # Some Examples

@@ -42,7 +42,7 @@ Signal.Tracing<string>()
     .SetArtery(new WriteDataToFile())
     .Pulse(""hello"", ""collector"");
 ```
-By default, this creates a `log.txt` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
+By default, this creates a `quick-pulse.log` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
 The file will contain:
 ```
 hello
@@ -68,8 +68,8 @@ collector
     public void Default_constructor_uses_log_txt()
     {
         var fake = new FakeFilingCabinet();
-        _ = new WriteDataToFile(cabinet: fake);
-        Assert.Contains("/solution/log.txt", fake.GetFullPath("/solution/log.txt"));
+        _ = new WriteDataToFile(cabinet: fake); // bad test this one
+        Assert.Contains("/solution/quick-pulse.log", fake.GetFullPath("/solution/quick-pulse.log"));
     }
 
     [Doc(Order = Chapters.ArteriesIncluded + "-3", Caption = "", Content =
@@ -157,6 +157,18 @@ Signal.Tracing<string>()
         artery.ClearFile();
         var expected = fake.GetFullPath("/solution/clear-me.txt");
         Assert.Contains((expected, ""), fake.Writes);
+    }
+
+    [Doc(Order = Chapters.ArteriesIncluded + "-8-1", Caption = "Sugaring", Content =
+@"I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
+-  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
+-  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.
+")]
+    [Fact]
+    public void Sugaring()
+    {
+        var artery = WriteData.ToFile();
+        Assert.IsType<WriteDataToFile>(artery);
     }
 }
 

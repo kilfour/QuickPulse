@@ -10,7 +10,6 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageReference Include="QuickExplainIt" Version="0.1.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
@@ -19,6 +18,11 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- <PackageReference Include="QuickExplainIt" Version="0.1.0" /> -->
+    <ProjectReference Include="..\..\QuickExplainIt\QuickExplainIt\QuickExplainIt.csproj" />
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\QuickPulse\QuickPulse.csproj" />
   </ItemGroup>
