@@ -26,14 +26,14 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
-    public static Flow<Unit> FirstOf(params (bool, Flow<Unit>)[] data) =>
+    public static Flow<Unit> FirstOf(params (Func<bool>, Func<Flow<Unit>>)[] data) =>
         state =>
         {
             foreach (var item in data)
             {
-                if (item.Item1)
+                if (item.Item1())
                 {
-                    return item.Item2(state);
+                    return item.Item2()(state);
                 }
             }
             return Cask.Empty(state);

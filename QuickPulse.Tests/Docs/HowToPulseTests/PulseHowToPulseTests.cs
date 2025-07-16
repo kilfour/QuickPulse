@@ -142,9 +142,9 @@ select anInt;
 var flow =
     from input in Pulse.Start<int>()
     from _ in Pulse.TraceFirstOf(
-        (input == 42, Pulse.Trace(""answer"")),
-        (input == 666, Pulse.Trace(""beëlzebub"")),
-        (input == 42 || input == 666, Pulse.Trace(""never"")))
+        (() => input == 42, () => Pulse.Trace(""answer"")),
+        (() => input == 666, () => Pulse.Trace(""beëlzebub"")),
+        (() => input == 42 || input == 666, () => Pulse.Trace(""never"")))
     select input;
 ```
 ")]
@@ -154,9 +154,9 @@ var flow =
         var flow =
             from input in Pulse.Start<int>()
             from _ in Pulse.FirstOf(
-                (input == 42, Pulse.Trace("answer")),
-                (input == 666, Pulse.Trace("beëlzebub")),
-                (input == 42 || input == 666, Pulse.Trace("never")))
+                (() => input == 42, () => Pulse.Trace("answer")),
+                (() => input == 666, () => Pulse.Trace("beëlzebub")),
+                (() => input == 42 || input == 666, () => Pulse.Trace("never")))
             select input;
         var collector = new TheCollector<string>();
         Signal.From(flow).SetArtery(collector).Pulse(42, 666);
