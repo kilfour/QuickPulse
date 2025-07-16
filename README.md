@@ -464,6 +464,12 @@ Assert.Equal(42, collector.TheExhibit[0]);
 ```
 
 
+**`Signal.GetArtery<TArtery>(...)`** throws if no `IArtery` is currently set on the `Signal`.
+
+
+**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+
+
 ## Set And Return Artery
 **`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp

@@ -337,6 +337,7 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
     }
+
     [Doc(Order = Chapters.Signalling + "-6.1", Caption = "Get Artery", Content =
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
 **Example:**
@@ -352,9 +353,29 @@ Assert.Equal(42, collector.TheExhibit[0]);
     public void Signal_get_artery()
     {
         var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
-        var collector = signal.GetArtery<TheCollector<int>>()!;
+        var collector = signal.GetArtery<TheCollector<int>>();
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-6.1-1", Caption = "", Content =
+@"**`Signal.GetArtery<TArtery>(...)`** throws if no `IArtery` is currently set on the `Signal`.
+")]
+    [Fact]
+    public void Signal_get_artery_throws_if_no_artery_set()
+    {
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().GetArtery<TheCollector<int>>());
+        Assert.Equal("No IArtery set on the current Signal.", ex.Message);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-6.1-1", Caption = "", Content =
+@"**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+")]
+    [Fact]
+    public void Signal_get_artery_throws_if_wrong_typed_retrieved()
+    {
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(new WriteDataToFile()).GetArtery<TheCollector<int>>());
+        Assert.Equal("IArtery set on the current Signal is of type 'WriteDataToFile' not 'TheCollector`1'.", ex.Message);
     }
 
     [Doc(Order = Chapters.Signalling + "-7", Caption = "Set And Return Artery", Content =

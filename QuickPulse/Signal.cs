@@ -31,10 +31,13 @@ public class Signal<T>
         this.flow = flow;
     }
 
-    public TArtery? GetArtery<TArtery>() where TArtery : class, IArtery
+    public TArtery GetArtery<TArtery>() where TArtery : class, IArtery
     {
-        var artery = state.CurrentArtery as TArtery;
-        return artery;
+        var artery = state.CurrentArtery;
+        if (artery == null) ComputerSays.No("No IArtery set on the current Signal.");
+        var typedArtery = artery as TArtery;
+        if (typedArtery == null) ComputerSays.No($"IArtery set on the current Signal is of type '{artery!.GetType().Name}' not '{typeof(TArtery).Name}'.");
+        return typedArtery!;
     }
 
     public Signal<T> SetArtery(IArtery artery)
