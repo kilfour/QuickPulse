@@ -337,6 +337,25 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
     }
+    [Doc(Order = Chapters.Signalling + "-6.1", Caption = "Get Artery", Content =
+@"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
+**Example:**
+```csharp
+var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
+
+var collector = signal.GetArtery<TheCollector<int>>()!;
+Assert.Single(collector.TheExhibit);
+Assert.Equal(42, collector.TheExhibit[0]);
+```
+")]
+    [Fact]
+    public void Signal_get_artery()
+    {
+        var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
+        var collector = signal.GetArtery<TheCollector<int>>()!;
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(42, collector.TheExhibit[0]);
+    }
 
     [Doc(Order = Chapters.Signalling + "-7", Caption = "Set And Return Artery", Content =
 @"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.

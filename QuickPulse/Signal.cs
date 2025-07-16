@@ -31,6 +31,12 @@ public class Signal<T>
         this.flow = flow;
     }
 
+    public TArtery? GetArtery<TArtery>() where TArtery : class, IArtery
+    {
+        var artery = state.CurrentArtery as TArtery;
+        return artery;
+    }
+
     public Signal<T> SetArtery(IArtery artery)
     {
         state.SetArtery(artery);

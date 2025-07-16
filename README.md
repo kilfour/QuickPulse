@@ -452,6 +452,18 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
 
+## Get Artery
+**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
+**Example:**
+```csharp
+var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
+
+var collector = signal.GetArtery<TheCollector<int>>()!;
+Assert.Single(collector.TheExhibit);
+Assert.Equal(42, collector.TheExhibit[0]);
+```
+
+
 ## Set And Return Artery
 **`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
