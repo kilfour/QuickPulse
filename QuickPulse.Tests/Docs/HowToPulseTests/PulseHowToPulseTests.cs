@@ -1,6 +1,7 @@
 using QuickExplainIt;
 using QuickPulse.Arteries;
 using QuickPulse.Bolts;
+using QuickPulse.Instruments;
 
 namespace QuickPulse.Tests.Docs.HowToPulseTests;
 
@@ -8,18 +9,21 @@ namespace QuickPulse.Tests.Docs.HowToPulseTests;
 [Doc(Order = Chapters.HowToPulse, Caption = "How To Pulse", Content =
 @"**Cheat Sheet:**
 
-| Combinator         | Role / Purpose                                                                |
-| ------------------ | ----------------------------------------------------------------------------- |
-| **Start<T>()**     | Starts a new flow. Defines the input type.                                    |
-| **Using(...)**     | Applies an `IArtery` to the flow context, enables tracing.                    |
-| **Trace(...)**     | Emits trace data unconditionally to the current artery.                       |
-| **TraceIf(...)**   | Emits trace data conditionally, based on a boolean flag.                      |
-| **Effect(...)**    | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
-| **EffectIf(...)**  | Performs a side-effect conditionally.                                         |
-| **Gather<T>(...)** | Captures a mutable box into flow memory (first write wins).                   |
-| **ToFlow(...)**    | Invokes a subflow over a value or collection.                                 |
-| **ToFlowIf(...)**  | Invokes a subflow conditionally, using a supplier for the input.              |
-| **NoOp()**         | Applies a do-nothing operation (for conditional branches or comments).        |
+| Combinator            | Role / Purpose                                                                |
+| --------------------- | ----------------------------------------------------------------------------- |
+| **Start<T>()**        | Starts a new flow. Defines the input type.                                    |
+| **Using(...)**        | Applies an `IArtery` to the flow context, enables tracing.                    |
+| **Trace(...)**        | Emits trace data unconditionally to the current artery.                       |
+| **TraceIf(...)**      | Emits trace data conditionally, based on a boolean flag.                      |
+| **FirstOf(...)**      | Executes the first flow where its condition is `true`, skips the rest.          |
+| **Effect(...)**       | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
+| **EffectIf(...)**     | Performs a side-effect conditionally.                                         |
+| **Gather<T>(...)**    | Captures a mutable box into flow memory (first write wins).                   |
+| **ToFlow(...)**       | Invokes a subflow over a value or collection.                                 |
+| **ToFlowIf(...)**     | Invokes a subflow conditionally, using a supplier for the input.              |
+| **NoOp()**            | Applies a do-nothing operation (for conditional branches or comments).        |
+
+
 
 ")]
 public class PulseHowToPulseTests
@@ -80,7 +84,7 @@ select anInt;
 
     [Doc(Order = Chapters.HowToPulse + "-3", Caption = "Trace", Content =
 @"
-**`Pulse.Trace(...)`** Emits trace data unconditionally to the current artery.
+**`Pulse.Trace(...)`** emits trace data unconditionally to the current artery.
 
 **Example:**
 ```csharp
@@ -105,7 +109,7 @@ select anInt;
 
     [Doc(Order = Chapters.HowToPulse + "-4", Caption = "TraceIf", Content =
 @"
-**`Pulse.TraceIf(...)`** Emits trace data conditionally, based on a boolean flag.
+**`Pulse.TraceIf(...)`** emits trace data conditionally, based on a boolean flag.
 
 **Example:**
 ```csharp
@@ -129,9 +133,38 @@ select anInt;
         Assert.Equal(7, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.HowToPulse + "-5", Caption = "Gather", Content =
+    [Doc(Order = Chapters.HowToPulse + "-4.5", Caption = "FirstOf", Content =
 @"
-**`Pulse.Gather(...)`** Binds a mutable box into flow memory (first write wins).
+**`Pulse.FirstOf(...)`** runs the first flow in a sequence of (condition, flow) pairs where the condition evaluates to true.
+
+**Example:**
+```csharp
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.TraceFirstOf(
+        (input == 42, Pulse.Trace(""answer"")),
+        (input == 666, Pulse.Trace(""beëlzebub"")),
+        (input == 42 || input == 666, Pulse.Trace(""never"")))
+    select input;
+```
+")]
+    [Fact]
+    public void Pulse_FirstOf()
+    {
+        var flow =
+            from input in Pulse.Start<int>()
+            from _ in Pulse.FirstOf(
+                (input == 42, Pulse.Trace("answer")),
+                (input == 666, Pulse.Trace("beëlzebub")),
+                (input == 42 || input == 666, Pulse.Trace("never")))
+            select input;
+        var collector = new TheCollector<string>();
+        Signal.From(flow).SetArtery(collector).Pulse(42, 666);
+        Assert.Equal(["answer", "beëlzebub"], collector.TheExhibit);
+    }
+
+    [Doc(Order = Chapters.HowToPulse + "-5", Caption = "Gather", Content =
+@"**`Pulse.Gather(...)`** Binds a mutable box into flow memory (first write wins).
 
 **Example:**
 ```csharp
@@ -140,8 +173,7 @@ from box in Pulse.Gather(1) // <=
 select anInt;
 ```
 **Warning:** `Gather` is thread-hostile by design, like a chainsaw. Use accordingly.  
-Useful, powerful, and absolutely the wrong tool to wield in a multithreaded environment.
-")]
+Useful, powerful, and absolutely the wrong tool to wield in a multithreaded environment.")]
     [Fact]
     public void Pulse_gather()
     {
@@ -155,6 +187,46 @@ Useful, powerful, and absolutely the wrong tool to wield in a multithreaded envi
         signal.Pulse(41);
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.HowToPulse + "-5-1", Caption = "", Content =
+@"**`Pulse.Gather<T>()`** used without an argument, serves as a 'getter' of a previously gathered value.
+
+**Example:**
+```csharp
+from anInt in Pulse.Start<int>()
+from box in Pulse.Gather(1)
+from val in Pulse.Gather<int>() // <=
+from _ in Pulse.Trace(anInt + val.Value)
+select anInt;
+```")]
+    [Fact]
+    public void Pulse_gather_empty_param()
+    {
+        var collector = new TheCollector<int>();
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from box in Pulse.Gather(1)
+            from val in Pulse.Gather<int>()
+            from _ in Pulse.Trace(anInt + val.Value)
+            select anInt;
+        Signal.From(flow).SetArtery(collector).Pulse(41);
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(42, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.HowToPulse + "-5-1", Caption = "", Content =
+ @"**`Pulse.Gather<T>()`** throws if no value of the requested type is available.")]
+    [Fact]
+    public void Pulse_gather_empty_param_no_value_throws()
+    {
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from val in Pulse.Gather<int>()
+            from _ in Pulse.Trace(anInt + val.Value)
+            select anInt;
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(flow).Pulse(42));
+        Assert.Equal("No value of type Int32 found.", ex.Message);
     }
 
     [Doc(Order = Chapters.HowToPulse + "-6", Caption = "Effect", Content =

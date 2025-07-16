@@ -1,4 +1,5 @@
 using QuickPulse.Bolts;
+using QuickPulse.Instruments;
 
 namespace QuickPulse;
 
@@ -25,6 +26,19 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
+    public static Flow<Unit> FirstOf(params (bool, Flow<Unit>)[] data) =>
+        state =>
+        {
+            foreach (var item in data)
+            {
+                if (item.Item1)
+                {
+                    return item.Item2(state);
+                }
+            }
+            return Cask.Empty(state);
+        };
+
     public static Flow<Box<T>> Gather<T>(T value) =>
         state =>
         {
@@ -33,6 +47,16 @@ public static class Pulse
                 var box = new Box<T>(value);
                 state.Memory[typeof(T)] = box;
                 return Cask.Some(state, box);
+            }
+            return Cask.Some(state, (Box<T>)obj!);
+        };
+
+    public static Flow<Box<T>> Gather<T>() =>
+        state =>
+        {
+            if (!state.Memory.TryGetValue(typeof(T), out var obj))
+            {
+                ComputerSays.No($"No value of type {typeof(T).Name} found.");
             }
             return Cask.Some(state, (Box<T>)obj!);
         };
@@ -48,27 +72,30 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
-    public static Flow<T> ToFlow<T>(Flow<T> flow, T value) => // T[] input maybe ?
-        state => { state.SetValue(value); return flow(state); };
+    public static Flow<Unit> ToFlow<T>(Flow<T> flow, T value) => // T[] input maybe ?
+        state => { state.SetValue(value); flow(state); return Cask.Empty(state); };
 
-    public static Flow<T> ToFlow<T>(Flow<T> flow, IEnumerable<T> values) =>
+    public static Flow<Unit> ToFlow<T>(Flow<T> flow, IEnumerable<T> values) =>
         state =>
         {
             foreach (var item in values)
                 flow(state.SetValue(item));
-            return Cask.None<T>(state);
+            return Cask.Empty(state);
         };
 
-    public static Flow<T> ToFlowIf<T>(bool flag, Flow<T> flow, Func<T> func) =>
+    public static Flow<Unit> ToFlowIf<T>(bool flag, Flow<T> flow, Func<T> func) =>
         state =>
         {
             if (flag)
             {
                 state.SetValue(func());
-                return flow(state);
+                flow(state);
+                return Cask.Empty(state);
             }
-            return Cask.None<T>(state);
+            return Cask.Empty(state);
         };
 
     public static Flow<Unit> NoOp() => Cask.Empty;
+
+    public static Flow<Unit> CaseOf() => Cask.Empty;
 }
