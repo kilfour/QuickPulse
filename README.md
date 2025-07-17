@@ -746,7 +746,7 @@ Use the static helper `TheString.Catcher()` to create a new catcher:
 var holden = TheString.Catcher();
 ```
 
-You can get *holden* of the string through the `.Whispers()` method.
+You can get a hold of the string through the `.Whispers()` method.
 ```csharp
 var holden = TheString.Catcher();
 Signal.From(

@@ -187,7 +187,7 @@ var holden = TheString.Catcher();
 
     [Fact]
     [Doc(Order = Chapters.ArteriesIncluded + "-3-1", Caption = "", Content =
-@"You can get *holden* of the string through the `.Whispers()` method.
+@"You can get a hold of the string through the `.Whispers()` method.
 ```csharp
 var holden = TheString.Catcher();
 Signal.From(
