@@ -25,9 +25,9 @@ And yes, it did *literally* involve Trees.")]
 public class PulseIntroTests
 {
     [Fact]
-    [Doc(Order = Chapters.Introduction + "-1", Caption = "QuickPulse", Content =
+    [Doc(Order = Chapters.Introduction + "-1", Caption = "", Content =
 @"```
-Assert.Equal(""A deep dark forest, a looking glass and a trail of dead generators."",
+var result =
     Signal.From(
             from input in Pulse.Start<string>()
             from isFirst in Pulse.Gather(true)
@@ -41,6 +41,8 @@ Assert.Equal(""A deep dark forest, a looking glass and a trail of dead generator
         .Pulse(""and a trail of dead generators."")
         .GetArtery<Holden>()
         .Whispers());
+        
+Assert.Equal(""A deep dark forest, a looking glass and a trail of dead generators."", result);
 ```")]
     public void Example() =>
         Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.",
