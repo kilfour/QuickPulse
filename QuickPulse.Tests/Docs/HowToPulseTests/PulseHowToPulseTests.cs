@@ -15,10 +15,11 @@ namespace QuickPulse.Tests.Docs.HowToPulseTests;
 | **Using(...)**        | Applies an `IArtery` to the flow context, enables tracing.                    |
 | **Trace(...)**        | Emits trace data unconditionally to the current artery.                       |
 | **TraceIf(...)**      | Emits trace data conditionally, based on a boolean flag.                      |
-| **FirstOf(...)**      | Executes the first flow where its condition is `true`, skips the rest.          |
+| **FirstOf(...)**      | Executes the first flow where its condition is `true`, skips the rest.        |
 | **Effect(...)**       | Performs a side-effect (logging, mutation, etc.) without yielding a value.    |
 | **EffectIf(...)**     | Performs a side-effect conditionally.                                         |
 | **Gather<T>(...)**    | Captures a mutable box into flow memory (first write wins).                   |
+| **Scoped<T>(...)**    | Temporarily mutates gathered state during a subflow, then restores it.        |
 | **ToFlow(...)**       | Invokes a subflow over a value or collection.                                 |
 | **ToFlowIf(...)**     | Invokes a subflow conditionally, using a supplier for the input.              |
 | **NoOp()**            | Applies a do-nothing operation (for conditional branches or comments).        |
@@ -171,9 +172,7 @@ var flow =
 from anInt in Pulse.Start<int>()
 from box in Pulse.Gather(1) // <=
 select anInt;
-```
-**Warning:** `Gather` is thread-hostile by design, like a chainsaw. Use accordingly.  
-Useful, powerful, and absolutely the wrong tool to wield in a multithreaded environment.")]
+```")]
     [Fact]
     public void Pulse_gather()
     {
@@ -227,6 +226,54 @@ select anInt;
             select anInt;
         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(flow).Pulse(42));
         Assert.Equal("No value of type Int32 found.", ex.Message);
+    }
+
+    [Doc(Order = Chapters.HowToPulse + "-5.1", Caption = "Scoped", Content =
+@"**`Pulse.Scoped<T>(...)`** temporarily alters gathered state of type T, runs an inner flow,
+and reverts the state after.
+**Example:**
+```csharp
+var collector = new TheCollector<int>();
+var innerFlow =
+    from anInt in Pulse.Start<int>()
+    from scopedBox in Pulse.Gather<int>()
+    from _ in Pulse.Trace(anInt + scopedBox.Value)
+    select anInt;
+var flow =
+    from anInt in Pulse.Start<int>()
+    from box in Pulse.Gather(0)
+    from _ in Pulse.Trace(anInt + box.Value)
+    from scopeInt in Pulse.Scoped<int>(
+        a => a + 1,
+        Pulse.ToFlow(innerFlow, anInt))
+    from __ in Pulse.Trace(anInt + box.Value)
+    select anInt;
+var signal = Signal.From(flow).SetArtery(collector);
+signal.Pulse(42);
+Assert.Equal([42, 43, 42], collector.TheExhibit);
+```
+**Warning:** TODO.")]
+    [Fact]
+    public void Pulse_Scoped()
+    {
+        var collector = new TheCollector<int>();
+        var innerFlow =
+            from anInt in Pulse.Start<int>()
+            from scopedBox in Pulse.Gather<int>()
+            from _ in Pulse.Trace(anInt + scopedBox.Value)
+            select anInt;
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from box in Pulse.Gather(0)
+            from _ in Pulse.Trace(anInt + box.Value)
+            from scopeInt in Pulse.Scoped<int>(
+                a => a + 1,
+                Pulse.ToFlow(innerFlow, anInt))
+            from __ in Pulse.Trace(anInt + box.Value)
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.Pulse(42);
+        Assert.Equal([42, 43, 42], collector.TheExhibit);
     }
 
     [Doc(Order = Chapters.HowToPulse + "-6", Caption = "Effect", Content =
