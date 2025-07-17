@@ -338,7 +338,27 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-6.1", Caption = "Get Artery", Content =
+    [Doc(Order = Chapters.Signalling + "-7", Caption = "Set And Return Artery", Content =
+@"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
+```csharp
+var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+```
+")]
+    [Fact]
+    public void Signal_set_and_return_artery()
+    {
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from _ in Pulse.Trace(anInt)
+            select anInt;
+        var signal = Signal.From(flow);
+        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+        signal.Pulse(42);
+        Assert.Single(collector.TheExhibit);
+        Assert.Equal(42, collector.TheExhibit[0]);
+    }
+
+    [Doc(Order = Chapters.Signalling + "-7.1", Caption = "Get Artery", Content =
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
 **Example:**
 ```csharp
@@ -358,7 +378,7 @@ Assert.Equal(42, collector.TheExhibit[0]);
         Assert.Equal(42, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.Signalling + "-6.1-1", Caption = "", Content =
+    [Doc(Order = Chapters.Signalling + "-7.1-1", Caption = "", Content =
 @"**`Signal.GetArtery<TArtery>(...)`** throws if no `IArtery` is currently set on the `Signal`.
 ")]
     [Fact]
@@ -368,7 +388,7 @@ Assert.Equal(42, collector.TheExhibit[0]);
         Assert.Equal("No IArtery set on the current Signal.", ex.Message);
     }
 
-    [Doc(Order = Chapters.Signalling + "-6.1-1", Caption = "", Content =
+    [Doc(Order = Chapters.Signalling + "-7.1-1", Caption = "", Content =
 @"**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
 ")]
     [Fact]
@@ -376,26 +396,6 @@ Assert.Equal(42, collector.TheExhibit[0]);
     {
         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(new WriteDataToFile()).GetArtery<TheCollector<int>>());
         Assert.Equal("IArtery set on the current Signal is of type 'WriteDataToFile' not 'TheCollector`1'.", ex.Message);
-    }
-
-    [Doc(Order = Chapters.Signalling + "-7", Caption = "Set And Return Artery", Content =
-@"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
-```csharp
-var collector = signal.SetAndReturnArtery(new TheCollector<int>());
-```
-")]
-    [Fact]
-    public void Signal_set_and_return_artery()
-    {
-        var flow =
-            from anInt in Pulse.Start<int>()
-            from _ in Pulse.Trace(anInt)
-            select anInt;
-        var signal = Signal.From(flow);
-        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
-        signal.Pulse(42);
-        Assert.Single(collector.TheExhibit);
-        Assert.Equal(42, collector.TheExhibit[0]);
     }
 
     [Doc(Order = Chapters.Signalling + "-8", Caption = "Manipulate", Content =
