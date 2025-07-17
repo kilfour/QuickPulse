@@ -14,6 +14,23 @@ It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
 And yes, it did *literally* involve Trees.
 
+## QuickPulse
+```
+Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.",
+    Signal.From(
+            from input in Pulse.Start<string>()
+            from isFirst in Pulse.Gather(true)
+            from first in Pulse.TraceIf(isFirst.Value, char.ToUpper(input[0]) + input[1..])
+            from rest in Pulse.TraceIf(!isFirst.Value, $" {input}")
+            from off in Pulse.Effect(() => isFirst.Value = false)
+            from even in Pulse.TraceIf(input.Length % 2 == 0, $", a looking glass")
+            select input)
+        .SetArtery(TheString.Catcher())
+        .Pulse("a deep dark forest")
+        .Pulse("and a trail of dead generators.")
+        .GetArtery<Holden>()
+        .Whispers());```
+
 # Building a Flow
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.
 
@@ -619,8 +636,38 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 ```
 
 
+# Flow Extensions
+Not a big fan of extensions on LINQ enabled combinators, but there *is* one which is just to useful to pass up on.
+
+## Then
+**`.Then(...)`** is just syntactic sugar for `.SelectMany(...)`.
+
+Suppose we have: 
+```csharp
+var dot = Pulse.Trace(".");
+var space = Pulse.Trace(" ");
+```
+We can compose this like so:
+```csharp
+var threeDotsAndSpace =
+    from d1 in dot
+    from d2 in dot
+    from d3 in dot
+    from s in space
+    select Unit.Instance;
+```
+Most of you would probably prefer: 
+```csharp
+var threeDotsAndSpace = dot.SelectMany(_ => dot).SelectMany(_ => dot).SelectMany(_ => space);
+```
+Now with `.Then(...)` you can do:
+```csharp
+var threeDotsAndSpace = dot.Then(dot).Then(dot).Then(space);
+```
+
+
 # Arteries Included
-QuickPulse comes with *only* two build in arteries:
+QuickPulse comes with *only* three build in arteries:
 
 ## TheCollector
 This is the artery used throughout the documentation examples, and it's especially useful in testing scenarios.
@@ -689,6 +736,26 @@ I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
 -  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
 -  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.
 
+## TheStringCatcher
+This catcher quietly captures everything that flows through it, and returns it as a single string.  
+It is especially useful in testing and example scenarios where the full trace output is needed as a value.
+
+Use the static helper `TheString.Catcher()` to create a new catcher:
+```csharp
+var holden = TheString.Catcher();
+```
+
+You can get *holden* of the string through the `.Whispers()` method.
+```csharp
+var holden = TheString.Catcher();
+Signal.From(
+        from x in Pulse.Start<int>()
+        from _ in Pulse.Trace($"x = {x}")
+        select x)
+    .SetArtery(holden)
+    .Pulse(42);
+Assert.Equal("x = 42", holden.Whispers());
+```
 
 # Some Examples
 ## Log Filtering

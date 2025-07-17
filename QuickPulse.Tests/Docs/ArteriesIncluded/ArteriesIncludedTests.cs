@@ -6,7 +6,7 @@ namespace QuickPulse.Tests.Docs.BuildFlowTests;
 
 
 [Doc(Order = Chapters.ArteriesIncluded, Caption = "Arteries Included", Content =
-@"QuickPulse comes with *only* two build in arteries:")]
+@"QuickPulse comes with *only* three build in arteries:")]
 public class ArteriesIncludedTests
 {
 
@@ -65,14 +65,14 @@ collector
     }
 
     [Fact]
-    public void Default_constructor_uses_log_txt()
+    public void Default_constructor_uses_quick_dash_pulse_dot_log()
     {
         var fake = new FakeFilingCabinet();
-        _ = new WriteDataToFile(cabinet: fake); // bad test this one
-        Assert.Contains("/solution/quick-pulse.log", fake.GetFullPath("/solution/quick-pulse.log"));
+        _ = new WriteDataToFile(cabinet: fake);
+        Assert.Contains("/solution/quick-pulse.log", fake.LastCombinedPath);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-3", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-1", Caption = "", Content =
 @"You can, of course, pass in a custom filename.
 Example:
 ```csharp
@@ -92,7 +92,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Contains((expected, ""), fake.Writes);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-4", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-2", Caption = "", Content =
 @"Note that the `WriteDataToFile` constructor will throw an exception if no `.sln` file can be found.")]
     [Fact]
     public void Throws_when_solution_root_is_null()
@@ -102,7 +102,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Equal("Cannot find solution root.", ex.Message);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-5", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-3", Caption = "", Content =
 @"To avoid solution root detection altogether, use the following factory method:
 ```csharp
 Signal.Tracing<string>()
@@ -123,7 +123,7 @@ Signal.Tracing<string>()
     }
 
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-6", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-4", Caption = "", Content =
 @"`WriteDataToFile` appends all entries to the file; each pulse adds new lines to the end.
 ")]
     [Fact]
@@ -140,7 +140,7 @@ Signal.Tracing<string>()
         );
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-7", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-5", Caption = "", Content =
 @"The `ClearFile` method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:
 ```csharp
@@ -159,16 +159,55 @@ Signal.Tracing<string>()
         Assert.Contains((expected, ""), fake.Writes);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-8-1", Caption = "Sugaring", Content =
+    [Fact]
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-6", Caption = "Sugaring", Content =
 @"I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
 -  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
--  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.
-")]
-    [Fact]
+-  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.")]
     public void Sugaring()
     {
         var artery = WriteData.ToFile();
         Assert.IsType<WriteDataToFile>(artery);
+    }
+
+    [Fact]
+    [Doc(Order = Chapters.ArteriesIncluded + "-3", Caption = "TheStringCatcher", Content =
+@"This catcher quietly captures everything that flows through it, and returns it as a single string.  
+It is especially useful in testing and example scenarios where the full trace output is needed as a value.
+
+Use the static helper `TheString.Catcher()` to create a new catcher:
+```csharp
+var holden = TheString.Catcher();
+```")]
+    public void TheStringCatcher()
+    {
+        var artery = TheString.Catcher();
+        Assert.IsType<Holden>(artery);
+    }
+
+    [Fact]
+    [Doc(Order = Chapters.ArteriesIncluded + "-3-1", Caption = "", Content =
+@"You can get *holden* of the string through the `.Whispers()` method.
+```csharp
+var holden = TheString.Catcher();
+Signal.From(
+        from x in Pulse.Start<int>()
+        from _ in Pulse.Trace($""x = {x}"")
+        select x)
+    .SetArtery(holden)
+    .Pulse(42);
+Assert.Equal(""x = 42"", holden.Whispers());
+```")]
+    public void TheStringCatcher_Whispers()
+    {
+        var holden = TheString.Catcher();
+        Signal.From(
+                from x in Pulse.Start<int>()
+                from _ in Pulse.Trace($"x = {x}")
+                select x)
+            .SetArtery(holden)
+            .Pulse(42);
+        Assert.Equal("x = 42", holden.Whispers());
     }
 }
 

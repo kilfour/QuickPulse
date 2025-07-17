@@ -7,6 +7,7 @@ public class FakeFilingCabinet : IAmAFilingCabinet
     public char DirectorySeparatorChar => '/';
 
     public string? SolutionRoot { get; set; } = "/solution";
+
     public List<(string Path, string? Contents)> Writes = new();
     public List<(string Path, string? Contents)> Appends = new();
 
@@ -24,7 +25,12 @@ public class FakeFilingCabinet : IAmAFilingCabinet
 
     public string? FindSolutionRoot(string? startDirectory = null) => SolutionRoot;
 
-    public string Combine(params string[] paths) => string.Join("/", paths);
+    public string LastCombinedPath { get; private set; } = string.Empty;
+    public string Combine(params string[] paths)
+    {
+        LastCombinedPath = string.Join("/", paths);
+        return LastCombinedPath;
+    }
 
     public string? GetDirectoryName(string path)
     {

@@ -108,5 +108,8 @@ public static class Pulse
 
     public static Flow<Unit> NoOp() => Cask.Empty;
 
-    public static Flow<Unit> CaseOf() => Cask.Empty;
+    public static Flow<TResult> Then<TSource, TResult>(this Flow<TSource> flow, Flow<TResult> next)
+    {
+        return flow.SelectMany(_ => next);
+    }
 }
