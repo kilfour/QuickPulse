@@ -22,10 +22,8 @@ namespace QuickPulse.Tests.Docs.HowToPulseTests;
 | **Scoped<T>(...)**    | Temporarily mutates gathered state during a subflow, then restores it.        |
 | **ToFlow(...)**       | Invokes a subflow over a value or collection.                                 |
 | **ToFlowIf(...)**     | Invokes a subflow conditionally, using a supplier for the input.              |
+| **When(...)**         | Executes the given flow only if the condition is true, without input.         |
 | **NoOp()**            | Applies a do-nothing operation (for conditional branches or comments).        |
-
-
-
 ")]
 public class PulseHowToPulseTests
 {
@@ -406,7 +404,48 @@ var flow =
         Assert.Equal(7, collector.TheExhibit[0]);
     }
 
-    [Doc(Order = Chapters.HowToPulse + "-10", Caption = "NoOp", Content =
+    [Fact]
+    [Doc(Order = Chapters.HowToPulse + "-10", Caption = "When", Content =
+@"
+**`Pulse.When(...)`** Executes a subflow conditionally.
+
+A flow that does not take an input like `var someMessage = Pulse.Trace(""Some Message"")` can be defined as a sub flow,
+and executed by simple including it in the Linq chain: `from _ in someMessage`.
+
+If we want to flow, based on a predicate, we could do: `from _ in predicate ? someMessage : Pulse.NoOp()`.
+
+Which is fine but with `Pulse.When(...)` we can do better.
+
+**Example:**
+```csharp
+var dotDotDot = Pulse.Trace(""..."");
+var flow =
+    from anInt in Pulse.Start<int>()
+    from _ in Pulse.When(anInt == 42, dotDotDot) // <=
+    select anInt;
+var collector = new TheCollector<string>();
+Signal.From(flow).SetArtery(collector)
+    .Pulse(6)
+    .Pulse(42);
+Assert.Equal([""...""], collector.TheExhibit);
+```
+")]
+    public void Pulse_when()
+    {
+        var dotDotDot = Pulse.Trace("...");
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from _ in Pulse.When(anInt == 42, dotDotDot)
+            select anInt;
+        var collector = new TheCollector<string>();
+        Signal.From(flow).SetArtery(collector)
+            .Pulse(6)
+            .Pulse(42);
+        Assert.Equal(["..."], collector.TheExhibit);
+    }
+
+    [Fact]
+    [Doc(Order = Chapters.HowToPulse + "-11", Caption = "NoOp", Content =
 @"
 **`Pulse.NoOp(...)`** A do-nothing operation (useful for conditional branches). 
 
@@ -418,7 +457,6 @@ from anInt in Pulse.Start<int>()
     select anInt;
 ```
 ")]
-    [Fact]
     public void Pulse_no_op()
     {
         var flow =

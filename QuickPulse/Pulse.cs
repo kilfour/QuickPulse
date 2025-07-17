@@ -106,6 +106,17 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
+    public static Flow<Unit> When(bool flag, Flow<Unit> flow) =>
+        state =>
+        {
+            if (flag)
+            {
+                flow(state);
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
     public static Flow<Unit> NoOp() => Cask.Empty;
 
     public static Flow<TResult> Then<TSource, TResult>(this Flow<TSource> flow, Flow<TResult> next)
