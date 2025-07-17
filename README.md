@@ -14,9 +14,8 @@ It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
 And yes, it did *literally* involve Trees.
 
-## QuickPulse
 ```
-Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.",
+var result =
     Signal.From(
             from input in Pulse.Start<string>()
             from isFirst in Pulse.Gather(true)
@@ -30,6 +29,8 @@ Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators
         .Pulse("and a trail of dead generators.")
         .GetArtery<Holden>()
         .Whispers());
+        
+Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.", result);
 ```
 
 # Building a Flow
