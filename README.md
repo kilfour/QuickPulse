@@ -277,7 +277,6 @@ var signal = Signal.From(flow).SetArtery(collector);
 signal.Pulse(42);
 Assert.Equal([42, 43, 42], collector.TheExhibit);
 ```
-**Warning:** TODO.
 
 ## Effect
 
