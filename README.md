@@ -29,7 +29,8 @@ Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators
         .Pulse("a deep dark forest")
         .Pulse("and a trail of dead generators.")
         .GetArtery<Holden>()
-        .Whispers());```
+        .Whispers());
+```
 
 # Building a Flow
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.

@@ -40,7 +40,8 @@ Assert.Equal(""A deep dark forest, a looking glass and a trail of dead generator
         .Pulse(""a deep dark forest"")
         .Pulse(""and a trail of dead generators."")
         .GetArtery<Holden>()
-        .Whispers());```")]
+        .Whispers());
+```")]
     public void Example() =>
         Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.",
             Signal.From(
