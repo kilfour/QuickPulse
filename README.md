@@ -1,4 +1,6 @@
 # QuickPulse
+> LINQ with a heartbeat.
+
 Do you know how you sometimes leave your house, maybe to get some cigarettes, and start thinking about something?
 Your brain takes over.
 You walk straight past the shop, and the legs just keep going.
