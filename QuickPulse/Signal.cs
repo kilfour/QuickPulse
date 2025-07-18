@@ -126,4 +126,69 @@ public class Signal<T>
         existing.Value = enter(existing.Value);
         return new DisposableAction(() => { existing.Value = exit(existing.Value); });
     }
+
+    public Signal<T> Then<TNext>(Flow<TNext> next)
+    {
+        SetArtery(new Pipe<TNext>(next, state.CurrentArtery!));
+        return this;
+        // if (state.CurrentArtery is not ComposedPipe<T> pipe)
+        // {
+        //     pipe = new ComposedPipe<T>(() => state.CurrentArtery!);
+        //     SetArtery(pipe);
+        // }
+
+        // pipe.AddFlow(next.Select(x => (object)x));
+        // return this;
+    }
 }
+
+public class Pipe<T> : IArtery
+{
+    private readonly Signal<T> signal;
+
+    public Pipe(Flow<T> flow, IArtery target)
+    {
+        signal = Signal.From(flow).SetArtery(target);
+    }
+
+    public void Flow(params object[] data)
+    {
+        // if (data.Length != 1 || data[0] is not T input)
+        // throw new InvalidOperationException($"Pipe expected a single value of type {typeof(T)}, but got: {string.Join(", ", data.Select(d => d?.GetType().Name ?? "null"))}");
+
+        if (data is [T input])
+        {
+            signal.Pulse(input);
+        }
+    }
+}
+
+// public class ComposedPipe<TIn> : IArtery
+// {
+//     private readonly List<Flow<object>> _flowChain = new();
+//     private readonly Func<IArtery> _getTarget;
+
+//     public ComposedPipe(Func<IArtery> getTarget)
+//     {
+//         _getTarget = getTarget;
+//     }
+
+//     public void AddFlow<T>(Flow<T> flow)
+//     {
+//         _flowChain.Add(flow.Select(x => (object)x));
+//     }
+
+//     public void Flow(params object[] data)
+//     {
+//         if (data.Length != 1) throw new InvalidOperationException();
+
+//         object current = data[0];
+//         foreach (var flow in _flowChain)
+//         {
+//             var signal = Signal.From(flow).SetArtery(TheString.Catcher()); // optional
+//             current = signal.Pulse(current).FirstOrDefault(); // only use first result per stage
+//         }
+
+//         _getTarget().Flow(current);
+//     }
+// }
