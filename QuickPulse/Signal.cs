@@ -1,3 +1,4 @@
+using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
@@ -17,6 +18,11 @@ public static class Signal
             from _ in Pulse.Trace(start)
             select start;
         return new Signal<T>(flow);
+    }
+
+    public static Signal<T> ToFile<T>(string? maybeFileName = null)
+    {
+        return Tracing<T>().SetArtery(WriteData.ToFile(maybeFileName));
     }
 }
 

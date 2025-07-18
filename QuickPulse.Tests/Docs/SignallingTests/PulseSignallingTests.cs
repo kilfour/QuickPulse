@@ -524,4 +524,19 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 ")]
     [Fact]
     public void Signal_recap() { /* Place holder*/ }
+
+    [Doc(Order = Chapters.Signalling + "-11", Caption = "ToFile", Content =
+@"**`Signal.ToFile<T>(string? maybeFileName = null)`** is shorthand for:
+
+`Signal.Tracing<T>().SetArtery(WriteData.ToFile(string? maybeFileName = null))
+
+This allows quick logging of all values flowing through the signal to a file.")]
+    [Fact]
+    public void Signal_ToFile_sets_WriteDataToFile_artery()
+    {
+        var signal = Signal.ToFile<int>();
+        Assert.IsType<Signal<int>>(signal);
+        var artery = signal.GetArtery<WriteDataToFile>();
+        Assert.NotNull(artery);
+    }
 }
