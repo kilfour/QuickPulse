@@ -84,7 +84,7 @@ public static class Pulse
         };
 
     public static Flow<Unit> ToFlow<T>(Flow<T> flow, T value) => // T[] input maybe ?
-        state => { state.SetValue(value); flow(state); return Cask.Empty(state); };
+        state => { flow(state.SetValue(value)); return Cask.Empty(state); };
 
     public static Flow<Unit> ToFlow<T>(Flow<T> flow, IEnumerable<T> values) =>
         state =>
@@ -101,6 +101,19 @@ public static class Pulse
             {
                 state.SetValue(func());
                 flow(state);
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> ToFlowIf<T>(bool flag, Flow<T> flow, Func<IEnumerable<T>> func) =>
+        state =>
+        {
+            if (flag)
+            {
+                var values = func();
+                foreach (var item in values)
+                    flow(state.SetValue(item));
                 return Cask.Empty(state);
             }
             return Cask.Empty(state);

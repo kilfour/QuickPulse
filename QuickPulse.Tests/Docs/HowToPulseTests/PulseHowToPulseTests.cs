@@ -365,8 +365,24 @@ var flow =
         var collector = new TheCollector<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(new Box<int>(42));
-        Assert.Single(collector.TheExhibit);
-        Assert.Equal(42, collector.TheExhibit[0]);
+        Assert.Equal([42], collector.TheExhibit);
+    }
+
+    [Fact]
+    public void Pulse_to_flow_collection()
+    {
+        var subFlow =
+            from anInt in Pulse.Start<int>()
+            from _ in Pulse.Trace(anInt + 1)
+            select anInt;
+        var flow =
+            from input in Pulse.Start<List<int>>()
+            from _ in Pulse.ToFlow(subFlow, input)
+            select input;
+        var collector = new TheCollector<int>();
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.Pulse([41, 41]);
+        Assert.Equal([42, 42], collector.TheExhibit);
     }
 
     [Doc(Order = Chapters.HowToPulse + "-9", Caption = "ToFlowIf", Content =
@@ -393,15 +409,32 @@ var flow =
             from _ in Pulse.Trace(anInt)
             select anInt;
         var flow =
-            from box in Pulse.Start<Box<int>>()
-            from _ in Pulse.ToFlowIf(box.Value != 42, subFlow, () => box.Value)
-            select box;
+            from input in Pulse.Start<Box<int>>()
+            from _ in Pulse.ToFlowIf(input.Value != 42, subFlow, () => input.Value)
+            select input;
         var collector = new TheCollector<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(new Box<int>(42));
         signal.Pulse(new Box<int>(7));
         Assert.Single(collector.TheExhibit);
         Assert.Equal(7, collector.TheExhibit[0]);
+    }
+
+    [Fact]
+    public void Pulse_to_flow_if_collection()
+    {
+        var subFlow =
+            from input in Pulse.Start<int>()
+            from _ in Pulse.Trace(input + 1)
+            select input;
+        var flow =
+            from input in Pulse.Start<List<int>>()
+            from _ in Pulse.ToFlowIf(true, subFlow, () => input)
+            select input;
+        var collector = new TheCollector<int>();
+        var signal = Signal.From(flow).SetArtery(collector);
+        signal.Pulse([41, 41]);
+        Assert.Equal([42, 42], collector.TheExhibit);
     }
 
     [Fact]
