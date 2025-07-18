@@ -41,4 +41,6 @@ public class FakeFilingCabinet : IAmAFilingCabinet
     {
         return true;
     }
+
+    public string GetUniqueSuffix() => "SUFFIX";
 }

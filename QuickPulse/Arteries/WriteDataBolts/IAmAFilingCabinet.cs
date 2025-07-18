@@ -10,4 +10,5 @@ public interface IAmAFilingCabinet
     void AppendAllText(string path, string? contents);
     void WriteAllText(string path, string? contents);
     public string? FindSolutionRoot(string? startDirectory = null);
+    string GetUniqueSuffix();
 }

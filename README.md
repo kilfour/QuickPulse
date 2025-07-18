@@ -661,6 +661,13 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 ```
 
 
+## ToFile
+**`Signal.ToFile<T>(string? maybeFileName = null)`** is shorthand for:
+
+`Signal.Tracing<T>().SetArtery(WriteData.ToFile(string? maybeFileName = null))
+
+This allows quick logging of all values flowing through the signal to a file.
+
 # Flow Extensions
 Not a big fan of extensions on LINQ enabled combinators, but there *is* one which is just to useful to pass up on.
 
@@ -716,12 +723,21 @@ Signal.Tracing<string>()
     .SetArtery(new WriteDataToFile())
     .Pulse("hello", "collector");
 ```
-By default, this creates a `quick-pulse.log` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
 The file will contain:
 ```
 hello
 collector
 ```
+
+
+When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
+located at the solution root (i.e., the nearest parent directory containing a .sln file).  
+
+The filename follows this pattern:
+```bash
+/solution/.quickpulse/quick-pulse-{unique-suffix}.log
+```
+This ensures that each run generates a distinct, traceable log file without overwriting previous logs.
 
 
 You can, of course, pass in a custom filename.
@@ -757,9 +773,11 @@ Signal.Tracing<string>()
 
 
 ### Sugaring
-I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
--  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
--  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.
+These are simple aliases that make common cases easier to read:
+
+- `WriteData.ToFile(...)` = `new WriteDataToFile(...)`
+
+- `WriteData.ToNewFile(...)` = `new WriteDataToFile(...).ClearFile()`
 
 ## TheStringCatcher
 This catcher quietly captures everything that flows through it, and returns it as a single string.  

@@ -12,4 +12,5 @@ public class TheFilingCabinet : IAmAFilingCabinet
     public void WriteAllText(string path, string? contents) => File.WriteAllText(path, contents);
     public void AppendAllText(string path, string? contents) => File.AppendAllText(path, contents);
     public string? FindSolutionRoot(string? startDirectory = null) => SolutionLocator.FindSolutionRoot();
+    public string GetUniqueSuffix() => $"{DateTime.UtcNow:yyyyMMdd-HHmmss-fff}_{Path.GetRandomFileName().Replace(".", "")}";
 }

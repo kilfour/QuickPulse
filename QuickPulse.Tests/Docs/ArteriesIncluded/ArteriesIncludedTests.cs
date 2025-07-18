@@ -34,6 +34,8 @@ Assert.Equal(""collector"", collector.TheExhibit[1]);
         Assert.Equal("collector", collector.TheExhibit[1]);
     }
 
+
+    [Fact]
     [Doc(Order = Chapters.ArteriesIncluded + "-2", Caption = "WriteDataToFile", Content =
 @"This artery is included because writing trace output to a file is one of the most common use cases.
 Example:
@@ -42,14 +44,12 @@ Signal.Tracing<string>()
     .SetArtery(new WriteDataToFile())
     .Pulse(""hello"", ""collector"");
 ```
-By default, this creates a `quick-pulse.log` file in the nearest parent directory that contains a `.sln` file, typically the solution root.
 The file will contain:
 ```
 hello
 collector
 ```
 ")]
-    [Fact]
     public void WriteDataToFile_Example()
     {
         var fake = new FakeFilingCabinet();
@@ -57,7 +57,7 @@ collector
         Signal.Tracing<string>()
             .SetArtery(collector)
             .Pulse("hello", "collector");
-        var expectedPath = fake.GetFullPath("/solution/quick-pulse.log");
+        var expectedPath = fake.GetFullPath("/solution/.quickpulse/quick-pulse-SUFFIX.log");
         Assert.Collection(fake.Appends,
            item => Assert.Equal((expectedPath, "hello" + Environment.NewLine), item),
            item => Assert.Equal((expectedPath, "collector" + Environment.NewLine), item)
@@ -65,14 +65,25 @@ collector
     }
 
     [Fact]
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-1", Caption = "", Content =
+@"When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
+located at the solution root (i.e., the nearest parent directory containing a .sln file).  
+
+The filename follows this pattern:
+```bash
+/solution/.quickpulse/quick-pulse-{unique-suffix}.log
+```
+This ensures that each run generates a distinct, traceable log file without overwriting previous logs.
+")]
     public void Default_constructor_uses_quick_dash_pulse_dot_log()
     {
         var fake = new FakeFilingCabinet();
         _ = new WriteDataToFile(cabinet: fake);
-        Assert.Contains("/solution/quick-pulse.log", fake.LastCombinedPath);
+        Assert.StartsWith("/solution/.quickpulse/quick-pulse-", fake.LastCombinedPath);
+        Assert.EndsWith(".log", fake.LastCombinedPath);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-1", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-2", Caption = "", Content =
 @"You can, of course, pass in a custom filename.
 Example:
 ```csharp
@@ -92,7 +103,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Contains((expected, ""), fake.Writes);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-2", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-3", Caption = "", Content =
 @"Note that the `WriteDataToFile` constructor will throw an exception if no `.sln` file can be found.")]
     [Fact]
     public void Throws_when_solution_root_is_null()
@@ -102,7 +113,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Equal("Cannot find solution root.", ex.Message);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-3", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-4", Caption = "", Content =
 @"To avoid solution root detection altogether, use the following factory method:
 ```csharp
 Signal.Tracing<string>()
@@ -123,7 +134,7 @@ Signal.Tracing<string>()
     }
 
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-4", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-5", Caption = "", Content =
 @"`WriteDataToFile` appends all entries to the file; each pulse adds new lines to the end.
 ")]
     [Fact]
@@ -140,7 +151,7 @@ Signal.Tracing<string>()
         );
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-5", Caption = "", Content =
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-6", Caption = "", Content =
 @"The `ClearFile` method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:
 ```csharp
@@ -160,13 +171,22 @@ Signal.Tracing<string>()
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-6", Caption = "Sugaring", Content =
-@"I usually prefer bitter, but adding a bit of sweet sometimes doesn't hurt.
--  `WriteData.ToFile(...)` is the same as `new WriteDataToFile()`.
--  `WriteData.ToNewFile(...)` is the same as `new WriteDataToFile().ClearFile()`.")]
-    public void Sugaring()
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-7", Caption = "Sugaring", Content =
+@"These are simple aliases that make common cases easier to read:
+
+- `WriteData.ToFile(...)` = `new WriteDataToFile(...)`")]
+    public void ToFile()
     {
         var artery = WriteData.ToFile();
+        Assert.IsType<WriteDataToFile>(artery);
+    }
+
+    [Fact]
+    [Doc(Order = Chapters.ArteriesIncluded + "-2-7-1", Caption = "", Content =
+@"- `WriteData.ToNewFile(...)` = `new WriteDataToFile(...).ClearFile()`")]
+    public void ToNewFile()
+    {
+        var artery = WriteData.ToNewFile();
         Assert.IsType<WriteDataToFile>(artery);
     }
 

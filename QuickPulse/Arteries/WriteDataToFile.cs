@@ -12,7 +12,8 @@ public class WriteDataToFile : IArtery
     public WriteDataToFile(string? maybeFileName = null, IAmAFilingCabinet cabinet = null!)
     {
         filingCabinet = cabinet ?? new TheFilingCabinet();
-        var fileName = maybeFileName ?? "quick-pulse.log";
+        string suffix = filingCabinet.GetUniqueSuffix();
+        var fileName = maybeFileName ?? filingCabinet.Combine(".quickpulse", $"quick-pulse-{suffix}.log");
         var root = filingCabinet.FindSolutionRoot();
         if (root == null)
             ComputerSays.No("Cannot find solution root.");
