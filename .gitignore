@@ -7,4 +7,5 @@ _ReSharper.*/
 *log.txt
 /.vscode/
 temp*.md
-
+*.log
+.quickpulse
