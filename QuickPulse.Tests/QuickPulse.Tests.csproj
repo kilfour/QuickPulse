@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="QuickExplainIt" Version="0.1.0" /> -->
-    <ProjectReference Include="..\..\QuickExplainIt\QuickExplainIt\QuickExplainIt.csproj" />
+    <PackageReference Include="QuickExplainIt" Version="0.1.1" />
+    <!-- <ProjectReference Include="..\..\QuickExplainIt\QuickExplainIt\QuickExplainIt.csproj" /> -->
   </ItemGroup>
   
   <ItemGroup>
