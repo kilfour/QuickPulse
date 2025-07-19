@@ -94,6 +94,29 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
+    public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, T value) =>
+        state =>
+        {
+            var flow =
+                from i in Start<T>()
+                from _ in flowFactory(i)
+                select i;
+            flow(state.SetValue(value));
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, IEnumerable<T> values) =>
+        state =>
+        {
+            var flow =
+                from i in Start<T>()
+                from _ in flowFactory(i)
+                select i;
+            foreach (var item in values)
+                flow(state.SetValue(item));
+            return Cask.Empty(state);
+        };
+
     public static Flow<Unit> ToFlowIf<T>(bool flag, Flow<T> flow, Func<T> func) =>
         state =>
         {
@@ -112,6 +135,39 @@ public static class Pulse
             if (flag)
             {
                 var values = func();
+                foreach (var item in values)
+                    flow(state.SetValue(item));
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> ToFlowIf<T>(bool flag, Func<T, Flow<Unit>> flowFactory, Func<T> func) =>
+        state =>
+        {
+            if (flag)
+            {
+                state.SetValue(func());
+                var flow =
+                    from i in Start<T>()
+                    from _ in flowFactory(i)
+                    select i;
+                flow(state);
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> ToFlowIf<T>(bool flag, Func<T, Flow<Unit>> flowFactory, Func<IEnumerable<T>> func) =>
+        state =>
+        {
+            if (flag)
+            {
+                var values = func();
+                var flow =
+                    from i in Start<T>()
+                    from _ in flowFactory(i)
+                    select i;
                 foreach (var item in values)
                     flow(state.SetValue(item));
                 return Cask.Empty(state);
