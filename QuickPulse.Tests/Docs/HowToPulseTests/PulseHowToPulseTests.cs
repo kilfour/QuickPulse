@@ -437,6 +437,74 @@ var flow =
         Assert.Equal([42, 42], collector.TheExhibit);
     }
 
+    //     [Fact]
+    //     [Doc(Order = Chapters.HowToPulse + "-10", Caption = "Extended `ToFlow` and `ToFlowIf` Overloads", Content =
+    // @" These overloads enable more expressive flow definitions, 
+    // particularly when working with inline signal construction over values or collections.
+
+    // They are most useful inside **signal definitions**, not in static flow declarations.
+
+    // They allow you to define a short-lived, focused subflow inline, often in combination with `Signal.From(...)` over a function.
+
+    // ## `ToFlow(Func<T, Flow<Unit>>, T)`
+
+    // Applies a flow-producing function to a **single value**. Useful for wrapping a value with a small diagnostic or assertive flow.
+
+    // ```csharp
+    // public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, T value)
+    // ```
+
+    // ### Example:
+
+    // ```csharp
+    // Signal.From<string>(line =>
+    //     Pulse.ToFlow(assert => Pulse.Trace(assert), line)
+    //         .Then(Pulse.Trace(""✓ done"")))
+    //     .SetArtery(WriteData.ToFile())
+    //     .Pulse(""hello world"");
+    // ```
+
+    // ---
+
+    // ## `ToFlow(Func<T, Flow<Unit>>, IEnumerable<T>)`
+
+    // Applies a flow-producing function to **each value** in a collection.
+
+    // ```csharp
+    // public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, IEnumerable<T> values)
+    // ```
+
+    // ### Example:
+
+    // ```csharp
+    // Signal.From<string[]>(lines =>
+    //     Pulse.ToFlow(assert => Pulse.Trace(assert), lines)
+    //         .Then(Pulse.Trace(""End of content"")))
+    //     .SetArtery(WriteData.ToFile())
+    //     .Pulse(lines);
+    // ```
+
+    // This pattern is especially valuable for:
+
+    // * Logging/asserting each line
+    // * Validating sequences
+    // * Flowing structured output with a clear ending
+    // ")]
+    //     public void Pulse_Flow_Factory()
+    //     {
+    //         var dotDotDot = Pulse.Trace("...");
+    //         var flow =
+    //             from anInt in Pulse.Start<int>()
+    //             from _ in Pulse.When(anInt == 42, dotDotDot)
+    //             select anInt;
+    //         var collector = new TheCollector<string>();
+    //         Signal.From(flow).SetArtery(collector)
+    //             .Pulse(6)
+    //             .Pulse(42);
+    //         Assert.Equal(["..."], collector.TheExhibit);
+    //     }
+
+
     [Fact]
     [Doc(Order = Chapters.HowToPulse + "-10", Caption = "When", Content =
 @"
