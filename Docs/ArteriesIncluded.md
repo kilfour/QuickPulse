@@ -1,5 +1,5 @@
 # Arteries Included
-QuickPulse comes with *only* three build in arteries:
+QuickPulse comes with three built-in arteries:
 
 ## TheCollector
 This is the artery used throughout the documentation examples, and it's especially useful in testing scenarios.
@@ -74,10 +74,9 @@ Signal.Tracing<string>()
 
 ### Sugaring
 These are simple aliases that make common cases easier to read:
+- `WriteData.ToFile(...)` is shorthand for `new WriteDataToFile(...)`
 
-- `WriteData.ToFile(...)` = `new WriteDataToFile(...)`
-
-- `WriteData.ToNewFile(...)` = `new WriteDataToFile(...).ClearFile()`
+- `WriteData.ToNewFile(...)` is shorthand for `new WriteDataToFile(...).ClearFile()`
 
 ## TheStringCatcher
 This catcher quietly captures everything that flows through it, and returns it as a single string.  
@@ -99,4 +98,5 @@ Signal.From(
     .Pulse(42);
 Assert.Equal("x = 42", holden.Whispers());
 ```
+Great for assertions or string comparisons in tests.
 

@@ -394,8 +394,8 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery_throws_if_wrong_typed_retrieved()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(new WriteDataToFile()).GetArtery<TheCollector<int>>());
-        Assert.Equal("IArtery set on the current Signal is of type 'WriteDataToFile' not 'TheCollector`1'.", ex.Message);
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
+        Assert.Equal("IArtery set on the current Signal is of type 'Holden' not 'TheCollector`1'.", ex.Message);
     }
 
     [Doc(Order = Chapters.Signalling + "-8", Caption = "Manipulate", Content =

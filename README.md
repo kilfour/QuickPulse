@@ -36,6 +36,8 @@ You can explore it here:
 
 * **[Table of Contents](./Docs/TOC.md)**
 
+Or, ... see [Building a Flow](./Docs/BuildingAFlow.md) for a hands-on quickstart.
+
 ## Highlights
 
 * Composable `Flow<T>` pipelines using LINQ.
@@ -45,11 +47,20 @@ You can explore it here:
 * Scoped state and reversible manipulations.
 * Integration with file logging and string capture.
 
-## Why?
+## Why QuickPulse Exists?
 
-This started as a debugging tool for test data generators.
-It grew into a clean little DSL for writing fluent, state-aware, debuggable logic.
-Useful in testing. Delightful in exploration.
+Do you know how you sometimes leave your house, maybe to get some cigarettes, and start thinking about something?
+Your brain takes over.
+You walk straight past the shop, and the legs just keep going.
+An hour later, you look up, and you're in the next village wondering how you got there.
+
+No? Just me?
+
+Well, okay.
+
+It happens in code too, ... quite a lot.
+This library is the result of one of those walks through a dark forest.
+And yes, it did *literally* involve Trees.
 
 
 ## Installation
@@ -65,3 +76,5 @@ Or via the .NET CLI:
 ```bash
 dotnet add package QuickPulse
 ```
+
+
