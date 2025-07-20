@@ -1,8 +1,7 @@
 using QuickPulse.Explains;
-using QuickPulse;
 using QuickPulse.Arteries;
-using QuickPulse.Bolts;
-using QuickPulse.Tests.Docs;
+
+namespace QuickPulse.Tests.Docs.FlowExtensions;
 
 [Doc(Order = Chapters.FlowExtensions, Caption = "Flow Extensions", Content =
 @"Not a big fan of extensions on LINQ enabled combinators, but there *is* one which is just to useful to pass up on.")]

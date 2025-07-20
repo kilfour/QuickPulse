@@ -2,7 +2,7 @@ using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 
-namespace QuickPulse.Tests.Docs.BuildFlowTests;
+namespace QuickPulse.Tests.Docs.BuildingAFlow;
 
 
 [Doc(Order = Chapters.BuildFlow, Caption = "Building a Flow", Content =

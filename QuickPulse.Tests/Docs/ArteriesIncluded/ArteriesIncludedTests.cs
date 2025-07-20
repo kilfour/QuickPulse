@@ -1,8 +1,9 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
+using QuickPulse.Tests.Docs.BuildFlowTests;
 
-namespace QuickPulse.Tests.Docs.BuildFlowTests;
+namespace QuickPulse.Tests.Docs.ArteriesIncluded;
 
 
 [Doc(Order = Chapters.ArteriesIncluded, Caption = "Arteries Included", Content =

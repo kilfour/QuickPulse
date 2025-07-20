@@ -3,7 +3,7 @@ using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.HowToPulseTests;
+namespace QuickPulse.Tests.Docs.HowToPulse;
 
 
 [Doc(Order = Chapters.HowToPulse, Caption = "How To Pulse", Content =

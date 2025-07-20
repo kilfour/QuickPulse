@@ -1,6 +1,6 @@
 ﻿using QuickPulse.Explains;
 
-namespace QuickPulse.Tests.Docs.NoWhereTests;
+namespace QuickPulse.Tests.Docs.NoWhere;
 
 [Doc(Order = Chapters.NoWhere, Caption = "Addendum: No Where")]
 public class PulseNoWhereTests

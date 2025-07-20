@@ -1,10 +1,5 @@
-using QuickPulse.Explains;
-
-namespace QuickPulse.Tests.Docs.WhyQuickPulseExists;
-
-
-[Doc(Order = Chapters.Outro, Caption = "Why QuickPulse Exists", Content =
-@"*A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
+# Why QuickPulse Exists
+*A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
 
 A little while back I was writing a test for a method that took some JSON as input.
 I got my fuzzers out and went to work. And then... my fuzzers gave up.
@@ -44,8 +39,8 @@ that could take a generated value and help me see why things were behaving oddly
 
 Eventually, I nailed the last bug and got tree generation working fine.
 
-Then I looked at this little helper I'd written for combining stuff and thought: **""Now *that's* a nice-looking rabbit hole.""**
+Then I looked at this little helper I'd written for combining stuff and thought: **"Now *that's* a nice-looking rabbit hole."**
 
 One week and exactly nine combinators later, I had this surprisingly useful, lightweight little library.
-")]
-public class PulseOutroTests { } // placeholder
+
+

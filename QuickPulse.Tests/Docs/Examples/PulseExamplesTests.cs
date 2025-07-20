@@ -1,7 +1,6 @@
 ﻿using QuickPulse.Explains;
-using QuickPulse.Tests._Tools;
 
-namespace QuickPulse.Tests.Docs.ExamplesTests;
+namespace QuickPulse.Tests.Docs.Examples;
 
 [Doc(Order = Chapters.Examples, Caption = "Some Examples")]
 public class PulseExamplesTests
@@ -23,7 +22,7 @@ public static Signal<DiagnosticInfo> FilterOnTags(IArtery artery, params string[
         let indent = new string(' ', diagnosis.PhaseLevel * 4)
         from log in Pulse.TraceIf(needsLogging, $""{indent}{diagnosis.Tags.First()}:{diagnosis.Message}"")
         select diagnosis;
-    return Signal.From(flow); ;
+    return Signal.From(flow);
 }
 ```
 ")]

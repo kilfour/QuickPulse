@@ -2,7 +2,7 @@ using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.SignallingTests;
+namespace QuickPulse.Tests.Docs.PulsingAFlow;
 
 
 [Doc(Order = Chapters.Signalling, Caption = "Pulsing a Flow: One Signal, One State", Content =
