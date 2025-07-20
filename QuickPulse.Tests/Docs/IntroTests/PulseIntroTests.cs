@@ -1,8 +1,5 @@
-using System.Text;
 using QuickPulse.Explains;
-using QuickExplainIt.Text;
 using QuickPulse.Arteries;
-using QuickPulse.Tests._Tools;
 
 namespace QuickPulse.Tests.Docs.IntroTests;
 
