@@ -1,5 +1,5 @@
 using System.Text;
-using QuickExplainIt;
+using QuickPulse.Explains;
 using QuickExplainIt.Text;
 using QuickPulse.Arteries;
 using QuickPulse.Tests._Tools;

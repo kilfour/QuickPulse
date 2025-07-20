@@ -26,16 +26,18 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
+    public static Flow<Unit> TraceIf<T>(Func<T, bool> predicate, params object[] data) =>
+        state =>
+        {
+            if (CheckInTheBox(predicate, state))
+                state.CurrentArtery?.Flow(data);
+            return Cask.Empty(state);
+        };
+
     public static Flow<Unit> FirstOf(params (Func<bool>, Func<Flow<Unit>>)[] data) =>
         state =>
         {
-            foreach (var item in data)
-            {
-                if (item.Item1())
-                {
-                    return item.Item2()(state);
-                }
-            }
+            foreach (var item in data) if (item.Item1()) return item.Item2()(state);
             return Cask.Empty(state);
         };
 
@@ -52,14 +54,7 @@ public static class Pulse
         };
 
     public static Flow<Box<T>> Gather<T>() =>
-        state =>
-        {
-            if (!state.Memory.TryGetValue(typeof(T), out var obj))
-            {
-                ComputerSays.No($"No value of type {typeof(T).Name} found.");
-            }
-            return Cask.Some(state, (Box<T>)obj!);
-        };
+        state => Cask.Some(state, GetTheBox<T>(state));
 
     public static Flow<Unit> Scoped<TValue>(Func<TValue, TValue> enter, Flow<Unit> flow) =>
         state =>
@@ -78,17 +73,17 @@ public static class Pulse
     public static Flow<Unit> EffectIf(bool flag, Action action) =>
         state =>
         {
-            if (flag)
-                action();
+            if (flag) action();
             return Cask.Empty(state);
         };
 
-
-
-    private static Flow<T> GetFlowFromFactory<T>(Func<T, Flow<Unit>> flowFactory)
-    {
-        return from i in Start<T>() from _ in flowFactory(i) select i;
-    }
+    public static Flow<Unit> EffectIf<T>(Func<T, bool> predicate, Action action) =>
+        state =>
+        {
+            if (CheckInTheBox(predicate, state))
+                action();
+            return Cask.Empty(state);
+        };
 
     public static Flow<Unit> ToFlow<T>(Flow<T> flow, T value) =>
         state => { flow(state.SetValue(value)); return Cask.Empty(state); };
@@ -130,14 +125,13 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
-    public static Flow<Unit> ToFlowIf<T>(bool flag, Flow<T> flow, Func<IEnumerable<T>> func) =>
+    public static Flow<Unit> ToFlowIf<T, TBox>(Func<TBox, bool> predicate, Flow<T> flow, Func<T> func) =>
         state =>
         {
-            if (flag)
+            if (CheckInTheBox(predicate, state))
             {
-                var values = func();
-                foreach (var item in values)
-                    flow(state.SetValue(item));
+                state.SetValue(func());
+                flow(state);
                 return Cask.Empty(state);
             }
             return Cask.Empty(state);
@@ -151,6 +145,32 @@ public static class Pulse
                 state.SetValue(func());
                 var flow = GetFlowFromFactory(flowFactory);
                 flow(state);
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
+    public static Flow<Unit> ToFlowIf<T>(bool flag, Flow<T> flow, Func<IEnumerable<T>> func) =>
+        state =>
+        {
+            if (flag)
+            {
+                var values = func();
+                foreach (var item in values)
+                    flow(state.SetValue(item));
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };// Func<T, bool> predicate  (CheckInTheBox(predicate, state))
+
+    public static Flow<Unit> ToFlowIf<T, TBox>(Func<TBox, bool> predicate, Flow<T> flow, Func<IEnumerable<T>> func) =>
+        state =>
+        {
+            if (CheckInTheBox(predicate, state))
+            {
+                var values = func();
+                foreach (var item in values)
+                    flow(state.SetValue(item));
                 return Cask.Empty(state);
             }
             return Cask.Empty(state);
@@ -181,10 +201,42 @@ public static class Pulse
             return Cask.Empty(state);
         };
 
+    public static Flow<Unit> When<T>(Func<T, bool> predicate, Flow<Unit> flow) =>
+        state =>
+        {
+            if (CheckInTheBox(predicate, state))
+            {
+                flow(state);
+                return Cask.Empty(state);
+            }
+            return Cask.Empty(state);
+        };
+
     public static Flow<Unit> NoOp() => Cask.Empty;
 
     public static Flow<TResult> Then<TSource, TResult>(this Flow<TSource> flow, Flow<TResult> next)
     {
         return flow.SelectMany(_ => next);
+    }
+
+    // --------------------------------------------------------------
+    // Helpers
+    private static Flow<T> GetFlowFromFactory<T>(Func<T, Flow<Unit>> flowFactory)
+    {
+        return from i in Start<T>() from _ in flowFactory(i) select i;
+    }
+
+    private static Box<T> GetTheBox<T>(State state)
+    {
+        if (!state.Memory.TryGetValue(typeof(T), out var obj))
+        {
+            ComputerSays.No($"No value of type {typeof(T).Name} found.");
+        }
+        return (Box<T>)obj!;
+    }
+
+    private static bool CheckInTheBox<T>(Func<T, bool> predicate, State state)
+    {
+        return predicate(GetTheBox<T>(state).Value);
     }
 }

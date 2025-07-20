@@ -1,4 +1,4 @@
-using QuickExplainIt;
+using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 

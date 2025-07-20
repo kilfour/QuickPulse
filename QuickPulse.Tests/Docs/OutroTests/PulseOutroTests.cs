@@ -1,4 +1,4 @@
-using QuickExplainIt;
+using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.IntroTests;
 

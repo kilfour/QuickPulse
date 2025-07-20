@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="QuickExplainIt" Version="0.1.1" />
-    <!-- <ProjectReference Include="..\..\QuickExplainIt\QuickExplainIt\QuickExplainIt.csproj" /> -->
+    <PackageReference Include="QuickPulse.Explains" Version="0.1.0" />
   </ItemGroup>
   
   <ItemGroup>
