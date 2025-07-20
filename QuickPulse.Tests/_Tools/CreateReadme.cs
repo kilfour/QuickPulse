@@ -23,11 +23,11 @@ public class CreateReadme
             new ("./Docs/ToC.md", ["QuickPulse.Tests._Tools"]),
 
             new ("./Docs/Introduction.md", ["QuickPulse.Tests.Docs.Introduction"]),
-            new ("./Docs/BuildingAFlow.md", ["QuickPulse.Tests.Docs.BuildingAFlow"]),
+            new ("./Docs/BuildingAFlow.md", ["QuickPulse.Tests.Docs.BuildingAFlow"]), // Check
             new ("./Docs/HowToPulse.md", ["QuickPulse.Tests.Docs.HowToPulse"]),
             new ("./Docs/PulsingAFlow.md", ["QuickPulse.Tests.Docs.PulsingAFlow"]),
             new ("./Docs/FlowExtensions.md", ["QuickPulse.Tests.Docs.FlowExtensions"]),
-            new ("./Docs/ArteriesIncluded.md", ["QuickPulse.Tests.Docs.ArteriesIncluded"]),
+            new ("./Docs/ArteriesIncluded.md", ["QuickPulse.Tests.Docs.ArteriesIncluded"]), // Chec
             new ("./Docs/Examples.md", ["QuickPulse.Tests.Docs.Examples"]),
             new ("./Docs/WhyQuickPulseExists.md", ["QuickPulse.Tests.Docs.WhyQuickPulseExists"]),
             new ("./Docs/NoWhere.md", ["QuickPulse.Tests.Docs.NoWhere"]),

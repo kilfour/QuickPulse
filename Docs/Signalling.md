@@ -244,43 +244,6 @@ Like setting a trap, stepping into it, and then dismantling it.
 Make sure you spring it though.
 
 
-## Recap
-State manipulation occurs before flow evaluation. Scoped reverses it afterward.
-```
-                     +-----------------------------+
-Input via            |     Signal<T> instance      |
-Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
-                     +-------------┬---------------+
-                                   │
-                      .------------+-------------.
-                     /                          \
-          Scoped / Manipulate                Normal Flow
-        (adjust state before)               (start as-is)
-                     \                          /
-                      '------------┬-----------'
-                                   ▼
-                      +------------------------+
-                      |    Flow<T> via LINQ    |
-                      | (Start → Gather → ...) |
-                      +------------------------+
-                                   │
-                  +----------------+----------------+
-                  |                |                |
-                  ▼                ▼                ▼
-            +----------+     +-----------+     +-----------+
-            | Gather() |     | Trace()   |     | ToFlow()  |
-            | (state)  |     | (emit)    |     | (subflow) |
-            +----------+     +-----------+     +-----------+
-                                   │
-                                   ▼
-                        +------------------+
-                        | Artery (optional) |
-                        | Receives traces   |
-                        +------------------+
-
-```
-
-
 ## ToFile
 **`Signal.ToFile<T>(string? maybeFileName = null)`** is shorthand for:
 

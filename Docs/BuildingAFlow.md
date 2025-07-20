@@ -89,31 +89,3 @@ public void Adding_an_artery()
 
 
 
-## The Life and Times of a Single Pulse
-```                   
-                     +-----------------------------+
-Input via            |     Signal<T> instance      |
-Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
-                     +-------------┬---------------+
-                                   │
-                                   ▼
-                      +------------------------+
-                      |    Flow<T> via LINQ    |
-                      | (Start → Gather → ...) |
-                      +------------------------+
-                                   │
-                  +----------------+----------------+
-                  |                |                |
-                  ▼                ▼                ▼
-            +----------+     +-----------+     +-----------+
-            | Gather() |     | Trace()   |     | ToFlow()  |
-            | (state)  |     | (emit)    |     | (subflow) |
-            +----------+     +-----------+     +-----------+
-                                   │
-                                   ▼
-                        +------------------+
-                        | Artery (optional) |
-                        | Receives traces   |
-                        +------------------+
-```
-

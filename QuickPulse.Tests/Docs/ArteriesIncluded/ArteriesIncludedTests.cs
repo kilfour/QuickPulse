@@ -7,7 +7,7 @@ namespace QuickPulse.Tests.Docs.ArteriesIncluded;
 
 
 [Doc(Order = Chapters.ArteriesIncluded, Caption = "Arteries Included", Content =
-@"QuickPulse comes with *only* three build in arteries:")]
+@"QuickPulse comes with three built-in arteries:")]
 public class ArteriesIncludedTests
 {
 
@@ -174,8 +174,7 @@ Signal.Tracing<string>()
     [Fact]
     [Doc(Order = Chapters.ArteriesIncluded + "-2-7", Caption = "Sugaring", Content =
 @"These are simple aliases that make common cases easier to read:
-
-- `WriteData.ToFile(...)` = `new WriteDataToFile(...)`")]
+- `WriteData.ToFile(...)` is shorthand for `new WriteDataToFile(...)`")]
     public void ToFile()
     {
         var artery = WriteData.ToFile();
@@ -184,7 +183,7 @@ Signal.Tracing<string>()
 
     [Fact]
     [Doc(Order = Chapters.ArteriesIncluded + "-2-7-1", Caption = "", Content =
-@"- `WriteData.ToNewFile(...)` = `new WriteDataToFile(...).ClearFile()`")]
+@"- `WriteData.ToNewFile(...)` is shorthand for `new WriteDataToFile(...).ClearFile()`")]
     public void ToNewFile()
     {
         var artery = WriteData.ToNewFile();
@@ -218,7 +217,8 @@ Signal.From(
     .SetArtery(holden)
     .Pulse(42);
 Assert.Equal(""x = 42"", holden.Whispers());
-```")]
+```
+Great for assertions or string comparisons in tests.")]
     public void TheStringCatcher_Whispers()
     {
         var holden = TheString.Catcher();
