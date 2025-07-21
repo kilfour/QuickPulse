@@ -1,5 +1,4 @@
 using QuickPulse.Bolts;
-using QuickPulse.Instruments;
 
 namespace QuickPulse;
 
