@@ -34,7 +34,7 @@ QuickPulse is fully documented, with real, executable examples for each combinat
 
 You can explore it here:
 
-* **[Table of Contents](./Docs/TOC.md)**
+* **[Table of Contents](./Docs/ToC.md)**
 
 Or, ... see [A Quick Pulse](./Docs/AQuickPulse.md) for a hands-on quickstart.
 

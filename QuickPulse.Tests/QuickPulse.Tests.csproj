@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QuickPulse\QuickPulse.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
@@ -25,9 +29,5 @@
   <!-- <ItemGroup>
     <ProjectReference Include="..\..\QuickPulse.Explains\QuickPulse.Explains\QuickPulse.Explains.csproj" />
   </ItemGroup> -->
-
-  <ItemGroup>
-    <ProjectReference Include="..\QuickPulse\QuickPulse.csproj" />
-  </ItemGroup>
 
 </Project>
