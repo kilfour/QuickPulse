@@ -14,7 +14,7 @@ public class MakeItFlowFirstOfTests
 ```csharp
 var flow =
     from input in Pulse.Start<int>()
-    from _ in Pulse.TraceFirstOf(
+    from _ in Pulse.FirstOf(
         (() => input == 42, () => Pulse.Trace(""answer"")),
         (() => input == 666, () => Pulse.Trace(""beëlzebub"")),
         (() => input == 42 || input == 666, () => Pulse.Trace(""never"")))
