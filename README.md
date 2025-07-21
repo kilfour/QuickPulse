@@ -36,7 +36,7 @@ You can explore it here:
 
 * **[Table of Contents](./Docs/TOC.md)**
 
-Or, ... see [Building a Flow](./Docs/BuildingAFlow.md) for a hands-on quickstart.
+Or, ... see [A Quick Pulse](./Docs/AQuickPulse.md) for a hands-on quickstart.
 
 ## Highlights
 

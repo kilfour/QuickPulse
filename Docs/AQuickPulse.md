@@ -1,4 +1,4 @@
-# A Quick Look
+# A Quick Pulse
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.
 ## The Minimal Flow
 

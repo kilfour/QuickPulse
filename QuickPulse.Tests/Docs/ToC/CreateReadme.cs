@@ -1,7 +1,6 @@
-using System.Reflection;
 using QuickPulse.Explains;
 
-namespace QuickPulse.Tests.Docs;
+namespace QuickPulse.Tests.Docs.ToC;
 
 public class CreateReadme
 {
@@ -22,7 +21,7 @@ public class CreateReadme
         new Document().ToFiles([
             new ("README.md", ["QuickPulse.Tests.Docs.Introduction"]), // Check
 
-            new ("./Docs/ToC.md", ["QuickPulse.Tests.Docs"]),
+            new ("./Docs/ToC.md", ["QuickPulse.Tests.Docs.ToC"]),
 
             new ("./Docs/AQuickPulse.md", ["QuickPulse.Tests.Docs.AQuickPulse"]), // Check       
 

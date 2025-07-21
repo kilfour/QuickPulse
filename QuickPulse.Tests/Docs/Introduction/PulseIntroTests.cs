@@ -42,7 +42,7 @@ You can explore it here:
 
 * **[Table of Contents](./Docs/TOC.md)**
 
-Or, ... see [Building a Flow](./Docs/BuildingAFlow.md) for a hands-on quickstart.
+Or, ... see [A Quick Pulse](./Docs/AQuickPulse.md) for a hands-on quickstart.
 
 ## Highlights
 
@@ -96,7 +96,7 @@ public class PulseIntroTests
                     from _1 in Pulse.TraceIf(isFirst.Value, () => capitalized)
                     from _2 in Pulse.TraceIf(!isFirst.Value, () => $" {input}")
                     from _3 in Pulse.TraceIf(evenLength, () => ", a looking glass")
-                    from _ in Pulse.Effect(() => isFirst.Value = false)
+                    from _ in Pulse.Manipulate<bool>(a => false)
                     select input)
                 .SetArtery(TheString.Catcher())
                 .Pulse("a deep dark forest")

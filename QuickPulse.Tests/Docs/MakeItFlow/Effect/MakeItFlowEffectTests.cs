@@ -1,7 +1,7 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 
-namespace QuickPulse.Tests.Docs.MakeItFlow;
+namespace QuickPulse.Tests.Docs.MakeItFlow.Effect;
 
 
 public class MakeItFlowEffectTests
