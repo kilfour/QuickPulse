@@ -1,4 +1,4 @@
-# How To Pulse
+# Number One, Make it Flow
 **Cheat Sheet:**
 
 | Combinator            | Role / Purpose                                                                |

@@ -2,12 +2,12 @@ using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 
-namespace QuickPulse.Tests.Docs.BuildingAFlow;
+namespace QuickPulse.Tests.Docs.AQuickLook;
 
 
-[Doc(Order = Chapters.BuildFlow, Caption = "Building a Flow", Content =
+[Doc(Order = Chapters.BuildFlow, Caption = "A Quick Look", Content =
 @"To explain how QuickPulse works (not least to myself), let's build up a flow step by step.")]
-public class PulseBuildFlowTests
+public class AQuickLookTests
 {
     [Doc(Order = Chapters.BuildFlow + "-1", Caption = "The Minimal Flow", Content =
 @"

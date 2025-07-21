@@ -2,7 +2,7 @@ using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.PulsingAFlow;
+namespace QuickPulse.Tests.Docs.OneSignalOneState;
 
 
 [Doc(Order = Chapters.Signalling, Caption = "Pulsing a Flow: One Signal, One State", Content =
@@ -31,7 +31,7 @@ In short: **one signal, one evolving state**.
 
 This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
 ")]
-public class PulseSignallingTests
+public class OneSignalOneStateTests
 {
     [Doc(Order = Chapters.Signalling + "-1", Caption = "From", Content =
 @"
@@ -485,45 +485,6 @@ Make sure you spring it though.
         Assert.Equal("42 : 1", collector.TheExhibit[1]);
         Assert.Equal("42 : 0", collector.TheExhibit[2]);
     }
-
-    [Doc(Order = Chapters.Signalling + "-10", Caption = "Recap", Content =
-@"State manipulation occurs before flow evaluation. Scoped reverses it afterward.
-```
-                     +-----------------------------+
-Input via            |     Signal<T> instance      |
-Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
-                     +-------------┬---------------+
-                                   │
-                      .------------+-------------.
-                     /                          \
-          Scoped / Manipulate                Normal Flow
-        (adjust state before)               (start as-is)
-                     \                          /
-                      '------------┬-----------'
-                                   ▼
-                      +------------------------+
-                      |    Flow<T> via LINQ    |
-                      | (Start → Gather → ...) |
-                      +------------------------+
-                                   │
-                  +----------------+----------------+
-                  |                |                |
-                  ▼                ▼                ▼
-            +----------+     +-----------+     +-----------+
-            | Gather() |     | Trace()   |     | ToFlow()  |
-            | (state)  |     | (emit)    |     | (subflow) |
-            +----------+     +-----------+     +-----------+
-                                   │
-                                   ▼
-                        +------------------+
-                        | Artery (optional) |
-                        | Receives traces   |
-                        +------------------+
-
-```
-")]
-    [Fact]
-    public void Signal_recap() { /* Place holder*/ }
 
     [Doc(Order = Chapters.Signalling + "-11", Caption = "ToFile", Content =
 @"**`Signal.ToFile<T>(string? maybeFileName = null)`** is shorthand for:

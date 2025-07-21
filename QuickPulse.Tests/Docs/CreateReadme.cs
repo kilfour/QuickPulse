@@ -1,15 +1,15 @@
 using QuickPulse.Explains;
 
-namespace QuickPulse.Tests._Tools;
+namespace QuickPulse.Tests.Docs;
 
 public class CreateReadme
 {
     [Fact]
     [Doc(Order = "0", Caption = "QuickPulse Documentation", Content =
 @"
-- [Building a Flow](BuildingAFlow.md)
-- [How to Pulse](HowToPulse.md)
-- [Pulsing A Flow](PulsingAFlow.md)
+- [A Quick Look](AQuickLook.md)
+- [Number One, Make it Flow](NumberOneMakeItFlow.md)
+- [One Signal, One State](OneSignalOneState.md)
 - [Flow Extensions](FlowExtensions.md)
 - [Arteries Included](ArteriesIncluded.md)
 - [Examples](Examples.md)
@@ -20,11 +20,11 @@ public class CreateReadme
         new Document().ToFiles([
             new ("README.md", ["QuickPulse.Tests.Docs.Introduction"]), // Check
 
-            new ("./Docs/ToC.md", ["QuickPulse.Tests._Tools"]),
+            new ("./Docs/ToC.md", ["QuickPulse.Tests.Docs"]),
 
-            new ("./Docs/BuildingAFlow.md", ["QuickPulse.Tests.Docs.BuildingAFlow"]), // Check
-            new ("./Docs/HowToPulse.md", ["QuickPulse.Tests.Docs.HowToPulse"]),
-            new ("./Docs/PulsingAFlow.md", ["QuickPulse.Tests.Docs.PulsingAFlow"]),
+            new ("./Docs/AQuickLook.md", ["QuickPulse.Tests.Docs.AQuickLook"]), // Check
+            new ("./Docs/NumberOneMakeItFlow.md", ["QuickPulse.Tests.Docs.NumberOneMakeItFlow"]),
+            new ("./Docs/OneSignalOneState.md", ["QuickPulse.Tests.Docs.OneSignalOneState"]),
             new ("./Docs/FlowExtensions.md", ["QuickPulse.Tests.Docs.FlowExtensions"]),
             new ("./Docs/ArteriesIncluded.md", ["QuickPulse.Tests.Docs.ArteriesIncluded"]), // Check
             new ("./Docs/Examples.md", ["QuickPulse.Tests.Docs.Examples"]),

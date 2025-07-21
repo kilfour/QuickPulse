@@ -3,10 +3,10 @@ using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.HowToPulse;
+namespace QuickPulse.Tests.Docs.NumberOneMakeItFlow;
 
 
-[Doc(Order = Chapters.HowToPulse, Caption = "How To Pulse", Content =
+[Doc(Order = Chapters.HowToPulse, Caption = "Number One, Make it Flow", Content =
 @"**Cheat Sheet:**
 
 | Combinator            | Role / Purpose                                                                |
@@ -25,7 +25,7 @@ namespace QuickPulse.Tests.Docs.HowToPulse;
 | **When(...)**         | Executes the given flow only if the condition is true, without input.         |
 | **NoOp()**            | Applies a do-nothing operation (for conditional branches or comments).        |
 ")]
-public class PulseHowToPulseTests
+public class MakeItFlowTests
 {
     [Doc(Order = Chapters.HowToPulse + "-1", Caption = "Start", Content =
 @"
