@@ -1,6 +1,5 @@
 # Flow Extensions
 Not a big fan of extensions on LINQ enabled combinators, but there *is* one which is just to useful to pass up on.
-
 ## Then
 **`.Then(...)`** is just syntactic sugar for `.SelectMany(...)`.
 
@@ -26,5 +25,4 @@ Now with `.Then(...)` you can do:
 ```csharp
 var threeDotsAndSpace = dot.Then(dot).Then(dot).Then(space);
 ```
-
 

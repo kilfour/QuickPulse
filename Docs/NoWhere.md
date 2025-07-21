@@ -14,7 +14,6 @@ let y = x.SomeProperty // NRE: still evaluated even if x is null!
 
 The `let` runs *before* the `where`, causing runtime exceptions — even though it looks safe.
 
-
 ## Instead of `where`, use:
 
 * `Pulse.TraceIf(...)`
@@ -31,7 +30,6 @@ from _ in diag.Tags.Contains("Phase")
     : Pulse.NoOp()
 ```
 
-
 ## And This Matters Because ... ?
 
 Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidental crashes in:
@@ -41,5 +39,4 @@ Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidenta
 * Custom combinators and trace sequences
 
 It's a minor trade-off in exchange for greater composability and correctness.
-
 

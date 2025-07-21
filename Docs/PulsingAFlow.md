@@ -24,7 +24,6 @@ In short: **one signal, one evolving state**.
 
 This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
 
-
 ## From
 
 **`Signal.From(...)`** is a simple factory method used to get hold of a `Signal<T>` instance
@@ -37,7 +36,6 @@ from anInt in Pulse.Start<int>()
 select anInt;
 var signal = Signal.From(flow);
 ```
-
 
 ## Tracing
 
@@ -55,7 +53,6 @@ Signal.Tracing<string>();
 ```
 Useful if you want to just quickly grab a tracer.
 
-
 ## Pulse
 **`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
@@ -69,7 +66,6 @@ signal.Pulse(42);
 ```
 This sends the int `42` into the flow.
 
-
 The argument of this method is actually `params T[] input`, so you can send multiple values in, in one call.
 
 **Example:**
@@ -77,7 +73,6 @@ The argument of this method is actually `params T[] input`, so you can send mult
 signal.Pulse(42, 43, 44);
 ```
 This will execute the flow three times, once for each value passed in.
-
 
 For ease of use, when dealing with `IEnumerable` return values from various sources,
 an overload exists: `Pulse(IEnumerable<T> inputs)`. 
@@ -87,7 +82,6 @@ an overload exists: `Pulse(IEnumerable<T> inputs)`.
 signal.Pulse(new List<int> { 42, 43, 44 });
 ```
 This behaves exactly like the previous example.
-
 
 ## Pulse Multiple
 **`Signal.PulseMultiple(...)`** is a helper method that sugars a `for(int i = ...)` type structure.
@@ -106,7 +100,6 @@ signal.PulseMultiple(3, 39);
 ```
 Trace output: `40, 41, 42`.
 
-
 ## Pulse Until
 **`Signal.PulseUntil(...)`** is a helper method that sugars a `while(...)` type structure.
 
@@ -124,9 +117,7 @@ signal.PulseUntil(() => collector.TheExhibit.Contains(42), 39);
 ```
 Trace output: `40, 41, 42`.
 
-
 **Warning:** Make sure you stop pulsing. `Signal.PulseUntil(...)` throws an exception if you try to pulse over 256 times.
-
 
 ## Pulse Multiple Until
 **`Signal.PulseMultipleUntil(...)`** is a combination of the previous two methods.
@@ -146,7 +137,6 @@ signal.PulseMultipleUntil(3, () => false, 40);
 ```
 Trace output: `40, 41, 42`.
 
-
 But if the condition supplied is satisfied it will stop pulsing early.  
 
 **Example:**
@@ -163,20 +153,17 @@ signal.PulseMultipleUntil(3, () => false, 40);
 ```
 Trace output: `40, 41, 42`.
 
-
 ## Set Artery
 **`Signal.SetArtery(...)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
 
 A full example of this can be found at the end of the 'Building a Flow' chapter.
 
-
 ## Set And Return Artery
 **`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
 var collector = signal.SetAndReturnArtery(new TheCollector<int>());
 ```
-
 
 ## Get Artery
 **`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
@@ -189,12 +176,9 @@ Assert.Single(collector.TheExhibit);
 Assert.Equal(42, collector.TheExhibit[0]);
 ```
 
-
 **`Signal.GetArtery<TArtery>(...)`** throws if no `IArtery` is currently set on the `Signal`.
 
-
 **`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
-
 
 ## Manipulate
 **`Signal.Manipulate(...)`** is used in conjunction with `Pulse.Gather(...)`,
@@ -219,7 +203,6 @@ produces `42 : 1`.
 **Warning:** `Manipulate` mutates state between pulses. Sharp tool, like a scalpel.
 Don't cut yourself.
 
-
 ## Scoped
 **`Signal.Scoped(...)`** is sugaring for 'scoped' usage of the `Manipulate` method.
 
@@ -242,7 +225,6 @@ And the trace values will be:
 **Warning:** `Scoped` Temporarily alters state.  
 Like setting a trap, stepping into it, and then dismantling it.  
 Make sure you spring it though.
-
 
 ## Recap
 State manipulation occurs before flow evaluation. Scoped reverses it afterward.
@@ -280,11 +262,9 @@ Signal.Pulse(x) ---> |  (wraps Flow<T> + state)    |
 
 ```
 
-
 ## ToFile
 **`Signal.ToFile<T>(string? maybeFileName = null)`** is shorthand for:
 
 `Signal.Tracing<T>().SetArtery(WriteData.ToFile(string? maybeFileName = null))
 
 This allows quick logging of all values flowing through the signal to a file.
-

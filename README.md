@@ -14,9 +14,9 @@ Signal.From(
         from isFirst in Pulse.Gather(true)
         let capitalized = char.ToUpper(input[0]) + input[1..]
         let evenLength = input.Length % 2 == 0
-        from _1 in Pulse.TraceIf(isFirst.Value, capitalized)
-        from _2 in Pulse.TraceIf(!isFirst.Value, $" {input}")
-        from _3 in Pulse.TraceIf(evenLength, ", a looking glass")
+        from _1 in Pulse.TraceIf(isFirst.Value, () => capitalized)
+        from _2 in Pulse.TraceIf(!isFirst.Value, () => $" {input}")
+        from _3 in Pulse.TraceIf(evenLength, () => ", a looking glass")
         from _ in Pulse.Effect(() => isFirst.Value = false)
         select input)
     .SetArtery(TheString.Catcher())
@@ -76,5 +76,4 @@ Or via the .NET CLI:
 ```bash
 dotnet add package QuickPulse
 ```
-
 

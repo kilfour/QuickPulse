@@ -18,10 +18,14 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <PackageReference Include="QuickPulse.Explains" Version="0.1.0" />
-  </ItemGroup>
+  </ItemGroup> -->
   
+  <ItemGroup>
+    <ProjectReference Include="..\..\QuickPulse.Explains\QuickPulse.Explains\QuickPulse.Explains.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\QuickPulse\QuickPulse.csproj" />
   </ItemGroup>

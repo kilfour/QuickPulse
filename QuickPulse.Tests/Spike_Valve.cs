@@ -10,7 +10,7 @@ public class Spike_Valve
         var flow =
             from input in Pulse.Start<string>()
             from valve in Pulse.Gather(Valve.Install())
-            from _ in Pulse.TraceIf(valve.Value.Passable(), "Look ")
+            from _ in Pulse.TraceIf(valve.Value.Passable(), () => "Look ")
             from __ in Pulse.Trace(input)
             select input;
         var holden = TheString.Catcher();
@@ -26,7 +26,7 @@ public class Spike_Valve
         var flow =
             from input in Pulse.Start<string>()
             from valve in Pulse.Gather(Valve.Install())
-            from _ in Pulse.TraceIf(valve.Value.Restricted(), ", ")
+            from _ in Pulse.TraceIf(valve.Value.Restricted(), () => ", ")
             from __ in Pulse.Trace(input)
             select input;
         var holden = TheString.Catcher();
@@ -42,7 +42,7 @@ public class Spike_Valve
         var flow =
             from input in Pulse.Start<string>()
             from valve in Pulse.Gather(Valve.Install())
-            from _ in Pulse.TraceIf(valve.Value.Restricted(), ", ")
+            from _ in Pulse.TraceIf(valve.Value.Restricted(), () => ", ")
             from __ in Pulse.EffectIf(input == "open", valve.Value.Open)
             from ___ in Pulse.Trace(input)
             select input;
@@ -59,13 +59,13 @@ public class Spike_Valve
         var innerFlow1 =
             from input in Pulse.Start<string>()
             from valve in Pulse.Gather<Valve>()
-            from _1 in Pulse.TraceIf(valve.Value.Restricted(), "-")
+            from _1 in Pulse.TraceIf(valve.Value.Restricted(), () => "-")
             from _2 in Pulse.Trace(input)
             select input;
         var innerFlow2 =
             from input in Pulse.Start<string>()
             from valve in Pulse.Gather<Valve>()
-            from _1 in Pulse.TraceIf(valve.Value.Restricted(), ", ")
+            from _1 in Pulse.TraceIf(valve.Value.Restricted(), () => ", ")
             from _2 in Pulse.Trace(input)
             select input;
         var flow =

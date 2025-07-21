@@ -25,7 +25,7 @@ public class Spike_Gather_Access_In_Conditionals
         var flow =
             from input in Pulse.Start<int>()
             from _ in Pulse.Gather(Valve.Install())
-            from conditional in Pulse.TraceIf<Valve>(a => a.Restricted(), $"{input} ")
+            from conditional in Pulse.TraceIf<Valve>(a => a.Restricted(), () => $"{input} ")
             select input;
         var holden = TheString.Catcher();
         Signal.From(flow)

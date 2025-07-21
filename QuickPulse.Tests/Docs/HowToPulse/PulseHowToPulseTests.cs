@@ -113,7 +113,7 @@ select anInt;
 **Example:**
 ```csharp
 from anInt in Pulse.Start<int>()
-from _ in Pulse.TraceIf(anInt != 42, anInt) // <=
+from _ in Pulse.TraceIf(anInt != 42, () => anInt) // <=
 select anInt;
 ```
 ")]
@@ -123,7 +123,7 @@ select anInt;
         var collector = new TheCollector<int>();
         var flow =
             from anInt in Pulse.Start<int>()
-            from _ in Pulse.TraceIf(anInt != 42, anInt)
+            from _ in Pulse.TraceIf(anInt != 42, () => anInt)
             select anInt;
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(42);
@@ -324,7 +324,7 @@ select anInt;
             from anInt in Pulse.Start<int>()
             from seen42 in Pulse.Gather(false)
             from eff in Pulse.EffectIf(anInt == 42, () => seen42.Value = true)
-            from _ in Pulse.TraceIf(seen42.Value, anInt)
+            from _ in Pulse.TraceIf(seen42.Value, () => anInt)
             select anInt;
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(40);
