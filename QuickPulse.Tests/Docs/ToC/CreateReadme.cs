@@ -17,7 +17,7 @@ public class CreateReadme
 ")]
     public void FromDocAttributes()
     {
-        new Document().ToFile("TempQuickPulseDoc.md", typeof(CreateReadme).Assembly);
+        // new Document().ToFile("TempQuickPulseDoc.md", typeof(CreateReadme).Assembly);
         new Document().ToFiles([
             new ("README.md", ["QuickPulse.Tests.Docs.Introduction"]), // Check
 
