@@ -6,32 +6,16 @@ namespace QuickPulse;
 
 public static class Signal
 {
-    public static Signal<T> From<T>(Flow<T> flow)
-    {
-        return new Signal<T>(flow);
-    }
+    public static Signal<T> From<T>(Flow<T> flow) => new(flow);
 
-    public static Signal<T> From<T>(Func<T, Flow<Unit>> flowFactory)
-    {
-        return new Signal<T>(
-            from i in Pulse.Start<T>()
-            from _ in flowFactory(i)
-            select i);
-    }
+    public static Signal<T> From<T>(Func<T, Flow<Unit>> flowFactory) =>
+        new(Pulse.GetFlowFromFactory(flowFactory));
 
-    public static Signal<T> Tracing<T>()
-    {
-        var flow =
-            from start in Pulse.Start<T>()
-            from _ in Pulse.Trace(start)
-            select start;
-        return new Signal<T>(flow);
-    }
+    public static Signal<T> Tracing<T>() =>
+        new(Pulse.GetFlowFromFactory<T>(a => Pulse.Trace(a!)));
 
-    public static Signal<T> ToFile<T>(string? maybeFileName = null)
-    {
-        return Tracing<T>().SetArtery(WriteData.ToFile(maybeFileName));
-    }
+    public static Signal<T> ToFile<T>(string? maybeFileName = null) =>
+        Tracing<T>().SetArtery(WriteData.ToFile(maybeFileName));
 }
 
 public class Signal<T>
@@ -39,11 +23,9 @@ public class Signal<T>
     private readonly State state;
     private readonly Flow<T> flow;
 
-    public Signal(Flow<T> flow)
-    {
-        state = new State();
-        this.flow = flow;
-    }
+    public Signal(Flow<T> flow) { state = new State(); this.flow = flow; }
+
+    public Signal<T> ChainIt(Action action) => Chain.It(action, this);
 
     public TArtery GetArtery<TArtery>() where TArtery : class, IArtery
     {
@@ -54,17 +36,10 @@ public class Signal<T>
         return typedArtery!;
     }
 
-    public Signal<T> SetArtery(IArtery artery)
-    {
-        state.SetArtery(artery);
-        return this;
-    }
+    public Signal<T> SetArtery(IArtery artery) => ChainIt(() => state.SetArtery(artery));
 
-    public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery
-    {
-        state.SetArtery(artery);
-        return artery;
-    }
+    public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery =>
+        Chain.It(() => state.SetArtery(artery), artery);
 
     public Signal<T> Pulse(params T[] input)
     {
@@ -73,27 +48,15 @@ public class Signal<T>
             flow(state.SetValue<T>(default!));
             return this;
         }
-        if (!input.Any())
-            return this;
         Pulse((IEnumerable<T>)input);
         return this;
     }
 
-    public Signal<T> Pulse(IEnumerable<T> inputs)
-    {
-        foreach (var item in inputs)
-            flow(state.SetValue(item));// <= Re-invokes the entire flow
-        return this;
-    }
+    public Signal<T> Pulse(IEnumerable<T> inputs) =>
+        ChainIt(() => { foreach (var item in inputs) flow(state.SetValue(item)); });
 
-    public Signal<T> PulseMultiple(int times, T input)
-    {
-        for (int i = 0; i < times; i++)
-        {
-            Pulse(input);
-        }
-        return this;
-    }
+    public Signal<T> PulseMultiple(int times, T input) =>
+        ChainIt(() => { for (int i = 0; i < times; i++) { Pulse(input); } });
 
     public Signal<T> PulseUntil(Func<bool> shouldStop, T input)
     {
@@ -101,37 +64,18 @@ public class Signal<T>
         while (!shouldStop())
         {
             Pulse(input);
-            if (times >= 255)
-                ComputerSays.No("You can only pulse a max of 256 times, using Pulse.Until");
-            times++;
+            if (times++ >= 255) ComputerSays.No("You can only pulse a max of 256 times, using Pulse.Until");
         }
         return this;
     }
+
     public Signal<T> PulseMultipleUntil(int times, Func<bool> shouldStop, T input)
     {
         for (int i = 0; i < times; i++)
         {
-            if (shouldStop())
-                break;
+            if (shouldStop()) break;
             Pulse(input);
         }
         return this;
-    }
-
-    public Signal<T> Manipulate<TValue>(Func<TValue, TValue> update)
-        where TValue : notnull, new()
-    {
-        var existing = (Box<TValue>)state.Memory[typeof(TValue)]!;
-        var updated = update(existing.Value);
-        existing.Value = updated;
-        return this;
-    }
-
-    public IDisposable Scoped<TValue>(Func<TValue, TValue> enter, Func<TValue, TValue> exit)
-        where TValue : notnull, new()
-    {
-        var existing = (Box<TValue>)state.Memory[typeof(TValue)]!;
-        existing.Value = enter(existing.Value);
-        return new DisposableAction(() => { existing.Value = exit(existing.Value); });
     }
 }

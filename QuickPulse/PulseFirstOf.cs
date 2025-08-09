@@ -4,7 +4,6 @@ namespace QuickPulse;
 
 public static partial class Pulse
 {
-
     public static Flow<Unit> FirstOf(params (Func<bool>, Func<Flow<Unit>>)[] data) =>
         state =>
         {

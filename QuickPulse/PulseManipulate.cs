@@ -4,14 +4,18 @@ namespace QuickPulse;
 
 public static partial class Pulse
 {
-    public static Flow<T> Manipulate<T>(Func<T, T> manipulate) =>
-        state =>
+    private static Action<State, T> SetTheBox<T>() => (s, v) => s.GetTheBox<T>().Value = v;
+    private static Func<State, IEnumerable<T>> ManipulatedValue<T>(Func<T, T> manipulate) =>
+        s =>
         {
-            var box = GetTheBox<T>(state);
-            box.Value = manipulate(box.Value);
-            return Cask.Some(state, box.Value);
+            var box = s.GetTheBox<T>();
+            var next = manipulate(box.Value);
+            return new[] { next };
         };
-
+    public static Flow<T> Manipulate<T>(Func<T, T> manipulate) =>
+        Fyke(Always, ManipulatedValue(manipulate), SetTheBox<T>());
     public static Flow<T> ManipulateIf<T>(bool flag, Func<T, T> manipulate) =>
-        state => flag ? Manipulate(manipulate)(state) : Cask.None<T>(state);
+        Fyke(Flag(flag), ManipulatedValue(manipulate), SetTheBox<T>());
+    public static Flow<T> ManipulateIf<T, TBox>(Func<TBox, bool> predicate, Func<T, T> manipulate) =>
+        Fyke(Sluice(predicate), ManipulatedValue(manipulate), SetTheBox<T>());
 }

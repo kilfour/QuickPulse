@@ -1,3 +1,5 @@
+using QuickPulse.Instruments;
+
 namespace QuickPulse.Bolts;
 
 public class State
@@ -9,11 +11,24 @@ public class State
     public T GetValue<T>() { return (T)CurrentInput!; }
     public State SetValue<T>(T value) { CurrentInput = value!; return this; }
 
-    public readonly Dictionary<Type, object> Memory = [];
-
     public IArtery? CurrentArtery { get; private set; }
-    public void SetArtery(IArtery artery)
+    public void SetArtery(IArtery artery) { CurrentArtery = artery; }
+
+    private readonly Dictionary<Type, object> Memory = [];
+    public Box<TValue> GetTheBox<TValue>()
     {
-        CurrentArtery = artery;
+        if (!Memory.TryGetValue(typeof(TValue), out var obj))
+            ComputerSays.No($"No value of type {typeof(TValue).Name} found.");
+        return (Box<TValue>)obj!;
+    }
+    public Box<TValue> GetTheBox<TValue>(TValue value)
+    {
+        if (!Memory.TryGetValue(typeof(TValue), out var obj))
+        {
+            var box = new Box<TValue>(value);
+            Memory[typeof(TValue)] = box;
+            return box;
+        }
+        return (Box<TValue>)obj!;
     }
 }
