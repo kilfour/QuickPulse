@@ -9,7 +9,9 @@ public static partial class Pulse
     public static Flow<Unit> Trace(params object[] data) =>
         Runnel(Always, _ => data, IntoArtery);
     public static Flow<Unit> TraceIf(bool flag, Func<object> data) =>
-        Runnel(Flag(flag), _ => new[] { data() }, IntoArtery);
+        Runnel(Flag(flag), _ => data(), IntoArtery);
     public static Flow<Unit> TraceIf<T>(Func<T, bool> predicate, Func<object> data) =>
-        Runnel(Sluice(predicate), _ => new[] { data() }, IntoArtery);
+        Runnel(Sluice(predicate), _ => data(), IntoArtery);
+    public static Flow<Unit> TraceIf<T>(Func<T, bool> predicate, Func<T, object> data) =>
+        Runnel(Sluice(predicate), s => { var v = s.GetTheBox<T>().Value; return data(v); }, IntoArtery);
 }

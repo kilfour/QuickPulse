@@ -4,7 +4,7 @@ namespace QuickPulse.Tests.Docs.ToC;
 
 public class CreateReadme
 {
-    [Fact]
+    [Fact(Skip = "not now")]
     [Doc(Order = "0", Caption = "QuickPulse Documentation", Content =
 @"
 - [A Quick Pulse](AQuickPulse.md)
@@ -17,37 +17,37 @@ public class CreateReadme
 ")]
     public void FromDocAttributes()
     {
-        // new Document().ToFile("TempQuickPulseDoc.md", typeof(CreateReadme).Assembly);
-        new Document().ToFiles([
-            new ("README.md", ["QuickPulse.Tests.Docs.Introduction"]), // Check
+        new Document().ToFile("TempQuickPulseDoc.md", typeof(CreateReadme).Assembly);
+        // new Document().ToFiles([
+        //     new ("README.md", ["QuickPulse.Tests.Docs.Introduction"]), // Check
 
-            new ("./Docs/ToC.md", ["QuickPulse.Tests.Docs.ToC"]),
+        //     new ("./Docs/ToC.md", ["QuickPulse.Tests.Docs.ToC"]),
 
-            new ("./Docs/AQuickPulse.md", ["QuickPulse.Tests.Docs.AQuickPulse"]), // Check       
+        //     new ("./Docs/AQuickPulse.md", ["QuickPulse.Tests.Docs.AQuickPulse"]), // Check       
 
 
-            new ("./Docs/MakeItFlow.md", ["QuickPulse.Tests.Docs.MakeItFlow.CheatSheet"]),
+        //     new ("./Docs/MakeItFlow.md", ["QuickPulse.Tests.Docs.MakeItFlow.CheatSheet"]),
 
-            new ("./Docs/MakeItFlowStart.md", ["QuickPulse.Tests.Docs.MakeItFlow.Start"]),
-            new ("./Docs/MakeItFlowTrace.md", ["QuickPulse.Tests.Docs.MakeItFlow.Trace"]),
-            new ("./Docs/MakeItFlowFirstOf.md", ["QuickPulse.Tests.Docs.MakeItFlow.FirstOf"]),
-            new ("./Docs/MakeItFlowEffect.md", ["QuickPulse.Tests.Docs.MakeItFlow.Effect"]),
-            new ("./Docs/MakeItFlowGather.md", ["QuickPulse.Tests.Docs.MakeItFlow.Gather"]),
-            new ("./Docs/MakeItFlowScoped.md", ["QuickPulse.Tests.Docs.MakeItFlow.Scoped"]),
-            new ("./Docs/MakeItFlowToFlow.md", ["QuickPulse.Tests.Docs.MakeItFlow.ToFlow"]),
-            new ("./Docs/MakeItFlowWhen.md", ["QuickPulse.Tests.Docs.MakeItFlow.When"]),
-            new ("./Docs/MakeItFlowNoOp.md", ["QuickPulse.Tests.Docs.MakeItFlow.NoOp"]),
+        //     new ("./Docs/MakeItFlowStart.md", ["QuickPulse.Tests.Docs.MakeItFlow.Start"]),
+        //     new ("./Docs/MakeItFlowTrace.md", ["QuickPulse.Tests.Docs.MakeItFlow.Trace"]),
+        //     new ("./Docs/MakeItFlowFirstOf.md", ["QuickPulse.Tests.Docs.MakeItFlow.FirstOf"]),
+        //     new ("./Docs/MakeItFlowEffect.md", ["QuickPulse.Tests.Docs.MakeItFlow.Effect"]),
+        //     new ("./Docs/MakeItFlowGather.md", ["QuickPulse.Tests.Docs.MakeItFlow.Gather"]),
+        //     new ("./Docs/MakeItFlowScoped.md", ["QuickPulse.Tests.Docs.MakeItFlow.Scoped"]),
+        //     new ("./Docs/MakeItFlowToFlow.md", ["QuickPulse.Tests.Docs.MakeItFlow.ToFlow"]),
+        //     new ("./Docs/MakeItFlowWhen.md", ["QuickPulse.Tests.Docs.MakeItFlow.When"]),
+        //     new ("./Docs/MakeItFlowNoOp.md", ["QuickPulse.Tests.Docs.MakeItFlow.NoOp"]),
 
-            new ("./Docs/OneSignalOneState.md", ["QuickPulse.Tests.Docs.OneSignalOneState"]),
-            new ("./Docs/FlowExtensions.md", ["QuickPulse.Tests.Docs.FlowExtensions"]),
-            new ("./Docs/ArteriesIncluded.md", ["QuickPulse.Tests.Docs.ArteriesIncluded"]), // Check
-            new ("./Docs/Examples.md", ["QuickPulse.Tests.Docs.Examples"]),
+        //     new ("./Docs/OneSignalOneState.md", ["QuickPulse.Tests.Docs.OneSignalOneState"]),
+        //     new ("./Docs/FlowExtensions.md", ["QuickPulse.Tests.Docs.FlowExtensions"]),
+        //     new ("./Docs/ArteriesIncluded.md", ["QuickPulse.Tests.Docs.ArteriesIncluded"]), // Check
+        //     new ("./Docs/Examples.md", ["QuickPulse.Tests.Docs.Examples"]),
 
-            new ("./Docs/NoWhere.md", ["QuickPulse.Tests.Docs.NoWhere"]), // Check
+        //     new ("./Docs/NoWhere.md", ["QuickPulse.Tests.Docs.NoWhere"]), // Check
 
-            // new ("./Docs/WhyQuickPulseExists.md", ["QuickPulse.Tests.Docs.WhyQuickPulseExists"]),
-            
-        ], typeof(CreateReadme).Assembly);
+        //     // new ("./Docs/WhyQuickPulseExists.md", ["QuickPulse.Tests.Docs.WhyQuickPulseExists"]),
+
+        // ], typeof(CreateReadme).Assembly);
     }
 }
 
