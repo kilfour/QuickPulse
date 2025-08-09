@@ -41,40 +41,22 @@ public class Signal<T>
     public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery =>
         Chain.It(() => state.SetArtery(artery), artery);
 
-    public Signal<T> Pulse(params T[] input)
+    public bool FlowRanDry => state.FlowRanDry;
+
+    public Signal<T> Pulse(T value)
     {
-        if (input == null)
-        {
-            flow(state.SetValue<T>(default!));
-            return this;
-        }
-        Pulse((IEnumerable<T>)input);
+        if (FlowRanDry) return this;
+        flow(state.SetValue(value));
         return this;
     }
 
-    public Signal<T> Pulse(IEnumerable<T> inputs) =>
-        ChainIt(() => { foreach (var item in inputs) flow(state.SetValue(item)); });
-
-    public Signal<T> PulseMultiple(int times, T input) =>
-        ChainIt(() => { for (int i = 0; i < times; i++) { Pulse(input); } });
-
-    public Signal<T> PulseUntil(Func<bool> shouldStop, T input)
+    public Signal<T> Pulse(IEnumerable<T> inputs)
     {
-        var times = 0;
-        while (!shouldStop())
+        foreach (var item in inputs)
         {
-            Pulse(input);
-            if (times++ >= 255) ComputerSays.No("You can only pulse a max of 256 times, using Pulse.Until");
-        }
-        return this;
-    }
-
-    public Signal<T> PulseMultipleUntil(int times, Func<bool> shouldStop, T input)
-    {
-        for (int i = 0; i < times; i++)
-        {
-            if (shouldStop()) break;
-            Pulse(input);
+            if (FlowRanDry) break;
+            flow(state.SetValue(item));
+            if (FlowRanDry) break;
         }
         return this;
     }

@@ -31,4 +31,7 @@ public class State
         }
         return (Box<TValue>)obj!;
     }
+
+    public bool FlowRanDry { get; private set; }
+    public void StopFlowing() { FlowRanDry = true; }
 }

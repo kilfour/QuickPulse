@@ -30,7 +30,7 @@ Assert.Equal(""collector"", collector.TheExhibit[1]);
         var collector = new TheCollector<string>();
         Signal.Tracing<string>()
             .SetArtery(collector)
-            .Pulse("hello", "collector");
+            .Pulse(["hello", "collector"]);
         Assert.Equal("hello", collector.TheExhibit[0]);
         Assert.Equal("collector", collector.TheExhibit[1]);
     }
@@ -57,7 +57,7 @@ collector
         var collector = new WriteDataToFile(cabinet: fake);
         Signal.Tracing<string>()
             .SetArtery(collector)
-            .Pulse("hello", "collector");
+            .Pulse(["hello", "collector"]);
         var expectedPath = fake.GetFullPath("/solution/.quickpulse/quick-pulse-SUFFIX.log");
         Assert.Collection(fake.Appends,
            item => Assert.Equal((expectedPath, "hello" + Environment.NewLine), item),

@@ -16,7 +16,7 @@ public class Spike_Manipulate
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse(40, 40, 40, 40);
+            .Pulse([40, 40, 40, 40]);
         Assert.Equal("41 42 43 44 ", holden.Whispers());
     }
 }

@@ -15,7 +15,7 @@ public class Spike_Gather_Access_In_Conditionals
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse(1, 2, 3, 4);
+            .Pulse([1, 2, 3, 4]);
         Assert.Equal("2 3 4 ", holden.Whispers());
     }
 
@@ -30,7 +30,7 @@ public class Spike_Gather_Access_In_Conditionals
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse(1, 2, 3, 4);
+            .Pulse([1, 2, 3, 4]);
         Assert.Equal("2 3 4 ", holden.Whispers());
     }
 
@@ -50,7 +50,7 @@ public class Spike_Gather_Access_In_Conditionals
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse(1, 2, 3, 4);
+            .Pulse([1, 2, 3, 4]);
         Assert.Equal("2 3 4 ", holden.Whispers());
     }
 
@@ -67,7 +67,7 @@ public class Spike_Gather_Access_In_Conditionals
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse(1, 2, 3, 4);
+            .Pulse([1, 2, 3, 4]);
         Assert.Equal("1:1 1:2 1:3 1:4 ", holden.Whispers());
     }
 }

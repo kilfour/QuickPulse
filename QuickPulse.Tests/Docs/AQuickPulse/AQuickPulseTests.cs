@@ -144,7 +144,7 @@ public void Adding_an_artery()
         var collector = new TheCollector<int>();
         Signal.From(flow)
             .SetArtery(collector)
-            .Pulse(42, 43, 44);
+            .Pulse([42, 43, 44]);
         Assert.Equal(3, collector.TheExhibit.Count);
         Assert.Equal(42, collector.TheExhibit[0]);
         Assert.Equal(43, collector.TheExhibit[1]);

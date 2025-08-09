@@ -16,7 +16,7 @@ public class Spike_Valve
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse("over", " ", "there", ".");
+            .Pulse(["over", " ", "there", "."]);
         Assert.Equal("Look over there.", holden.Whispers());
     }
 
@@ -32,7 +32,7 @@ public class Spike_Valve
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse("a", "b", "c");
+            .Pulse(["a", "b", "c"]);
         Assert.Equal("a, b, c", holden.Whispers());
     }
 
@@ -49,7 +49,7 @@ public class Spike_Valve
         var holden = TheString.Catcher();
         Signal.From(flow)
             .SetArtery(holden)
-            .Pulse("a", "b", "open", "c", "d");
+            .Pulse(["a", "b", "open", "c", "d"]);
         Assert.Equal("a, b, openc, d", holden.Whispers());
     }
 
