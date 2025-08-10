@@ -1,4 +1,4 @@
-using QuickPulse.Explains;
+using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 
@@ -103,7 +103,7 @@ This sends the value `42` into the flow.
             from anInt in Pulse.Start<int>()
             from trace in Pulse.Trace(anInt)
             select anInt;
-        var signal = Signal.From(flow);
+        var signal = Signal.From(flow).SetArtery(TheString.Catcher());
         signal.Pulse(42);
         Assert.IsType<Flow<int>>(flow);
     }

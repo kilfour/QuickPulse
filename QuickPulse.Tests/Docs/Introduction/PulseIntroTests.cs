@@ -1,4 +1,4 @@
-using QuickPulse.Explains;
+using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 
 namespace QuickPulse.Tests.Docs.Introduction;

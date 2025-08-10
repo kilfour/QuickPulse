@@ -1,6 +1,7 @@
-using QuickPulse.Explains;
+using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
+using QuickPulse.Arteries.Shunt;
 
 namespace QuickPulse.Tests.Docs.MakeItFlow.Gather;
 
@@ -67,7 +68,7 @@ select anInt;
             from val in Pulse.Gather<int>()
             from _ in Pulse.Trace(anInt + val.Value)
             select anInt;
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(flow).Pulse(42));
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(flow).SetArtery(Install.Shunt).Pulse(42));
         Assert.Equal("No value of type Int32 found.", ex.Message);
     }
 }

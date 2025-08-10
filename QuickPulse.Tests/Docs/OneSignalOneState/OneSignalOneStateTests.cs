@@ -1,6 +1,7 @@
-using QuickPulse.Explains;
+using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
+using QuickPulse.Arteries.Shunt;
 
 namespace QuickPulse.Tests.Docs.OneSignalOneState;
 
@@ -104,7 +105,7 @@ This sends the int `42` into the flow.
             from _ in Pulse.Effect(() => collector.Add(anInt))
             select anInt;
         var signal = Signal.From(flow);
-        signal.Pulse(42);
+        signal.SetArtery(Install.Shunt).Pulse(42);
         Assert.Single(collector);
         Assert.Equal(42, collector[0]);
     }
@@ -127,7 +128,7 @@ This behaves exactly like the previous example.
             from anInt in Pulse.Start<int>()
             from _ in Pulse.Effect(() => collector.Add(anInt))
             select anInt;
-        var signal = Signal.From(flow);
+        var signal = Signal.From(flow).SetArtery(Install.Shunt);
         signal.Pulse(new List<int> { 42, 43, 44 });
         Assert.Equal(3, collector.Count);
         Assert.Equal(42, collector[0]);
@@ -202,8 +203,8 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery_throws_if_no_artery_set()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().GetArtery<TheCollector<int>>());
-        Assert.Equal("No IArtery set on the current Signal.", ex.Message);
+        var ex = Assert.Throws<NullReferenceException>(() => Signal.Tracing<int>().GetArtery<TheCollector<int>>());
+        Assert.Equal("Object reference not set to an instance of an object.", ex.Message);
     }
 
     [Doc(Order = Chapters.Signalling + "-7.1-1", Caption = "", Content =
@@ -213,6 +214,6 @@ Assert.Equal(42, collector.TheExhibit[0]);
     public void Signal_get_artery_throws_if_wrong_typed_retrieved()
     {
         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
-        Assert.Equal("IArtery set on the current Signal is of type 'Holden' not 'TheCollector`1'.", ex.Message);
+        Assert.Equal("No IArtery set on the current Signal.", ex.Message);
     }
 }

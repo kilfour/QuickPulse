@@ -12,7 +12,27 @@ public class State
     public State SetValue<T>(T value) { CurrentInput = value!; return this; }
 
     public IArtery? CurrentArtery { get; private set; }
-    public void SetArtery(IArtery artery) { CurrentArtery = artery; }
+    public void SetArtery(IArtery artery)
+    {
+        if (artery == null)
+            ComputerSays.No("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?");
+        CurrentArtery = artery;
+    }
+
+    private readonly Dictionary<Type, IArtery> heart = [];
+    public void Graft<TArtery>(TArtery artery) where TArtery : IArtery
+    {
+        heart[typeof(TArtery)] = artery;
+    }
+
+    public IArtery GetArtery<TArtery>() where TArtery : IArtery
+    {
+        if (typeof(TArtery) == CurrentArtery!.GetType())
+            return CurrentArtery;
+        if (heart.ContainsKey(typeof(TArtery)))
+            return heart[typeof(TArtery)];
+        return null!; // todo Computer Says No 
+    }
 
     private readonly Dictionary<Type, object> Memory = [];
     public Box<TValue> GetTheBox<TValue>()

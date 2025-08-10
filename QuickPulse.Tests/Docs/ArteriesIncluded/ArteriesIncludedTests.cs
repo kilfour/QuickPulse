@@ -1,4 +1,4 @@
-using QuickPulse.Explains;
+using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 using QuickPulse.Tests.Docs.BuildFlowTests;

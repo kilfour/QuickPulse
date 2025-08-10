@@ -29,7 +29,7 @@ public class Signal<T>
 
     public TArtery GetArtery<TArtery>() where TArtery : class, IArtery
     {
-        var artery = state.CurrentArtery;
+        var artery = state.GetArtery<TArtery>();
         if (artery == null) ComputerSays.No("No IArtery set on the current Signal.");
         var typedArtery = artery as TArtery;
         if (typedArtery == null) ComputerSays.No($"IArtery set on the current Signal is of type '{artery!.GetType().Name}' not '{typeof(TArtery).Name}'.");
@@ -43,21 +43,26 @@ public class Signal<T>
 
     public bool FlowRanDry => state.FlowRanDry;
 
-    public Signal<T> Pulse(T value)
-    {
-        if (FlowRanDry) return this;
-        flow(state.SetValue(value));
-        return this;
-    }
+    public Signal<T> Pulse(T value) => Pulse(Single(value));
 
     public Signal<T> Pulse(IEnumerable<T> inputs)
     {
+        if (state.CurrentArtery == null)
+            ComputerSays.No("The Heart flatlined. No Main Artery. Did you forget to call SetArtery(...) ?");
+        if (FlowRanDry) return this;
         foreach (var item in inputs)
         {
-            if (FlowRanDry) break;
             flow(state.SetValue(item));
             if (FlowRanDry) break;
         }
+        return this;
+    }
+
+    private static IEnumerable<T> Single(T value) { yield return value; }
+
+    public Signal<T> Graft<TArtery>(TArtery artery) where TArtery : IArtery
+    {
+        state.Graft(artery);
         return this;
     }
 }
