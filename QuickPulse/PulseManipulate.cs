@@ -16,6 +16,6 @@ public static partial class Pulse
         Fyke(Always, ManipulatedValue(manipulate), SetTheBox<T>());
     public static Flow<T> ManipulateIf<T>(bool flag, Func<T, T> manipulate) =>
         Fyke(Flag(flag), ManipulatedValue(manipulate), SetTheBox<T>());
-    public static Flow<T> ManipulateIf<T, TBox>(Func<TBox, bool> predicate, Func<T, T> manipulate) =>
+    public static Flow<T> ManipulateIf<T>(Func<T, bool> predicate, Func<T, T> manipulate) =>
         Fyke(Sluice(predicate), ManipulatedValue(manipulate), SetTheBox<T>());
 }

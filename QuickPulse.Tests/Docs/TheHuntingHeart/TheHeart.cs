@@ -36,7 +36,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
         Assert.Equal("42", holden.Whispers());
     }
 
-    [DocExample]
+    [DocSnippet]
     private void Signal_set_Artery_example(IArtery holden)
     {
         Signal.Tracing<int>()
@@ -46,14 +46,15 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [Fact]
     [DocContent(
-@"**`Signal.SetAndReturnArtery(...)`**  but returns the Artery you pass in (useful for quick wiring):")]
-    [DocCodeExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example), "return=>")]
+@"**`Signal.SetAndReturnArtery(...)`** Similar, but returns the Artery you pass in (useful for quick wiring):")]
+    [DocCodeExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example))]
     public void Signal_set_and_return_Artery()
     {
         Assert.IsType<Holden>(Signal_set_and_return_Artery_example());
     }
 
-    [DocExample]
+    [DocSnippet]
+    [DocReplace("return", "")]
     private Holden Signal_set_and_return_Artery_example()
     {
         return Signal.Tracing<int>().SetAndReturnArtery(TheString.Catcher());
@@ -62,7 +63,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [Fact]
     [DocContent(@"Setting an Artery on a signal that already has one **replaces** the previous Artery.  ")]
     [DocCodeExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice))]
-    [DocExample]
+    [DocSnippet]
     public void Signal_setting_Artery_twice()
     {
         var holden = TheString.Catcher();
@@ -112,8 +113,9 @@ In the following section we will discuss how to set up one particular use case:
 'Adding a diagnostic trace to an existing flow.' 
 
 Suppose we have the following flow: ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow), "return=>var flow = ")]
-    [DocExample]
+    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow))]
+    [DocSnippet]
+
     private Flow<char> Grafting_starting_flow()
     {
         return
@@ -128,8 +130,10 @@ Suppose we have the following flow: ")]
     [DocContent(
 @"This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow_usage), "return=>", "Grafting_starting_flow()=>flow")]
-    [DocExample]
+    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow_usage))]
+    [DocSnippet]
+    [DocReplace("return", "")]
+    [DocReplace("Grafting_starting_flow()", "flow")]
     private Signal<char> Grafting_starting_flow_usage()
     {
         var holden = TheString.Catcher();
@@ -141,7 +145,7 @@ Suppose we have the following flow: ")]
 
     [Fact]
     [DocContent(
-@"Unfortunately the result of this is ` a { b } c }` and really, we want it to be ` a { b } c }`.  ")]
+@"Unfortunately the result of this is ` a { b } c }` and really, we want it to be ` a { b } c `.  ")]
     public void Grafting_bad_flow()
     {
         Assert.Equal(" a { b } c }", Grafting_starting_flow_usage().GetArtery<Holden>().Whispers());
@@ -152,12 +156,13 @@ Suppose we have the following flow: ")]
 @"
 So let's try and find out what's going on.  
 
-First we define a new typed Artery: `public class Diagnostic : TheCollector<string> { }`.  
-
-Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.
-")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage), "return=>", "Grafting_inspected_flow()=>flow")]
-    [DocExample]
+First we define a new typed Artery:")]
+    [DocCodeExample(typeof(Diagnostic))]
+    [DocContent("Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.")]
+    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage))]
+    [DocSnippet]
+    [DocReplace("return", "")]
+    [DocReplace("Grafting_inspected_flow()", "flow")]
     private Signal<char> Grafting_inspected_flow_usage()
     {
         var holden = TheString.Catcher();
@@ -169,6 +174,7 @@ Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.
             .Pulse("{ a { b } c }");
     }
 
+    [DocExample]
     public class Diagnostic : TheCollector<string> { }
 
     [DocContent(
@@ -176,8 +182,9 @@ Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage), "return=>var flow = ")]
-    [DocExample]
+    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow))]
+    [DocSnippet]
+    [DocReplace("return", "var flow = ")]
     private Flow<char> Grafting_inspected_flow()
     {
         return
@@ -197,7 +204,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     [DocContent(
 @"When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected), "return=>")]
+    [DocCodeExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected))]
     [DocContent("We can now use this information to correct the original flow")]
     public void Grafting_checking_diagnostics()
     {
@@ -206,7 +213,8 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     }
 
 
-    [DocExample]
+    [DocSnippet]
+    [DocReplace("return", "")]
     private List<string> Grafting_checking_diagnostics_expected()
     {
         return
@@ -234,7 +242,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.  
 ")]
     [DocCodeExample(typeof(TheHeart), nameof(Signal_get_Artery))]
-    [DocExample]
+    [DocSnippet]
     public void Signal_get_Artery()
     {
         var holden =
@@ -249,7 +257,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocHeader("Safeties:", 2)]
     [DocContent(
 @"- If no Main Artery exists `GetArtery` throws:  
-    > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?")]
+    ...")] //> The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?
 
     public void Signal_get_Artery_throws_if_no_Artery_set()
     {
