@@ -14,7 +14,4 @@ public static partial class Pulse
         Runnel(Sluice(predicate), _ => data(), IntoArtery);
     public static Flow<Unit> TraceIf<T>(Func<T, bool> predicate, Func<T, object> data) =>
         Runnel(Sluice(predicate), s => { var v = s.GetTheBox<T>().Value; return data(v); }, IntoArtery);
-
-    public static Flow<Unit> TraceTo<TArtery>(params object[] data) where TArtery : IArtery =>
-        Runnel(Always, _ => data, (s, o) => s.GetArtery<TArtery>().Flow(o));
 }

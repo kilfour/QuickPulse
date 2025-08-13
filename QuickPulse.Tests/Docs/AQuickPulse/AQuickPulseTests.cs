@@ -5,6 +5,7 @@ using QuickPulse.Bolts;
 
 namespace QuickPulse.Tests.Docs.AQuickPulse;
 
+//[DocFile]
 [Doc(Order = Chapters.BuildFlow, Caption = "A Quick Pulse", Content =
 @"To explain how QuickPulse works (not least to myself), let's build up a flow step by step.")]
 public class AQuickPulseTests
