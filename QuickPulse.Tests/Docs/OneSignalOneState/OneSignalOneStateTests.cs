@@ -136,6 +136,18 @@ This behaves exactly like the previous example.
         Assert.Equal(44, collector[2]);
     }
 
+    [Fact(Skip = "doc this")]
+    public void Signal_pulse_null()
+    {
+        List<int> collector = [];
+        var flow =
+            from anInt in Pulse.Start<int>()
+            from _ in Pulse.Effect(() => collector.Add(anInt))
+            select anInt;
+        var signal = Signal.From(flow).SetArtery(Install.Shunt);
+        signal.Pulse((List<int>)null!);
+    }
+
     [Doc(Order = Chapters.Signalling + "-6", Caption = "Set Artery", Content =
 @"**`Signal.SetArtery(...)`** is used to inject an `IArtery` into the flow.
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` calls will be received by this .
