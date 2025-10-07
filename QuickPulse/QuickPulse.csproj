@@ -3,7 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>0.2.3</Version>
+    <Version>0.2.4</Version>
     <Authors>Kilfour</Authors>
     <PackageId>QuickPulse</PackageId>
     <Description>LINQ with a heartbeat.</Description>
