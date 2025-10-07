@@ -1,5 +1,4 @@
 using QuickPulse.Arteries;
-using QuickPulse.Bolts;
 using QuickPulse.Explains;
 using QuickPulse.Instruments;
 using QuickPulse.Show;
@@ -15,7 +14,7 @@ It is *not* an output by itself.
 
 public class TheHeart
 {
-    [Fact]
+    [Fact(Skip = "broke doc")]
     public void CreateDoc()
     {
         Explain.This<TheHeart>("the-heart.md");

@@ -1,5 +1,4 @@
 using QuickPulse.Explains.Deprecated;
-using QuickPulse.Bolts;
 
 namespace QuickPulse.Tests.Docs.MakeItFlow.Start;
 

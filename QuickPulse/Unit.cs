@@ -1,4 +1,4 @@
-namespace QuickPulse.Bolts;
+namespace QuickPulse;
 
 public readonly struct Unit : IComparable<Unit>, IEquatable<Unit>
 {

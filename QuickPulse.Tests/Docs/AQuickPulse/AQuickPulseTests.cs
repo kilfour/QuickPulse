@@ -1,6 +1,5 @@
 using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
-using QuickPulse.Bolts;
 
 
 namespace QuickPulse.Tests.Docs.AQuickPulse;

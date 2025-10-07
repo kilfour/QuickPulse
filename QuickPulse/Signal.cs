@@ -18,12 +18,10 @@ public static class Signal
         Tracing<T>().SetArtery(WriteData.ToFile(maybeFileName));
 }
 
-public class Signal<T>
+public class Signal<T>(Flow<T> flow)
 {
-    private readonly State state;
-    private readonly Flow<T> flow;
-
-    public Signal(Flow<T> flow) { state = new State(); this.flow = flow; }
+    private readonly State state = new();
+    private readonly Flow<T> flow = flow;
 
     public Signal<T> ChainIt(Action action) => Chain.It(action, this);
 
@@ -63,6 +61,12 @@ public class Signal<T>
     public Signal<T> Graft<TArtery>(TArtery artery) where TArtery : IArtery
     {
         state.Graft(artery);
+        return this;
+    }
+
+    public Signal<T> FlatLine(Flow<Unit> flow)
+    {
+        flow(state);
         return this;
     }
 }
