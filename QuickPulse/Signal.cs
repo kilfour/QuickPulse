@@ -64,9 +64,9 @@ public class Signal<T>(Flow<T> flow)
         return this;
     }
 
-    public Signal<T> FlatLine(Flow<Unit> flow)
+    public Signal<T> FlatLine(Flow<Unit> finisher)
     {
-        flow(state);
+        finisher(state);
         return this;
     }
 }
