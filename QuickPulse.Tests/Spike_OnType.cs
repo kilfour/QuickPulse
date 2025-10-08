@@ -22,8 +22,8 @@ public class Spike_OnType
             select start;
         var flow =
             from input in Pulse.Start<Base>()
-            from _ in Pulse.ToFlow(one, input)
-            from __ in Pulse.ToFlow(two, input)
+            from _ in Pulse.Into(one, input)
+            from __ in Pulse.Into(two, input)
             from ___ in Pulse.Trace(" ")
             select input;
         var text =

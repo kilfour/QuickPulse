@@ -8,7 +8,7 @@ public class Spike_ToFlow_Factory
         var flow =
             from i in Pulse.Start<int>()
             from c in Pulse.Gather(42)
-            from t in Pulse.ToFlow(a => Pulse.Manipulate<int>(a => a + 1).AsUnit(), i)
+            from t in Pulse.ToFlow(a => Pulse.Manipulate<int>(a => a + 1).Dissipate(), i)
             select i;
         // var text =
         //     Signal.From(flow)
@@ -18,10 +18,4 @@ public class Spike_ToFlow_Factory
         //         .Whispers();
         // Assert.Equal("onetwo", text);
     }
-}
-
-public static class FlowExt
-{
-    public static Flow<Unit> AsUnit<T>(this Flow<T> flow)
-        => from _ in flow select Unit.Instance;
 }

@@ -1,7 +1,6 @@
 using QuickPulse.Arteries;
 using QuickPulse.Explains;
 using QuickPulse.Instruments;
-using QuickPulse.Show;
 
 namespace QuickPulse.Tests.Docs.TheHuntingHeart;
 
@@ -14,7 +13,7 @@ It is *not* an output by itself.
 
 public class TheHeart
 {
-    [Fact(Skip = "broke doc")]
+    [Fact]
     public void CreateDoc()
     {
         Explain.This<TheHeart>("the-heart.md");
@@ -27,7 +26,7 @@ public class TheHeart
 
 **`Signal.SetArtery(...)`** sets the **Main Artery**.  
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Signal_set_Artery_example))]
+    [DocExample(typeof(TheHeart), nameof(Signal_set_Artery_example))]
     public void Signal_set_Artery()
     {
         var holden = TheString.Catcher();
@@ -35,7 +34,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
         Assert.Equal("42", holden.Whispers());
     }
 
-    [DocSnippet]
+    [CodeSnippet]
     private void Signal_set_Artery_example(IArtery holden)
     {
         Signal.Tracing<int>()
@@ -46,14 +45,14 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [Fact]
     [DocContent(
 @"**`Signal.SetAndReturnArtery(...)`** Similar, but returns the Artery you pass in (useful for quick wiring):")]
-    [DocCodeExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example))]
+    [DocExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example))]
     public void Signal_set_and_return_Artery()
     {
         Assert.IsType<Holden>(Signal_set_and_return_Artery_example());
     }
 
-    [DocSnippet]
-    [DocReplace("return", "")]
+    [CodeSnippet]
+    [CodeReplace("return", "")]
     private Holden Signal_set_and_return_Artery_example()
     {
         return Signal.Tracing<int>().SetAndReturnArtery(TheString.Catcher());
@@ -61,8 +60,8 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [Fact]
     [DocContent(@"Setting an Artery on a signal that already has one **replaces** the previous Artery.  ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice))]
-    [DocSnippet]
+    [DocExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice))]
+    [CodeSnippet]
     public void Signal_setting_Artery_twice()
     {
         var holden = TheString.Catcher();
@@ -112,8 +111,8 @@ In the following section we will discuss how to set up one particular use case:
 'Adding a diagnostic trace to an existing flow.' 
 
 Suppose we have the following flow: ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow))]
-    [DocSnippet]
+    [DocExample(typeof(TheHeart), nameof(Grafting_starting_flow))]
+    [CodeSnippet]
 
     private Flow<char> Grafting_starting_flow()
     {
@@ -129,10 +128,10 @@ Suppose we have the following flow: ")]
     [DocContent(
 @"This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_starting_flow_usage))]
-    [DocSnippet]
-    [DocReplace("return", "")]
-    [DocReplace("Grafting_starting_flow()", "flow")]
+    [DocExample(typeof(TheHeart), nameof(Grafting_starting_flow_usage))]
+    [CodeSnippet]
+    [CodeReplace("return", "")]
+    [CodeReplace("Grafting_starting_flow()", "flow")]
     private Signal<char> Grafting_starting_flow_usage()
     {
         var holden = TheString.Catcher();
@@ -156,12 +155,12 @@ Suppose we have the following flow: ")]
 So let's try and find out what's going on.  
 
 First we define a new typed Artery:")]
-    [DocCodeExample(typeof(Diagnostic))]
+    [DocExample(typeof(Diagnostic))]
     [DocContent("Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage))]
-    [DocSnippet]
-    [DocReplace("return", "")]
-    [DocReplace("Grafting_inspected_flow()", "flow")]
+    [DocExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage))]
+    [CodeSnippet]
+    [CodeReplace("return", "")]
+    [CodeReplace("Grafting_inspected_flow()", "flow")]
     private Signal<char> Grafting_inspected_flow_usage()
     {
         var holden = TheString.Catcher();
@@ -173,7 +172,7 @@ First we define a new typed Artery:")]
             .Pulse("{ a { b } c }");
     }
 
-    [DocExample]
+    [CodeExample]
     public class Diagnostic : TheCollector<string> { }
 
     [DocContent(
@@ -181,9 +180,9 @@ First we define a new typed Artery:")]
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_inspected_flow))]
-    [DocSnippet]
-    [DocReplace("return", "var flow = ")]
+    [DocExample(typeof(TheHeart), nameof(Grafting_inspected_flow))]
+    [CodeSnippet]
+    [CodeReplace("return", "var flow = ")]
     private Flow<char> Grafting_inspected_flow()
     {
         return
@@ -203,7 +202,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     [DocContent(
 @"When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:")]
-    [DocCodeExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected))]
     [DocContent("We can now use this information to correct the original flow")]
     public void Grafting_checking_diagnostics()
     {
@@ -212,8 +211,8 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     }
 
 
-    [DocSnippet]
-    [DocReplace("return", "")]
+    [CodeSnippet]
+    [CodeReplace("return", "")]
     private List<string> Grafting_checking_diagnostics_expected()
     {
         return
@@ -240,8 +239,8 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocContent(
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.  
 ")]
-    [DocCodeExample(typeof(TheHeart), nameof(Signal_get_Artery))]
-    [DocSnippet]
+    [DocExample(typeof(TheHeart), nameof(Signal_get_Artery))]
+    [CodeSnippet]
     public void Signal_get_Artery()
     {
         var holden =
