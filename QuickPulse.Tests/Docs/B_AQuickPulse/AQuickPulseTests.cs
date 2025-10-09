@@ -1,21 +1,19 @@
-using QuickPulse.Explains.Deprecated;
+using QuickPulse.Explains;
 using QuickPulse.Arteries;
 
 
-namespace QuickPulse.Tests.Docs.AQuickPulse;
+namespace QuickPulse.Tests.Docs.B_AQuickPulse;
 
-//[DocFile]
-[Doc(Order = Chapters.BuildFlow, Caption = "A Quick Pulse", Content =
-@"To explain how QuickPulse works (not least to myself), let's build up a flow step by step.")]
+[DocFile]
+[DocContent("To explain how QuickPulse works (not least to myself), let's build up a flow step by step.")]
 public class AQuickPulseTests
 {
-    [Doc(Order = Chapters.BuildFlow + "-1", Caption = "The Minimal Flow", Content =
-@"
+    [DocHeader("The Minimal Flow")]
+    [DocContent(@"
 ```csharp
 from anInt in Pulse.Start<int>()
 select anInt;
 ```
-
 The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.")]
     [Fact]
@@ -27,8 +25,9 @@ The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
         Assert.IsType<Flow<int>>(flow);
     }
 
-    [Doc(Order = Chapters.BuildFlow + "-2", Caption = "Doing Something with the Input", Content =
-@"Let's trace the values as they pass through:
+    [DocHeader("Doing Something with the Input")]
+    [DocContent(
+    @"Let's trace the values as they pass through:
 
 ```csharp
 from anInt in Pulse.Start<int>()
@@ -46,7 +45,8 @@ select anInt;
         Assert.IsType<Flow<int>>(flow);
     }
 
-    [Doc(Order = Chapters.BuildFlow + "-3", Caption = "Executing a Flow", Content =
+    [DocHeader("Executing a Flow")]
+    [DocContent(
 @"To execute a flow, we need a `Signal<T>`, which is created via:
 
 ```csharp
@@ -75,7 +75,8 @@ var signal = Signal.From(flow);
         Assert.IsType<Signal<int>>(signal);
     }
 
-    [Doc(Order = Chapters.BuildFlow + "-4", Caption = "Sending Values Through the Flow", Content =
+    [DocHeader("Sending Values Through the Flow")]
+    [DocContent(
 @"Once you have a signal, you can push values into the flow by calling:
 
 ```csharp
@@ -108,7 +109,8 @@ This sends the value `42` into the flow.
         Assert.IsType<Flow<int>>(flow);
     }
 
-    [Doc(Order = Chapters.BuildFlow + "-5", Caption = "Capturing the Trace", Content =
+    [DocHeader("Capturing the Trace")]
+    [DocContent(
 @"To observe what flows through, we can add an `IArtery` by using `SetArtery` directly on the signal.
 
 ```csharp
