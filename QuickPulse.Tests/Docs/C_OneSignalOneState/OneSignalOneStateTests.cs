@@ -1,4 +1,3 @@
-using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 using QuickPulse.Arteries.Shunt;

@@ -1,5 +1,4 @@
 using QuickPulse.Explains;
-using QuickPulse.Explains.Deprecated;
 
 namespace QuickPulse.Tests.Docs.B_MakeItFlow.CheatSheet;
 

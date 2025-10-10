@@ -1,11 +1,13 @@
-﻿using QuickPulse.Explains.Deprecated;
+﻿using QuickPulse.Explains;
 
-namespace QuickPulse.Tests.Docs.NoWhere;
+namespace QuickPulse.Tests.Docs.H_NoWhere;
 
-[Doc(Order = Chapters.NoWhere, Caption = "Addendum: No Where")]
+[DocFile]
+[DocFileHeader("Addendum: No Where")]
+[DocContent("> A.k.a.: Why There Is No `.Where(...)` in QuickPulse LINQ.")]
 public class PulseNoWhereTests
 {
-    [Doc(Order = Chapters.NoWhere + "-1", Caption = "A.k.a.: Why There Is No `.Where(...)` in QuickPulse LINQ", Content =
+    [DocContent(
 @"In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
 
 But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses — and **evaluates them eagerly**.
@@ -21,8 +23,8 @@ let y = x.SomeProperty // NRE: still evaluated even if x is null!
 The `let` runs *before* the `where`, causing runtime exceptions — even though it looks safe.
 ")]
     public void WhyThereIsNoWhere() { /*placeholder*/}
-
-    [Doc(Order = Chapters.NoWhere + "-2", Caption = "Instead of `where`, use:", Content =
+    [DocHeader("Instead of `where`, use:")]
+    [DocContent(
 @"
 * `Pulse.TraceIf(...)`
 * `Pulse.NoOp()`
@@ -40,7 +42,8 @@ from _ in diag.Tags.Contains(""Phase"")
 ")]
     public void InsteadOfWhere() { /*placeholder*/}
 
-    [Doc(Order = Chapters.NoWhere + "-3", Caption = "And This Matters Because ... ?", Content =
+    [DocHeader("And This Matters Because ... ?")]
+    [DocContent(
 @"
 Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidental crashes in:
 

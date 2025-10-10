@@ -1,9 +1,10 @@
-using QuickPulse.Explains.Deprecated;
+using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.WhyQuickPulseExists;
 
-
-[Doc(Order = Chapters.Outro, Caption = "Why QuickPulse Exists", Content =
+[DocFile]
+[DocFileHeader("Why QuickPulse Exists")]
+[DocContent(
 @"*A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
 
 A little while back I was writing a test for a method that took some JSON as input.

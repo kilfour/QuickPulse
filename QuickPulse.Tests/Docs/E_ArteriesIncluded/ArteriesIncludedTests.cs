@@ -1,17 +1,18 @@
-using QuickPulse.Explains.Deprecated;
+using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 using QuickPulse.Tests.Docs.BuildFlowTests;
 
-namespace QuickPulse.Tests.Docs.ArteriesIncluded;
+namespace QuickPulse.Tests.Docs.E_ArteriesIncluded;
 
 
-[Doc(Order = Chapters.ArteriesIncluded, Caption = "Arteries Included", Content =
-@"QuickPulse comes with three built-in arteries:")]
+[DocFile]
+[DocContent(
+@"QuickPulse comes with a couple of built-in arteries:")]
 public class ArteriesIncludedTests
 {
-
-    [Doc(Order = Chapters.ArteriesIncluded + "-1", Caption = "TheCollector", Content =
+    [DocHeader("TheCollector")]
+    [DocContent(
 @"This is the artery used throughout the documentation examples, and it's especially useful in testing scenarios.
 
 Example:
@@ -37,7 +38,8 @@ Assert.Equal(""collector"", collector.TheExhibit[1]);
 
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-2", Caption = "WriteDataToFile", Content =
+    [DocHeader("WriteDataToFile")]
+    [DocContent(
 @"This artery is included because writing trace output to a file is one of the most common use cases.
 Example:
 ```csharp
@@ -66,7 +68,7 @@ collector
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-1", Caption = "", Content =
+    [DocContent(
 @"When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
 located at the solution root (i.e., the nearest parent directory containing a .sln file).  
 
@@ -84,7 +86,7 @@ This ensures that each run generates a distinct, traceable log file without over
         Assert.EndsWith(".log", fake.LastCombinedPath);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-2", Caption = "", Content =
+    [DocContent(
 @"You can, of course, pass in a custom filename.
 Example:
 ```csharp
@@ -104,7 +106,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Contains((expected, ""), fake.Writes);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-3", Caption = "", Content =
+    [DocContent(
 @"Note that the `WriteDataToFile` constructor will throw an exception if no `.sln` file can be found.")]
     [Fact]
     public void Throws_when_solution_root_is_null()
@@ -114,7 +116,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Equal("Cannot find solution root.", ex.Message);
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-4", Caption = "", Content =
+    [DocContent(
 @"To avoid solution root detection altogether, use the following factory method:
 ```csharp
 Signal.Tracing<string>()
@@ -135,7 +137,7 @@ Signal.Tracing<string>()
     }
 
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-5", Caption = "", Content =
+    [DocContent(
 @"`WriteDataToFile` appends all entries to the file; each pulse adds new lines to the end.
 ")]
     [Fact]
@@ -152,7 +154,7 @@ Signal.Tracing<string>()
         );
     }
 
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-6", Caption = "", Content =
+    [DocContent(
 @"The `ClearFile` method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:
 ```csharp
@@ -172,8 +174,9 @@ Signal.Tracing<string>()
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-7", Caption = "Sugaring", Content =
-@"These are simple aliases that make common cases easier to read:
+
+    [DocContent(
+@"**Sugaring:** These are simple aliases that make common cases easier to read:
 - `WriteData.ToFile(...)` is shorthand for `new WriteDataToFile(...)`")]
     public void ToFile()
     {
@@ -182,7 +185,7 @@ Signal.Tracing<string>()
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-2-7-1", Caption = "", Content =
+    [DocContent(
 @"- `WriteData.ToNewFile(...)` is shorthand for `new WriteDataToFile(...).ClearFile()`")]
     public void ToNewFile()
     {
@@ -194,7 +197,8 @@ Signal.Tracing<string>()
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-3", Caption = "TheStringCatcher", Content =
+    [DocHeader("TheStringCatcher")]
+    [DocContent(
 @"This catcher quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
@@ -209,7 +213,7 @@ var holden = TheString.Catcher();
     }
 
     [Fact]
-    [Doc(Order = Chapters.ArteriesIncluded + "-3-1", Caption = "", Content =
+    [DocContent(
 @"You can get a hold of the string through the `.Whispers()` method.
 ```csharp
 var holden = TheString.Catcher();

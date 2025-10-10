@@ -1,10 +1,11 @@
-using QuickPulse.Explains.Deprecated;
 using QuickPulse.Arteries;
+using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.Introduction;
 
-
-[Doc(Order = Chapters.Introduction, Caption = "QuickPulse", Content =
+[DocFile]
+[DocFileHeader("QuickPulse")]
+[DocContent(
 @"
 > **LINQ with a heartbeat.**
 >

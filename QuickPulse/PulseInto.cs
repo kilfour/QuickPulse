@@ -1,5 +1,3 @@
-using QuickPulse.Bolts;
-
 namespace QuickPulse;
 
 public static partial class Pulse
