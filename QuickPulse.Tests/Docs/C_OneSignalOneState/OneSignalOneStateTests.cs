@@ -1,6 +1,5 @@
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
-using QuickPulse.Arteries.Shunt;
 using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.C_OneSignalOneState;
@@ -80,7 +79,7 @@ Useful if you want to just quickly grab a tracer.
     public void Signal_tracing()
     {
         var signal = Signal.Tracing<int>();
-        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+        var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
         signal.Pulse(42);
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
@@ -162,7 +161,7 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
     [Fact]
     public void Signal_set_artery()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from _ in Pulse.Trace(anInt)
@@ -178,7 +177,7 @@ A full example of this can be found at the end of the 'Building a Flow' chapter.
     [DocContent(
 @"**`Signal.SetAndReturnArtery(...)`** is the same as above, but instead of returning the signal it returns the artery.
 ```csharp
-var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
 ```
 ")]
     [Fact]
@@ -189,7 +188,7 @@ var collector = signal.SetAndReturnArtery(new TheCollector<int>());
             from _ in Pulse.Trace(anInt)
             select anInt;
         var signal = Signal.From(flow);
-        var collector = signal.SetAndReturnArtery(new TheCollector<int>());
+        var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
         signal.Pulse(42);
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
@@ -200,7 +199,7 @@ var collector = signal.SetAndReturnArtery(new TheCollector<int>());
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
 **Example:**
 ```csharp
-var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
+var signal = Signal.Tracing<int>().SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
 
 var collector = signal.GetArtery<TheCollector<int>>()!;
 Assert.Single(collector.TheExhibit);
@@ -210,20 +209,10 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery()
     {
-        var signal = Signal.Tracing<int>().SetArtery(new TheCollector<int>()).Pulse(42);
-        var collector = signal.GetArtery<TheCollector<int>>();
+        var signal = Signal.Tracing<int>().SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
+        var collector = signal.GetArtery<Collector<int>>();
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
-    }
-
-    [DocContent(
-@"**`Signal.GetArtery<TArtery>(...)`** throws if no `IArtery` is currently set on the `Signal`.
-")]
-    [Fact]
-    public void Signal_get_artery_throws_if_no_artery_set()
-    {
-        var ex = Assert.Throws<NullReferenceException>(() => Signal.Tracing<int>().GetArtery<TheCollector<int>>());
-        Assert.Equal("Object reference not set to an instance of an object.", ex.Message);
     }
 
     [DocContent(
@@ -232,7 +221,9 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery_throws_if_wrong_typed_retrieved()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
-        Assert.Equal("No IArtery set on the current Signal.", ex.Message);
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<Ledger>());
+        var lines = ex.Message.Split(Environment.NewLine);
+        Assert.Equal("No IArtery of type 'Ledger' set on the current Signal.", lines[0]);
+        Assert.Equal("Main IArtery is of type 'Holden'.", lines[1]);
     }
 }

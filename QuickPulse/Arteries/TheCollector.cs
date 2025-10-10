@@ -1,10 +1,18 @@
 namespace QuickPulse.Arteries;
 
-public class TheCollector<T> : IArtery
+public static class TheCollector
+{
+    public static Collector<T> Exhibits<T>()
+    {
+        return new Collector<T>();
+    }
+}
+
+public class Collector<T> : IArtery
 {
     public readonly List<T> TheExhibit = [];
 
-    public void Flow(params object[] data)
+    public void Absorb(params object[] data)
     {
         foreach (var item in data)
         {

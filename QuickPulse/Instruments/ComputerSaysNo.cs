@@ -1,14 +1,9 @@
 namespace QuickPulse.Instruments;
 
-public class ComputerSaysNo : InvalidOperationException
-{
-    public ComputerSaysNo(string msg) : base(msg) { }
-}
+public class ComputerSaysNo(string msg) : InvalidOperationException(msg) { }
 
 public static class ComputerSays
 {
-    public static void No(string msg)
-    {
-        throw new ComputerSaysNo(msg);
-    }
+    public static void No(string msg) => throw new ComputerSaysNo(msg);
+    public static T No<T>(string msg) => throw new ComputerSaysNo(msg);
 }

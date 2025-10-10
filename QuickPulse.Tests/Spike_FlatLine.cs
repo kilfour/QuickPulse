@@ -1,4 +1,4 @@
-using QuickPulse.Arteries.Shunt;
+using QuickPulse.Arteries;
 
 namespace QuickPulse.Tests;
 

@@ -20,7 +20,7 @@ select anInt;
     [Fact]
     public void Pulse_trace()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from _ in Pulse.Trace(anInt)
@@ -45,7 +45,7 @@ select anInt;
     [Fact]
     public void Pulse_trace_if()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from _ in Pulse.TraceIf(anInt != 42, () => anInt)

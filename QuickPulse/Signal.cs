@@ -15,15 +15,13 @@ public static class Signal
         new(Pulse.GetFlowFromFactory<T>(a => Pulse.Trace(a!)));
 
     public static Signal<T> ToFile<T>(string? maybeFileName = null) =>
-        Tracing<T>().SetArtery(WriteData.ToFile(maybeFileName));
+        Tracing<T>().SetArtery(TheLedger.Records(maybeFileName));
 }
 
 public class Signal<T>(Flow<T> flow)
 {
     private readonly State state = new();
     private readonly Flow<T> flow = flow;
-
-    public Signal<T> ChainIt(Action action) => Chain.It(action, this);
 
     public TArtery GetArtery<TArtery>() where TArtery : class, IArtery
     {
@@ -34,7 +32,7 @@ public class Signal<T>(Flow<T> flow)
         return typedArtery!;
     }
 
-    public Signal<T> SetArtery(IArtery artery) => ChainIt(() => state.SetArtery(artery));
+    public Signal<T> SetArtery(IArtery artery) => Chain.It(() => state.SetArtery(artery), this);
 
     public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery =>
         Chain.It(() => state.SetArtery(artery), artery);

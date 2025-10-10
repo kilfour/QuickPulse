@@ -10,7 +10,7 @@ public static partial class Pulse
         {
             var box = s.GetTheBox<T>();
             var next = manipulate(box.Value);
-            return new[] { next };
+            return [next];
         };
     public static Flow<T> Manipulate<T>(Func<T, T> manipulate) =>
         Fyke(Always, ManipulatedValue(manipulate), SetTheBox<T>());

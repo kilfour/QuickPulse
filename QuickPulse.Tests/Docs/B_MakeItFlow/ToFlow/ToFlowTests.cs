@@ -34,7 +34,7 @@ var flow =
             from box in Pulse.Start<Box<int>>()
             from _ in Pulse.ToFlow(subFlow, box.Value)
             select box;
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(new Box<int>(42));
         Assert.Equal([42], collector.TheExhibit);
@@ -51,7 +51,7 @@ var flow =
             from input in Pulse.Start<List<int>>()
             from _ in Pulse.ToFlow(subFlow, input)
             select input;
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse([41, 41]);
         Assert.Equal([42, 42], collector.TheExhibit);
@@ -84,7 +84,7 @@ var flow =
             from input in Pulse.Start<Box<int>>()
             from _ in Pulse.ToFlowIf(input.Value != 42, subFlow, () => input.Value)
             select input;
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(new Box<int>(42));
         signal.Pulse(new Box<int>(7));
@@ -103,7 +103,7 @@ var flow =
             from input in Pulse.Start<List<int>>()
             from _ in Pulse.ToFlowIf(true, subFlow, () => input)
             select input;
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse([41, 41]);
         Assert.Equal([42, 42], collector.TheExhibit);

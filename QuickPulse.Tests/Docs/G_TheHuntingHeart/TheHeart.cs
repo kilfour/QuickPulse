@@ -10,15 +10,8 @@ namespace QuickPulse.Tests.Docs.G_TheHuntingHeart;
 @"The Heart is the typed Artery registry: it remembers where pulses can go, based on Artery type, and lets you target them deliberately.  
 It is *not* an output by itself. 
 ")]
-
 public class TheHeart
 {
-    [Fact]
-    public void CreateDoc()
-    {
-        Explain.This<TheHeart>("the-heart.md");
-    }
-
     [Fact]
     [DocHeader("The Main Artery")]
     [DocContent(
@@ -93,16 +86,6 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
         Assert.Equal("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?", ex.Message);
     }
 
-    [Fact]
-    [DocContent(
-@"- Pulsing without setting the Main Artery throws:  
-    > The Heart flatlined. No Main Artery. Did you forget to call SetArtery(...) ?")]
-    public void Signal_pulse_without_main_Artery_throws()
-    {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().Pulse(42));
-        Assert.Equal("The Heart flatlined. No Main Artery. Did you forget to call SetArtery(...) ?", ex.Message);
-    }
-
     [DocHeader("Grafting Arteries")] // ungraft
     [DocContent(
 @"Apart from pulsing flows through the Main Artery, QuickPulse allows you to redirect flows to additional Arteries.  
@@ -173,7 +156,7 @@ First we define a new typed Artery:")]
     }
 
     [CodeExample]
-    public class Diagnostic : TheCollector<string> { }
+    public class Diagnostic : Collector<string> { }
 
     [DocContent(
 @"In this case, we could just Graft the `TheCollector<string>`, but creating a derived class explains our intent much better.
@@ -249,18 +232,6 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
                 .Pulse(42)
                 .GetArtery<Holden>();
         Assert.Equal("42", holden.Whispers());
-    }
-
-    [Fact]
-    [DocHeader("Safeties:", 2)]
-    [DocContent(
-@"- If no Main Artery exists `GetArtery` throws:  
-    ...")] //> The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?
-
-    public void Signal_get_Artery_throws_if_no_Artery_set()
-    {
-        var ex = Assert.Throws<NullReferenceException>(() => Signal.Tracing<int>().GetArtery<TheCollector<int>>());
-        Assert.Equal("Object reference not set to an instance of an object.", ex.Message);
     }
 
     //     [Doc(Order = Chapters.Signalling + "-7.1-1", Caption = "", Content =

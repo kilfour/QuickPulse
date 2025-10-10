@@ -25,7 +25,7 @@ Use when you mean it.
     [Fact]
     public void Pulse_effect()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from box in Pulse.Gather(1)
@@ -53,7 +53,7 @@ select anInt;
     [Fact]
     public void Pulse_effect_if()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from seen42 in Pulse.Gather(false)

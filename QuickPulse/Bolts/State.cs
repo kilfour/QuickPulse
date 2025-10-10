@@ -1,3 +1,4 @@
+using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
 namespace QuickPulse.Bolts;
@@ -11,13 +12,10 @@ public class State
     public T GetValue<T>() { return (T)CurrentInput!; }
     public State SetValue<T>(T value) { CurrentInput = value!; return this; }
 
-    public IArtery? CurrentArtery { get; private set; }
+    public IArtery CurrentArtery { get; private set; } = Install.Shunt;
     public void SetArtery(IArtery artery)
-    {
-        if (artery == null)
-            ComputerSays.No("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?");
-        CurrentArtery = artery;
-    }
+        => CurrentArtery = artery
+            ?? ComputerSays.No<IArtery>("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?");
 
     private readonly Dictionary<Type, IArtery> heart = [];
     public void Graft<TArtery>(TArtery artery) where TArtery : IArtery
@@ -25,13 +23,17 @@ public class State
         heart[typeof(TArtery)] = artery;
     }
 
-    public IArtery GetArtery<TArtery>() where TArtery : IArtery
+    public TArtery GetArtery<TArtery>() where TArtery : IArtery
     {
-        if (typeof(TArtery) == CurrentArtery!.GetType())
-            return CurrentArtery;
-        if (heart.ContainsKey(typeof(TArtery)))
-            return heart[typeof(TArtery)];
-        return null!; // todo Computer Says No 
+        if (CurrentArtery is TArtery current)
+            return current;
+
+        if (heart.TryGetValue(typeof(TArtery), out var artery))
+            return (TArtery)artery;
+
+        return ComputerSays.No<TArtery>(
+            $"No IArtery of type '{typeof(TArtery).Name}' set on the current Signal.{Environment.NewLine}" +
+            $"Main IArtery is of type '{CurrentArtery.GetType().Name}'.");
     }
 
     private readonly Dictionary<Type, object> Memory = [];

@@ -11,7 +11,7 @@ public class ScopedTests
 and reverts the state after.
 **Example:**
 ```csharp
-var collector = new TheCollector<int>();
+var collector = TheCollector.Exhibits<int>();
 var innerFlow =
     from anInt in Pulse.Start<int>()
     from scopedBox in Pulse.Gather<int>()
@@ -33,7 +33,7 @@ Assert.Equal([42, 43, 42], collector.TheExhibit);
     [Fact]
     public void Pulse_Scoped()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var innerFlow =
             from anInt in Pulse.Start<int>()
             from scopedBox in Pulse.Gather<int>()

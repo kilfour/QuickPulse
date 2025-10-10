@@ -40,7 +40,7 @@ Assert.Equal([""...""], collector.TheExhibit);
             from anInt in Pulse.Start<int>()
             from _ in Pulse.When(anInt == 42, dotDotDot)
             select anInt;
-        var collector = new TheCollector<string>();
+        var collector = TheCollector.Exhibits<string>();
         Signal.From(flow).SetArtery(collector)
             .Pulse(6)
             .Pulse(42);

@@ -19,9 +19,9 @@ public class FlowEnumerationBugTests
 
         var result =
             Signal.From(flow)
-                .SetArtery(new TheCollector<int>())
+                .SetArtery(TheCollector.Exhibits<int>())
                 .Pulse([1, 2])
-                .GetArtery<TheCollector<int>>()
+                .GetArtery<Collector<int>>()
                 .TheExhibit;
         Assert.Equal(1, result[0]);
         Assert.Equal(2, result[1]);
@@ -36,10 +36,10 @@ public class FlowEnumerationBugTests
             select Unit.Instance;
 
         var signal = Signal.From(flow)
-            .SetArtery(new TheCollector<string>())
+            .SetArtery(TheCollector.Exhibits<string>())
             .Pulse(Unit.Instance);
 
         Assert.Equal("inside",
-            signal.GetArtery<TheCollector<string>>().TheExhibit.Single());
+            signal.GetArtery<Collector<string>>().TheExhibit.Single());
     }
 }

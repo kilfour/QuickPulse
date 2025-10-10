@@ -1,7 +1,6 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
-using QuickPulse.Arteries.Shunt;
 
 namespace QuickPulse.Tests.Docs.B_MakeItFlow.Gather;
 
@@ -20,7 +19,7 @@ select anInt;
     [Fact]
     public void Pulse_gather()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from box in Pulse.Gather(1)
@@ -46,7 +45,7 @@ select anInt;
     [Fact]
     public void Pulse_gather_empty_param()
     {
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var flow =
             from anInt in Pulse.Start<int>()
             from box in Pulse.Gather(1)

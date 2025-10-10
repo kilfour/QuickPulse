@@ -34,8 +34,6 @@ Assert.Equal("43", caulfield.Whispers());
 #### Safeties:
 - Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?  
-- Pulsing without setting the Main Artery throws:  
-    > The Heart flatlined. No Main Artery. Did you forget to call SetArtery(...) ?  
 ## Grafting Arteries
 Apart from pulsing flows through the Main Artery, QuickPulse allows you to redirect flows to additional Arteries.  
 There are various situations where this is useful.  
@@ -66,7 +64,7 @@ So let's try and find out what's going on.
 
 First we define a new typed Artery:  
 ```csharp
-public class Diagnostic : TheCollector<string> { }
+public class Diagnostic : Collector<string> { }
 ```
 Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.  
 ```csharp
@@ -125,6 +123,3 @@ var holden =
         .GetArtery<Holden>();
 Assert.Equal("42", holden.Whispers());
 ```
-#### Safeties:
-- If no Main Artery exists `GetArtery` throws:  
-    ...  

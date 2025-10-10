@@ -26,7 +26,7 @@ from anInt in Pulse.Start<int>()
             from _ in Pulse
                 .NoOp(/* --- Also useful for Comments --- */)
             select anInt;
-        var collector = new TheCollector<int>();
+        var collector = TheCollector.Exhibits<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse(42);
         Assert.Empty(collector.TheExhibit);

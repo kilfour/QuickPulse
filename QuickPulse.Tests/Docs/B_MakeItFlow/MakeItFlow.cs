@@ -2,7 +2,7 @@ using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.B_MakeItFlow.CheatSheet;
 
-[DocFile]
+//[DocFile]
 [DocContent(
 @"**Number One's Cheat Sheet:**
 
@@ -21,7 +21,7 @@ namespace QuickPulse.Tests.Docs.B_MakeItFlow.CheatSheet;
 | [**When(...)**](./MakeItFlowWhen.md)          | Executes the given flow only if the condition is true, without input.         |
 | [**NoOp()**](./MakeItFlowNoOp.md)             | Applies a do-nothing operation (for conditional branches or comments).        |
 ")]
-public class MakeItFlowTests
+public class MakeItFlow
 {
     // ------------
     // PLACEHOLDER  
