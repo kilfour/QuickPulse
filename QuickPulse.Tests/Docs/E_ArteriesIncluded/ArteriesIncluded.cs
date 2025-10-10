@@ -5,7 +5,7 @@ using QuickPulse.Instruments;
 namespace QuickPulse.Tests.Docs.E_ArteriesIncluded;
 
 
-//[DocFile]
+[DocFile]
 [DocContent("QuickPulse comes with a couple of built-in arteries:")]
 public class ArteriesIncluded
 {
@@ -68,24 +68,21 @@ Think of it as your **flow accountant**, keeping a faithful record of every tran
 
 Example:
 ")]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheLedger_Example))]
+    [CodeSnippet]
+    [CodeReplace("File.Delete(filePath);", "")]
     public void TheLedger_Example()
     {
-        //     var ledger = TheLedger.Records();
-        //     Signal.Tracing<string>()
-        //         .SetArtery(ledger)
-        //         .Pulse(["hello", "ledger"]);
-        //     var expectedPath = fake.GetFullPath("/solution/.quickpulse/quick-pulse-SUFFIX.log");
-        //     Assert.Collection(fake.Appends,
-        //        item => Assert.Equal((expectedPath, "hello" + Environment.NewLine), fake.Appends[0]),
-        //        item => Assert.Equal((expectedPath, "collector" + Environment.NewLine), fake.Appends[1])
-        //    );
-    }
-
-
-
-    // [CodeSnippet]
-    private void TheLedger_Example_Usage()
-    {
+        var filePath =
+            Signal.Tracing<string>()
+                .SetArtery(TheLedger.Records())
+                .Pulse(["hello", "filesystem"])
+                .GetArtery<Ledger>()
+                .FilePath;
+        var lines = File.ReadAllLines(filePath);
+        Assert.Equal("hello", lines[0]);
+        Assert.Equal("filesystem", lines[1]);
+        File.Delete(filePath);
     }
 
     [Fact]
@@ -107,27 +104,27 @@ This ensures that each run generates a distinct, traceable log file without over
         // Assert.EndsWith(".log", fake.LastCombinedPath);
     }
 
-    [DocContent(
-@"You can, of course, pass in a custom filename.
-Example:
-```csharp
-Signal.Tracing<string>()
-    .SetArtery(new WriteDataToFile(""myfilename.log""))
-    .Pulse(""hello"", ""collector"");
-```
-In that case, a `myfilename.log` file is created, still in the nearest parent directory that contains a `.sln` file.
-")]
     [Fact]
+    [DocContent(
+@"You can, of course, pass in a custom filename.  
+In that case, a `myfilename.log` file is created, still in the nearest parent directory that contains a `.sln` file.  
+
+Example:")]
+    [DocExample(typeof(ArteriesIncluded), nameof(Constructor_uses_custom_filename_example))]
     public void Constructor_uses_custom_filename()
     {
-        // var artery = new Ledger("custom.txt");
-        // var expected = fake.GetFullPath("/solution/custom.txt");
-        // artery.ClearFile(); // Triggers a write
-        // Assert.Contains((expected, ""), fake.Writes);
+        Assert.EndsWith("\\myfilename.log", Constructor_uses_custom_filename_example());
+    }
+
+    [CodeSnippet]
+    [CodeReplace("return", "")]
+    public string Constructor_uses_custom_filename_example()
+    {
+        return TheLedger.Records("myfilename.log").FilePath;
     }
 
     [DocContent(
-@"Note that the `WriteDataToFile` constructor will throw an exception if no `.sln` file can be found.")]
+@"Note that the `Ledger` will throw an exception if no `.sln` file can be found.")]
     [Fact(Skip = "use temp dir")]
     public void Throws_when_solution_root_is_null()
     {
@@ -135,55 +132,30 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
         Assert.Equal("Cannot find solution root.", ex.Message);
     }
 
-
-
-    [DocContent(
-@"`WriteDataToFile` appends all entries to the file; each pulse adds new lines to the end.
-")]
     [Fact]
-    public void Flow_appends_all_lines()
-    {
-        // var artery = new Ledger("data.txt");
-        // artery.Absorb("one", 2, "three");
-        // var expectedPath = fake.GetFullPath("/solution/data.txt");
-        // Assert.Collection(fake.Appends,
-        //     item => Assert.Equal((expectedPath, "one" + Environment.NewLine), item),
-        //     item => Assert.Equal((expectedPath, "2" + Environment.NewLine), item),
-        //     item => Assert.Equal((expectedPath, "three" + Environment.NewLine), item)
-        // );
-    }
-
     [DocContent(
-@"The `ClearFile` method does exactly what it says: it clears the file before logging.
-This is an idiomatic way to log repeatedly to a file that should start out empty:
-```csharp
-Signal.Tracing<string>()
-    .SetArtery(new WriteDataToFile().ClearFile())
-    .Pulse(""hello"", ""collector"");
-```
-")]
-    [Fact]
+@"The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
+This is an idiomatic way to log repeatedly to a file that should start out empty:")]
+    [CodeSnippet]
+    [CodeReplace("File.Delete(filePath);", "")]
     public void ClearFile_writes_empty_string_to_file()
     {
-        // var fake = new FakeFilingCabinet();
-        // var artery = new Ledger("clear-me.txt");
-        // artery.ClearFile();
-        // var expected = fake.GetFullPath("/solution/clear-me.txt");
-        // Assert.Contains((expected, ""), fake.Writes);
-    }
-
-
-
-    [Fact]
-    [DocContent(
-@"- `WriteData.ToNewFile(...)` is shorthand for `new WriteDataToFile(...).ClearFile()`")]
-    public void ToNewFile()
-    {
-        // -------------------------------------------------------
-        // Untested as it creates a log file on execution
-        //
-        // var artery = WriteData.ToNewFile();
-        // Assert.IsType<WriteDataToFile>(artery);
+        // Setup a file with content
+        var filePath =
+            Signal.Tracing<string>()
+                .SetArtery(TheLedger.Records("myfilename.log"))
+                .Pulse(["hello", "filesystem"])
+                .GetArtery<Ledger>()
+                .FilePath;
+        var lines = File.ReadAllLines(filePath);
+        Assert.Equal("hello", lines[0]);
+        Assert.Equal("filesystem", lines[1]);
+        // Clear it
+        Signal.Tracing<string>()
+            .SetArtery(TheLedger.Rewrites("myfilename.log"))
+            .GetArtery<Ledger>();
+        Assert.Equal(string.Empty, File.ReadAllText(filePath));
+        File.Delete(filePath);
     }
 
     [Fact]
@@ -192,10 +164,7 @@ Signal.Tracing<string>()
 @"This catcher quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
-Use the static helper `TheString.Catcher()` to create a new catcher:
-```csharp
-var holden = TheString.Catcher();
-```")]
+Use the static helper `TheString.Catcher()` to create a new catcher.")]
     public void TheStringCatcher()
     {
         var artery = TheString.Catcher();
@@ -203,25 +172,16 @@ var holden = TheString.Catcher();
     }
 
     [Fact]
-    [DocContent(
-@"You can get a hold of the string through the `.Whispers()` method.
-```csharp
-var holden = TheString.Catcher();
-Signal.From(
-        from x in Pulse.Start<int>()
-        from _ in Pulse.Trace($""x = {x}"")
-        select x)
-    .SetArtery(holden)
-    .Pulse(42);
-Assert.Equal(""x = 42"", holden.Whispers());
-```
-Great for assertions or string comparisons in tests.")]
+    [DocContent("You can get a hold of the string through the `.Whispers()` method.")]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheStringCatcher_Whispers))]
+    [CodeSnippet]
     public void TheStringCatcher_Whispers()
     {
         var holden = TheString.Catcher();
         Signal.From(
                 from x in Pulse.Start<int>()
-                from _ in Pulse.Trace($"x = {x}")
+                from _ in Pulse.Trace("x = ")
+                from __ in Pulse.Trace(42)
                 select x)
             .SetArtery(holden)
             .Pulse(42);

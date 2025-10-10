@@ -10,6 +10,7 @@
     - [When](B_MakeItFlow/When/WhenTests.md)
   - [Pulsing a Flow: One Signal, One State](C_OneSignalOneState/OneSignalOneStateTests.md)
   - [Flow Extensions](D_FlowExtensions/FlowExtensionsTests.md)
+  - [Arteries Included](E_ArteriesIncluded/ArteriesIncluded.md)
   - [The Heart](G_TheHuntingHeart/TheHeart.md)
   - [Addendum: No Where](H_NoWhere/PulseNoWhereTests.md)
   - [Why QuickPulse Exists](WhyQuickPulseExists/PulseOutroTests.md)

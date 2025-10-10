@@ -12,11 +12,11 @@ public static class TheLedger
 
 public class Ledger : IArtery
 {
-    private readonly string filePath;
+    public string FilePath { get; init; }
 
     public Ledger(string? maybeFileName = null, bool relativeToSolution = true)
     {
-        filePath = GetFilePath(maybeFileName, relativeToSolution);
+        FilePath = GetFilePath(maybeFileName, relativeToSolution);
         EnsureDirectoryExists();
     }
 
@@ -30,7 +30,7 @@ public class Ledger : IArtery
 
     private void EnsureDirectoryExists()
     {
-        var directory = Path.GetDirectoryName(filePath);
+        var directory = Path.GetDirectoryName(FilePath);
         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             Directory.CreateDirectory(directory);
     }
@@ -50,8 +50,8 @@ public class Ledger : IArtery
     }
 
     public Ledger ClearFile()
-        => Chain.It(() => File.WriteAllText(filePath, ""), this);
+        => Chain.It(() => File.WriteAllText(FilePath, ""), this);
 
     public void Absorb(params object[] data)
-        => File.AppendAllLines(filePath, data.Select(a => a.ToString()!));
+        => File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
 }
