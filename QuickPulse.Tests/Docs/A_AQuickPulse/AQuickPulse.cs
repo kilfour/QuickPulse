@@ -13,7 +13,7 @@ public class AQuickPulse
 @"The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.")]
     [Fact]
-    [DocExample(typeof(AQuickPulse), nameof(Adding_a_trace_example))]
+    [DocExample(typeof(AQuickPulse), nameof(Minimal_definition_start_example))]
     public void Minimal_definition_start()
     {
         Assert.IsType<Flow<int>>(Minimal_definition_start_example());

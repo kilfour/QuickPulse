@@ -5,7 +5,6 @@ The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.  
 ```csharp
     from anInt in Pulse.Start<int>()
-    from trace in Pulse.Trace(anInt)
     select anInt;
 ```
 ## Doing Something with the Input
