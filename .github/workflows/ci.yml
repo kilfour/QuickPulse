@@ -29,15 +29,23 @@ jobs:
         name: dotnet-results
         path: TestResults
       if: ${{ always() }}
-    - name: Upload Test report
-      uses: actions/upload-artifact@v4
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: (!cancelled())
       with:
-        name: test-report
-        path: TestResults/
-    - name: Complexity analysis using SCC
-      uses: hdmsantander/scc-docker-action@3.0
-      with:
-        args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/ > scc-report.txt
+        files: |
+          TestResults/**/*.xml
+          TestResults/**/*.trx
+          TestResults/**/*.json
+    - name: Run scc and save output
+      run: |
+        docker run --rm -v "$PWD":/src ghcr.io/boyter/scc:latest \
+          --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo . > scc-report.txt
+
+    # - name: Complexity analysis using SCC
+    #   uses: hdmsantander/scc-docker-action@3.0
+    #   with:
+    #     args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/ > scc-report.txt
     - name: Upload scc report
       uses: actions/upload-artifact@v4
       with:
