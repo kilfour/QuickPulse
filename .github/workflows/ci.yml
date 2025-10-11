@@ -4,16 +4,11 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-permissions:
-    contents: read
-    checks: write 
-    pages: write
-    id-token: write
-    issues: read
-    pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -24,44 +19,10 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Test with dotnet
-      run: dotnet test --no-restore --logger trx --results-directory "TestResults"
-    - name: Upload dotnet test results
-      uses: actions/upload-artifact@v4
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: Complexity analysis using SCC
+      uses: hdmsantander/scc-docker-action@3.0
       with:
-        name: dotnet-results
-        path: TestResults
-      if: ${{ always() }}
-    # - name: Publish Test Results
-    #   uses: EnricoMi/publish-unit-test-result-action@v2
-    #   if: (!cancelled())
-    #   with:
-    #     files: |
-    #       TestResults/**/*.xml
-    #       TestResults/**/*.trx
-    #       TestResults/**/*.json
-    - name: Run scc and save output
-      run: |
-        docker run --rm -v "$PWD":/src ghcr.io/boyter/scc:latest \
-          --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo . > scc-report.txt
-
-    # - name: Complexity analysis using SCC
-    #   uses: hdmsantander/scc-docker-action@3.0
-    #   with:
-    #     args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/ > scc-report.txt
-    - name: Upload scc report
-      uses: actions/upload-artifact@v4
-      with:
-        name: scc-report
-        path: scc-report.txt
-    - name: Upload pages Test Results artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: TestResults
-    - name: Upload pages SCC Results artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: scc-report.txt
-    - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
+        args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo 'QuickPulse/'
           
