@@ -11,7 +11,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -23,14 +22,15 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Run tests (TRX)
-      run: dotnet test --logger "trx;LogFileName=test.trx" --results-directory TestResults
-    - name: Install ReportUnit
-      run: dotnet tool update -g reportunit
-    - name: Generate HTML from TRX
+      run: dotnet test --logger "trx;LogFileName=tests.trx" --results-directory TestResults
+    - name: Install trx2html
+      run: dotnet tool update -g trx2html
+    - name: Generate HTML report
       run: |
-        reportunit "TestResults" "TestResultsHtml"
+        mkdir -p TestResultsHtml
+        trx2html TestResults/tests.trx TestResultsHtml/index.html
         ls -la TestResultsHtml
-    - name: Upload HTML report (artifact)
+    - name: Upload HTML Test report
       uses: actions/upload-artifact@v4
       with:
         name: test-report-html
@@ -38,11 +38,20 @@ jobs:
     - name: Complexity analysis using SCC
       uses: hdmsantander/scc-docker-action@3.0
       with:
-        args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/
-    - name: Upload pages artifact
+        args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/ > scc-report.txt
+    - name: Upload scc report
+      uses: actions/upload-artifact@v4
+      with:
+        name: scc-report
+        path: scc-report.txt
+    - name: Upload pages Test Results artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: TestResultsHtml
+    - name: Upload pages SCC Results artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: scc-report.txt
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
           
