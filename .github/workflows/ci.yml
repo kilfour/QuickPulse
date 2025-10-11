@@ -9,6 +9,8 @@ permissions:
     checks: write 
     pages: write
     id-token: write
+    issues: read
+    pull-requests: write
 jobs:
   build:
     runs-on: ubuntu-latest
