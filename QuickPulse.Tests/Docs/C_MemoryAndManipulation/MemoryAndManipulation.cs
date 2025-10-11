@@ -46,7 +46,7 @@ public class MemoryAndManipulation
     {
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(0)
+            from _ in Pulse.Prime(() => 0)
             from __ in Pulse.Manipulate<int>(x => x + 10)
             from now in Pulse.Trace<int>(a => a + input)
             select input;

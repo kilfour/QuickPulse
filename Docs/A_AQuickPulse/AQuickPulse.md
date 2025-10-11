@@ -1,13 +1,13 @@
 # A Quick Pulse
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.  
 ## The Minimal Flow
-
-```csharp
-from anInt in Pulse.Start<int>()
-select anInt;
-```
-The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
+The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.  
+```csharp
+    from anInt in Pulse.Start<int>()
+    from trace in Pulse.Trace(anInt)
+    select anInt;
+```
 ## Doing Something with the Input
 Let's trace the values as they pass through:  
 ```csharp

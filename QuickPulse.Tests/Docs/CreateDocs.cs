@@ -4,7 +4,7 @@ namespace QuickPulse.Tests.Docs;
 
 public class CreateDocs
 {
-    [Fact(Skip = "needs package update")]
+    [Fact]
     public void Now()
     {
         Explain.These<CreateDocs>("Docs/");

@@ -9,7 +9,7 @@ public class Spike_Manipulate
     {
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(0)
+            from _ in Pulse.Prime(() => 0)
             from cnt in Pulse.Manipulate<int>(a => a + 1)
             from ___ in Pulse.Trace($"{cnt + input} ")
             select input;

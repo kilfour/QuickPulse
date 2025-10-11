@@ -44,17 +44,6 @@ public class State
         return (Box<TValue>)obj!;
     }
 
-    public Box<TValue> GetTheBox<TValue>(TValue value)
-    {
-        if (!Memory.TryGetValue(typeof(TValue), out var obj))
-        {
-            var box = new Box<TValue>(value);
-            Memory[typeof(TValue)] = box;
-            return box;
-        }
-        return (Box<TValue>)obj!;
-    }
-
     public Box<TValue> GetTheBox<TValue>(Func<TValue> factory)
     {
         if (!Memory.TryGetValue(typeof(TValue), out var obj))

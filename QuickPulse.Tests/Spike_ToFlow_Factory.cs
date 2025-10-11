@@ -7,7 +7,7 @@ public class Spike_ToFlow_Factory
     {
         var flow =
             from i in Pulse.Start<int>()
-            from c in Pulse.Gather(42)
+            from c in Pulse.Prime(() => 42)
             from t in Pulse.ToFlow(a => Pulse.Manipulate<int>(a => a + 1).Dissipate(), i)
             select i;
         // var text =

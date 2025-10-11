@@ -9,7 +9,7 @@ public class Spike_Gather_Access_In_Conditionals
     {
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(Valve.Install())
+            from _ in Pulse.Prime(() => Valve.Install())
             from conditional in Pulse.When<Valve>(a => a.Restricted(), Pulse.Trace($"{input} "))
             select input;
         var holden = TheString.Catcher();
@@ -24,7 +24,7 @@ public class Spike_Gather_Access_In_Conditionals
     {
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(Valve.Install())
+            from _ in Pulse.Prime(() => Valve.Install())
             from conditional in Pulse.TraceIf<Valve>(a => a.Restricted(), () => $"{input} ")
             select input;
         var holden = TheString.Catcher();
@@ -44,7 +44,7 @@ public class Spike_Gather_Access_In_Conditionals
 
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(Valve.Install())
+            from _ in Pulse.Prime(() => Valve.Install())
             from conditional in Pulse.ToFlowIf<int, Valve>(a => a.Restricted(), subFlow, () => input)
             select input;
         var holden = TheString.Catcher();
@@ -57,12 +57,12 @@ public class Spike_Gather_Access_In_Conditionals
     [Fact]
     public void EffectIf()
     {
-        var side = 0;
         var flow =
             from input in Pulse.Start<int>()
-            from _ in Pulse.Gather(Valve.Install())
-            from conditional in Pulse.EffectIf<Valve>(a => a.Passable(), () => side++)
-            from ___ in Pulse.Trace($"{side}:{input} ")
+            from _1 in Pulse.Prime(Valve.Install)
+            from _2 in Pulse.Prime(() => 0)
+            from _3 in Pulse.When<Valve>(a => a.Passable(), Pulse.Manipulate<int>(a => a + 1).Dissipate())
+            from _4 in Pulse.Trace<int>(a => $"{a}:{input} ")
             select input;
         var holden = TheString.Catcher();
         Signal.From(flow)

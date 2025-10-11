@@ -9,25 +9,28 @@ namespace QuickPulse.Tests.Docs.A_AQuickPulse;
 public class AQuickPulse
 {
     [DocHeader("The Minimal Flow")]
-    [DocContent(@"
-```csharp
-from anInt in Pulse.Start<int>()
-select anInt;
-```
-The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
+    [DocContent(
+@"The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
 **Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.")]
     [Fact]
+    [DocExample(typeof(AQuickPulse), nameof(Adding_a_trace_example))]
     public void Minimal_definition_start()
     {
-        var flow =
-            from anInt in Pulse.Start<int>()
-            select anInt;
-        Assert.IsType<Flow<int>>(flow);
+        Assert.IsType<Flow<int>>(Minimal_definition_start_example());
     }
 
+    [CodeSnippet]
+    [CodeReplace("return", "")]
+    private static Flow<int> Minimal_definition_start_example()
+    {
+        return
+            from anInt in Pulse.Start<int>()
+            select anInt;
+    }
+
+    [Fact]
     [DocHeader("Doing Something with the Input")]
     [DocContent("Let's trace the values as they pass through:")]
-    [Fact]
     [DocExample(typeof(AQuickPulse), nameof(Adding_a_trace_example))]
     public void Adding_a_trace()
         => Assert.IsType<Flow<int>>(Adding_a_trace_example());
