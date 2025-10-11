@@ -7,4 +7,7 @@ var flow =
     select anInt;
 var signal = Signal.From(flow);
 ```
-**`From<T>(Func<T, Flow<Unit>>`** is a useful overload that allows for inlining simple flows uppon Signal creation.  
+**`Signal.From<T>(Func<T, Flow<Unit>>`** is a useful overload that allows for inlining simple flows upon Signal creation.  
+```csharp
+var signal = Signal.From<int>(a => Pulse.Trace(a));
+```

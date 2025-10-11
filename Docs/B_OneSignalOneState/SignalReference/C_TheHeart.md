@@ -123,3 +123,5 @@ var holden =
         .GetArtery<Holden>();
 Assert.Equal("42", holden.Whispers());
 ```
+**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+      

@@ -17,12 +17,6 @@ public static partial class Pulse
     public static Flow<Unit> Scoped<TValue>(Func<TValue, TValue> enter, Flow<Unit> flow) =>
         Runnel(Always, WithScope(enter, flow));
 
-    public static Flow<Unit> Scoped<TValue>(TValue value, Flow<Unit> flow) =>
-        Scoped<TValue>(_ => value, flow);
-
-    public static Flow<Unit> Scoped<TValue>(Func<TValue> compute, Flow<Unit> flow) =>
-        Scoped<TValue>(_ => compute(), flow);
-
     public static Flow<Unit> ScopedIf<TValue>(bool flag, Func<TValue, TValue> enter, Flow<Unit> flow) =>
         Runnel(Flag(flag), WithScope(enter, flow));
 

@@ -234,14 +234,15 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
         Assert.Equal("42", holden.Whispers());
     }
 
-    //     [Doc(Order = Chapters.Signalling + "-7.1-1", Caption = "", Content =
-    // @"**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
-    // ")]
-    //     [Fact]
-    //     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
-    //     {
-    //         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
-    //         Assert.Equal("IArtery set on the current Signal is of type 'Holden' not 'TheCollector`1'.", ex.Message);
-    //     }
+    [DocContent(
+@"**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+    ")]
+    [Fact]
+    public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
+    {
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(Pulse.NoOp()).SetArtery(TheString.Catcher()).GetArtery<Ledger>());
+        var lines = ex.Message.Split(Environment.NewLine);
+        Assert.Equal("No IArtery of type 'Ledger' set on the current Signal.", lines[0]);
+        Assert.Equal("Main IArtery is of type 'Holden'.", lines[1]);
+    }
 }
-

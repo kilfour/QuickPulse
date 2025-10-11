@@ -5,6 +5,7 @@ namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 
 [DocFile]
 [DocContent("> How QuickPulse remembers, updates, and temporarily alters state.")]
+[DocExample(typeof(MemoryAndManipulation), nameof(Scoped_with_Manipulate))]
 public class MemoryAndManipulation
 {
     [Fact]
@@ -58,7 +59,6 @@ public class MemoryAndManipulation
     [Fact]
     [DocHeader("Scoped: temporary overrides with automatic restore.")]
     [DocContent("`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the gathered cell of type `T`. On exit, the outer value is restored.")]
-    [DocContent("Any `Manipulate<T>` inside the scope affects the **scoped** value and is discarded on exit.")]
     public void Scoped_applies_temp_value_and_restores()
     {
         var seen = TheCollector.Exhibits<string>();
@@ -75,6 +75,7 @@ public class MemoryAndManipulation
 
     [Fact]
     [DocContent("Any `Manipulate<T>` inside the scope affects the **scoped** value and is discarded on exit.")]
+    [CodeSnippet]
     public void Scoped_with_Manipulate()
     {
         var seen = TheCollector.Exhibits<string>();
@@ -94,20 +95,33 @@ public class MemoryAndManipulation
     }
 
 
-    public record Int1(int Number);
-    public record Int2(int Number);
+
     [Fact]
-    [DocContent("* **Type identity matters**: Use wrapper records to keep multiple cells of the same underlying type.")]
+    [DocHeader("Type Identity Matters")]
+    [DocContent("Use wrapper records to keep multiple cells of the same underlying type.  ")]
+    [DocExample(typeof(Int1))]
+    [DocExample(typeof(Int2))]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Type_matters_using_records_flow))]
     public void Type_matters_using_records()
     {
-        var flow =
-            from start in Pulse.Start<Unit>()
-            from _1 in Pulse.Prime(() => new Int1(1))
-            from _2 in Pulse.Prime(() => new Int2(2))
-            from _3 in Pulse.Trace(_1.Number + _2.Number)
-            select start;
         var latch = TheLatch.Holds<int>();
-        Signal.From(flow).SetArtery(latch).Pulse();
+        Signal.From(Type_matters_using_records_flow()).SetArtery(latch).Pulse();
         Assert.Equal(3, latch.Q);
+    }
+
+    [CodeExample]
+    public record Int1(int Number) { }
+    [CodeExample]
+    public record Int2(int Number) { }
+
+    [CodeSnippet]
+    [CodeReplace("return", "")]
+    private static Flow<Unit> Type_matters_using_records_flow()
+    {
+        return from start in Pulse.Start<Unit>()
+               from _1 in Pulse.Prime(() => new Int1(1))
+               from _2 in Pulse.Prime(() => new Int2(2))
+               from _3 in Pulse.Trace(_1.Number + _2.Number)
+               select start;
     }
 }
