@@ -23,13 +23,19 @@ jobs:
       run: dotnet build --no-restore
     - name: Run tests (TRX)
       run: dotnet test --logger "trx;LogFileName=tests.trx" --results-directory TestResults
-    - name: Install trx2html
-      run: dotnet tool update -g trx2html
-    - name: Generate HTML report
+
+    - name: Install TRX→HTML tool
+      run: dotnet tool install -g Samhammer.TrxToHtml
+
+    # ensure the tool is on PATH for the runner
+    - name: Add dotnet tools to PATH
+      run: echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+    - name: Generate HTML
       run: |
         mkdir -p TestResultsHtml
-        trx2html TestResults/tests.trx TestResultsHtml/index.html
-        ls -la TestResultsHtml
+        trx-to-html  # finds TRX under cwd and writes TestResults.html
+        mv TestResults.html TestResultsHtml/index.html
     - name: Upload HTML Test report
       uses: actions/upload-artifact@v4
       with:
