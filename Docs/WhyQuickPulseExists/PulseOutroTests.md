@@ -1,16 +1,16 @@
 # Why QuickPulse Exists
-*A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.*
+> A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.
 
 A little while back I was writing a test for a method that took some JSON as input.
 I got my fuzzers out and went to work. And then... my fuzzers gave up.
 
-So I added the following to **QuickMGenerate**:
+So I added the following to **QuickFuzzr**:
 ```csharp
     var generator =
-        from _ in MGen.For<Tree>().Depth(2, 5)
-        from __ in MGen.For<Tree>().GenerateAsOneOf(typeof(Branch), typeof(Leaf))
-        from ___ in MGen.For<Tree>().TreeLeaf<Leaf>()
-        from tree in MGen.One<Tree>().Inspect()
+        from _ in Fuzz.For<Tree>().Depth(2, 5)
+        from __ in Fuzz.For<Tree>().GenerateAsOneOf(typeof(Branch), typeof(Leaf))
+        from ___ in Fuzz.For<Tree>().TreeLeaf<Leaf>()
+        from tree in Fuzz.One<Tree>().Inspect()
         select tree;
 ```
 Which can generate output like this:
