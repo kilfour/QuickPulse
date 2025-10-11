@@ -1,5 +1,4 @@
   - [A Quick Pulse](A_AQuickPulse/AQuickPulse.md)
-  - [Memory And Manipulation](A_AQuickPulse/MemoryAndManipulation.md)
     - [Effect](B_MakeItFlow/Effect/EffectTests.md)
     - [First Of](B_MakeItFlow/FirstOf/FirstOfTests.md)
     - [Gather](B_MakeItFlow/Gather/GatherTests.md)
@@ -10,6 +9,7 @@
     - [Trace](B_MakeItFlow/Trace/TraceTests.md)
     - [When](B_MakeItFlow/When/WhenTests.md)
   - [Pulsing a Flow: One Signal, One State](B_OneSignalOneState/OneSignalOneState.md)
+  - [Memory And Manipulation](C_MemoryAndManipulation/MemoryAndManipulation.md)
   - [Flow Extensions](D_FlowExtensions/FlowExtensionsTests.md)
   - [Arteries Included](E_ArteriesIncluded/ArteriesIncluded.md)
   - [The Heart](G_TheHuntingHeart/TheHeart.md)

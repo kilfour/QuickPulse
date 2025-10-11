@@ -58,33 +58,6 @@ var signal = Signal.From(flow);
         Assert.IsType<Signal<int>>(signal);
     }
 
-    [DocHeader("Tracing")]
-    [DocContent(
-@"
-**`Signal.Tracing<T>()`** is sugaring for: 
-```csharp
-var flow =
-    from start in Pulse.Start<T>()
-    from _ in Pulse.Trace(start)
-    select start;
-return new Signal<T>(flow);
-```
-**Example:**
-```csharp
-Signal.Tracing<string>();
-```
-Useful if you want to just quickly grab a tracer.
-")]
-    [Fact]
-    public void Signal_tracing()
-    {
-        var signal = Signal.Tracing<int>();
-        var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
-        signal.Pulse(42);
-        Assert.Single(collector.TheExhibit);
-        Assert.Equal(42, collector.TheExhibit[0]);
-    }
-
     [DocHeader("Pulse")]
     [DocContent(
 @"**`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
@@ -199,7 +172,7 @@ var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
 @"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
 **Example:**
 ```csharp
-var signal = Signal.Tracing<int>().SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
+var signal = Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
 
 var collector = signal.GetArtery<TheCollector<int>>()!;
 Assert.Single(collector.TheExhibit);
@@ -209,7 +182,8 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery()
     {
-        var signal = Signal.Tracing<int>().SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
+        var signal =
+        Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
         var collector = signal.GetArtery<Collector<int>>();
         Assert.Single(collector.TheExhibit);
         Assert.Equal(42, collector.TheExhibit[0]);
@@ -221,7 +195,7 @@ Assert.Equal(42, collector.TheExhibit[0]);
     [Fact]
     public void Signal_get_artery_throws_if_wrong_typed_retrieved()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<Ledger>());
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheString.Catcher()).GetArtery<Ledger>());
         var lines = ex.Message.Split(Environment.NewLine);
         Assert.Equal("No IArtery of type 'Ledger' set on the current Signal.", lines[0]);
         Assert.Equal("Main IArtery is of type 'Holden'.", lines[1]);

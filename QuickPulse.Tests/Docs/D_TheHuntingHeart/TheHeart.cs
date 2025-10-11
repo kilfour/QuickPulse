@@ -30,7 +30,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [CodeSnippet]
     private void Signal_set_Artery_example(IArtery holden)
     {
-        Signal.Tracing<int>()
+        Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(holden) // <= 'holden' is now the Main Artery
             .Pulse(42);
     }
@@ -48,7 +48,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [CodeReplace("return", "")]
     private Holden Signal_set_and_return_Artery_example()
     {
-        return Signal.Tracing<int>().SetAndReturnArtery(TheString.Catcher());
+        return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
     }
 
     [Fact]
@@ -59,7 +59,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     {
         var holden = TheString.Catcher();
         var caulfield = TheString.Catcher();
-        Signal.Tracing<int>()
+        Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(holden)
             .Pulse(42)
             .SetArtery(caulfield)
@@ -75,14 +75,14 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?")]
     public void Signal_setting_null_Artery_throws()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(null!));
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetArtery(null!));
         Assert.Equal("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?", ex.Message);
     }
 
     [Fact]
     public void Signal_setting_and_return_null_Artery_throws()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetAndReturnArtery<Holden>(null!));
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery<Holden>(null!));
         Assert.Equal("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?", ex.Message);
     }
 
@@ -227,7 +227,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     public void Signal_get_Artery()
     {
         var holden =
-            Signal.Tracing<int>()
+            Signal.From<int>(a => Pulse.Trace(a))
                 .SetArtery(TheString.Catcher())
                 .Pulse(42)
                 .GetArtery<Holden>();
@@ -240,7 +240,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     //     [Fact]
     //     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
     //     {
-    //         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.Tracing<int>().SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
+    //         var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheString.Catcher()).GetArtery<TheCollector<int>>());
     //         Assert.Equal("IArtery set on the current Signal is of type 'Holden' not 'TheCollector`1'.", ex.Message);
     //     }
 }

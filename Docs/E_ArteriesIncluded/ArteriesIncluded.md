@@ -14,7 +14,7 @@ Think of it as a **curator** for your flows, nothing escapes notice, everything 
 Example:  
 ```csharp
 var collector = TheCollector.Exhibits<string>();
-Signal.Tracing<string>()
+Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(collector)
     .Pulse(["hello", "collector"]);
 Assert.Equal("hello", collector.TheExhibit[0]);
@@ -27,7 +27,7 @@ This is ideal for tests and probes where you only care about what came out last.
 Example:  
 ```csharp
 var latch = TheLatch.Holds<string>();
-Signal.Tracing<string>()
+Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(latch)
     .Pulse(["hello", "latch"]);
 Assert.Equal("latch", latch.Q);
@@ -42,7 +42,7 @@ Example:
   
 ```csharp
 var filePath =
-    Signal.Tracing<string>()
+    Signal.From<string>(a => Pulse.Trace(a))
         .SetArtery(TheLedger.Records())
         .Pulse(["hello", "filesystem"])
         .GetArtery<Ledger>()

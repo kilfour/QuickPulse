@@ -17,7 +17,7 @@ It implements the Null Object pattern: an inert artery that silently absorbs all
 Any call to `Absorb()` on a shunt simply vanishes, no storage, no side effects, no errors.
 This ensures that flows without an explicitly attached artery still execute safely.")]
     public void TheShunt_Is_The_Default()
-        => Assert.NotNull(Signal.Tracing<string>().GetArtery<Shunt>());
+        => Assert.NotNull(Signal.From<string>(a => Pulse.Trace(a)).GetArtery<Shunt>());
 
     [Fact]
     [DocHeader("The Collector")]
@@ -33,7 +33,7 @@ Example:")]
     public void TheCollector_Example()
     {
         var collector = TheCollector.Exhibits<string>();
-        Signal.Tracing<string>()
+        Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(collector)
             .Pulse(["hello", "collector"]);
         Assert.Equal("hello", collector.TheExhibit[0]);
@@ -52,7 +52,7 @@ Example:")]
     public void TheLatch_Example()
     {
         var latch = TheLatch.Holds<string>();
-        Signal.Tracing<string>()
+        Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(latch)
             .Pulse(["hello", "latch"]);
         Assert.Equal("latch", latch.Q);
@@ -74,7 +74,7 @@ Example:
     public void TheLedger_Example()
     {
         var filePath =
-            Signal.Tracing<string>()
+            Signal.From<string>(a => Pulse.Trace(a))
                 .SetArtery(TheLedger.Records())
                 .Pulse(["hello", "filesystem"])
                 .GetArtery<Ledger>()
@@ -142,7 +142,7 @@ This is an idiomatic way to log repeatedly to a file that should start out empty
     {
         // Setup a file with content
         var filePath =
-            Signal.Tracing<string>()
+            Signal.From<string>(a => Pulse.Trace(a))
                 .SetArtery(TheLedger.Records("myfilename.log"))
                 .Pulse(["hello", "filesystem"])
                 .GetArtery<Ledger>()
@@ -151,7 +151,7 @@ This is an idiomatic way to log repeatedly to a file that should start out empty
         Assert.Equal("hello", lines[0]);
         Assert.Equal("filesystem", lines[1]);
         // Clear it
-        Signal.Tracing<string>()
+        Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(TheLedger.Rewrites("myfilename.log"))
             .GetArtery<Ledger>();
         Assert.Equal(string.Empty, File.ReadAllText(filePath));

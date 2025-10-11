@@ -37,22 +37,6 @@ select anInt;
 var signal = Signal.From(flow);
 ```
   
-## Tracing
-
-**`Signal.Tracing<T>()`** is sugaring for: 
-```csharp
-var flow =
-    from start in Pulse.Start<T>()
-    from _ in Pulse.Trace(start)
-    select start;
-return new Signal<T>(flow);
-```
-**Example:**
-```csharp
-Signal.Tracing<string>();
-```
-Useful if you want to just quickly grab a tracer.
-  
 ## Pulse
 **`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.
 In its simplest form this looks like the following.
@@ -91,7 +75,7 @@ var collector = signal.SetAndReturnArtery(TheCollector.Exhibits<int>());
 **`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.
 **Example:**
 ```csharp
-var signal = Signal.Tracing<int>().SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
+var signal = Signal.From<int>(a => Pulse.Trace(a)).SetArtery(TheCollector.Exhibits<int>()).Pulse(42);
 
 var collector = signal.GetArtery<TheCollector<int>>()!;
 Assert.Single(collector.TheExhibit);

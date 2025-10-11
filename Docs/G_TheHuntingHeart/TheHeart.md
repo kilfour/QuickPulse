@@ -11,19 +11,19 @@ There is *always* exactly one Main Artery. It is the default outflow for a signa
 **`Signal.SetArtery(...)`** sets the **Main Artery**.  
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.    
 ```csharp
-Signal.Tracing<int>()
+Signal.From<int>(a => Pulse.Trace(a))
     .SetArtery(holden) // <= 'holden' is now the Main Artery
     .Pulse(42);
 ```
 **`Signal.SetAndReturnArtery(...)`** Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
- Signal.Tracing<int>().SetAndReturnArtery(TheString.Catcher());
+ Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
 ```
 Setting an Artery on a signal that already has one **replaces** the previous Artery.    
 ```csharp
 var holden = TheString.Catcher();
 var caulfield = TheString.Catcher();
-Signal.Tracing<int>()
+Signal.From<int>(a => Pulse.Trace(a))
     .SetArtery(holden)
     .Pulse(42)
     .SetArtery(caulfield)
@@ -117,7 +117,7 @@ We can now use this information to correct the original flow
   
 ```csharp
 var holden =
-    Signal.Tracing<int>()
+    Signal.From<int>(a => Pulse.Trace(a))
         .SetArtery(TheString.Catcher())
         .Pulse(42)
         .GetArtery<Holden>();
