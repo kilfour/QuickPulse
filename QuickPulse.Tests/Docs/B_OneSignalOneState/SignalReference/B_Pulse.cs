@@ -7,7 +7,8 @@ namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 public class B_Pulse
 {
     [Fact]
-    [DocContent("**`Signal.Pulse(...)`** is the main way a flow can be instructed to do useful work.")]
+    [DocHeader("Pulsing One Value")]
+    [DocContent("`Signal.Pulse(...)` is the main way a flow can be instructed to do useful work.")]
     [DocExample(typeof(B_Pulse), nameof(Signal_pulse))]
     [DocContent("As the `Assert`'s demonstrate, this sends the int `42` into the flow.")]
     [CodeSnippet]
@@ -23,7 +24,8 @@ public class B_Pulse
 
 
     [Fact]
-    [DocContent("For ease of use, when dealing with `IEnumerable` return values from various sources, an overload exists: `Pulse(IEnumerable<T> inputs)`. ")]
+    [DocHeader("Pulsing Many Values")]
+    [DocContent("For ease of use, when dealing with `IEnumerable` return values from various sources, an overload exists: `Signal.Pulse(IEnumerable<T> inputs)`. ")]
     [DocExample(typeof(B_Pulse), nameof(Signal_pulse_thrice_enumerable))]
     [DocContent("This behaves exactly like the previous example.")]
     [CodeSnippet]
@@ -39,15 +41,28 @@ public class B_Pulse
         Assert.Equal(44, collector.TheExhibit[2]);
     }
 
-    [Fact(Skip = "doc this")]
-    public void Signal_pulse_null()
+    [Fact]
+    [DocHeader("Pulsing Nothing")]
+    [DocContent(
+@"Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Unit` type.  
+So in order to advance a flow of type `Flow<Unit>` you can use the `Signal.Pulse()` overload.")]
+    [DocExample(typeof(B_Pulse), nameof(Signal_pulse_unit))]
+    [CodeSnippet]
+    public void Signal_pulse_unit()
     {
-        // List<int> collector = [];
-        // var flow =
-        //     from anInt in Pulse.Start<int>()
-        //     from _ in Pulse.Effect(() => collector.Add(anInt))
-        //     select anInt;
-        // var signal = Signal.From(flow).SetArtery(Install.Shunt);
-        // signal.Pulse((List<int>)null!);
+        var flow =
+            from input in Pulse.Start<Unit>()
+            from _1 in Pulse.Prime(() => 42)
+            from _2 in Pulse.Trace<int>(a => a)
+            from _3 in Pulse.Manipulate<int>(a => a + 1)
+            select input;
+        var collector = TheCollector.Exhibits<int>();
+        Signal.From(flow)
+            .SetArtery(collector)
+            .Pulse().Pulse().Pulse();
+        Assert.Equal(3, collector.TheExhibit.Count);
+        Assert.Equal(42, collector.TheExhibit[0]);
+        Assert.Equal(43, collector.TheExhibit[1]);
+        Assert.Equal(44, collector.TheExhibit[2]);
     }
 }

@@ -6,16 +6,14 @@ The Heart is the typed Artery registry: it remembers where pulses can go, based 
 It is *not* an output by itself. 
   
 ## The Main Artery
-There is *always* exactly one Main Artery. It is the default outflow for a signal.  
-
-**`Signal.SetArtery(...)`** sets the **Main Artery**.  
+There is *always* exactly one Main Artery. It is the default outflow for a signal. Use `Signal.SetArtery(...)` to set it.  
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.    
 ```csharp
 Signal.From<int>(a => Pulse.Trace(a))
     .SetArtery(holden) // <= 'holden' is now the Main Artery
     .Pulse(42);
 ```
-**`Signal.SetAndReturnArtery(...)`** Similar, but returns the Artery you pass in (useful for quick wiring):  
+`Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
  Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
 ```
@@ -31,10 +29,9 @@ Signal.From<int>(a => Pulse.Trace(a))
 Assert.Equal("42", holden.Whispers());
 Assert.Equal("43", caulfield.Whispers());
 ```
-#### Safeties:
 - Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?  
-## Grafting Arteries
+## Grafting Extra Arteries
 Apart from pulsing flows through the Main Artery, QuickPulse allows you to redirect flows to additional Arteries.  
 There are various situations where this is useful.  
 In the following section we will discuss how to set up one particular use case:
@@ -75,7 +72,7 @@ Signal.From(flow)
     .Graft(diagnostic)
     .Pulse("{ a { b } c }");
 ```
-In this case, we could just Graft the `TheCollector<string>`, but creating a derived class explains our intent much better.
+In this case, we could just Graft the `TheCollector<string>`, but creating a derived class expresses our intent much better.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
   
@@ -113,7 +110,7 @@ When executing this, the `Holden` Artery contains the same as before, but now we
 ```
 We can now use this information to correct the original flow  
 ## GetArtery
-**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.  
+`Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
   
 ```csharp
 var holden =
@@ -123,5 +120,5 @@ var holden =
         .GetArtery<Holden>();
 Assert.Equal("42", holden.Whispers());
 ```
-**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrecte type of `IArtery` that the heart is unaware of.
       

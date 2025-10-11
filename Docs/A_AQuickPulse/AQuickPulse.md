@@ -18,6 +18,13 @@ Let's trace the values as they pass through:
 To execute a flow, we need a `Signal<T>`, which is created via: `Signal.From<T>(Flow<T> flow)`.
 
 Example:  
+```csharp
+var flow =
+    from anInt in Pulse.Start<int>()
+    from trace in Pulse.Trace(anInt)
+    select anInt;
+var signal = Signal.From(flow);
+```
 ## Sending Values Through the Flow
 Once you have a signal, you can push values into the flow by calling: `Signal.Pulse(...)`.
 

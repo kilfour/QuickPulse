@@ -50,6 +50,7 @@ public class AQuickPulse
 @"To execute a flow, we need a `Signal<T>`, which is created via: `Signal.From<T>(Flow<T> flow)`.
 
 Example:")]
+    [DocExample(typeof(AQuickPulse), nameof(Adding_a_signal_example))]
     [Fact]
     public void Adding_a_signal()
         => Assert.IsType<Signal<int>>(Adding_a_signal_example());

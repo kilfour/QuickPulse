@@ -15,9 +15,7 @@ public class C_TheHeart
     [Fact]
     [DocHeader("The Main Artery")]
     [DocContent(
-@"There is *always* exactly one Main Artery. It is the default outflow for a signal.  
-
-**`Signal.SetArtery(...)`** sets the **Main Artery**.  
+@"There is *always* exactly one Main Artery. It is the default outflow for a signal. Use `Signal.SetArtery(...)` to set it.  
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [DocExample(typeof(C_TheHeart), nameof(Signal_set_Artery_example))]
     public void Signal_set_Artery()
@@ -28,7 +26,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     }
 
     [CodeSnippet]
-    private void Signal_set_Artery_example(IArtery holden)
+    private static void Signal_set_Artery_example(IArtery holden)
     {
         Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(holden) // <= 'holden' is now the Main Artery
@@ -37,7 +35,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [Fact]
     [DocContent(
-@"**`Signal.SetAndReturnArtery(...)`** Similar, but returns the Artery you pass in (useful for quick wiring):")]
+@"`Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):")]
     [DocExample(typeof(C_TheHeart), nameof(Signal_set_and_return_Artery_example))]
     public void Signal_set_and_return_Artery()
     {
@@ -46,7 +44,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [CodeSnippet]
     [CodeReplace("return", "")]
-    private Holden Signal_set_and_return_Artery_example()
+    private static Holden Signal_set_and_return_Artery_example()
     {
         return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
     }
@@ -69,7 +67,6 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     }
 
     [Fact]
-    [DocHeader("Safeties:", 2)]
     [DocContent(
 @"- Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?")]
@@ -86,7 +83,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
         Assert.Equal("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?", ex.Message);
     }
 
-    [DocHeader("Grafting Arteries")] // ungraft
+    [DocHeader("Grafting Extra Arteries")]
     [DocContent(
 @"Apart from pulsing flows through the Main Artery, QuickPulse allows you to redirect flows to additional Arteries.  
 There are various situations where this is useful.  
@@ -159,7 +156,7 @@ First we define a new typed Artery:")]
     public class Diagnostic : Collector<string> { }
 
     [DocContent(
-@"In this case, we could just Graft the `TheCollector<string>`, but creating a derived class explains our intent much better.
+@"In this case, we could just Graft the `TheCollector<string>`, but creating a derived class expresses our intent much better.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 ")]
@@ -220,7 +217,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     [DocHeader("GetArtery")]
     [DocContent(
-@"**`Signal.GetArtery<TArtery>(...)`** can be used to retrieve the current `IArtery` set on the signal.  
+@"`Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
 ")]
     [DocExample(typeof(C_TheHeart), nameof(Signal_get_Artery))]
     [CodeSnippet]
@@ -235,7 +232,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     }
 
     [DocContent(
-@"**`Signal.GetArtery<TArtery>(...)`** throws if trying to retrieve the wrong type of `IArtery`.
+@"`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrecte type of `IArtery` that the heart is unaware of.
     ")]
     [Fact]
     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
