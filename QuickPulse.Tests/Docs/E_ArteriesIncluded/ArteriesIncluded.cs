@@ -113,7 +113,7 @@ Example:")]
     [DocExample(typeof(ArteriesIncluded), nameof(Constructor_uses_custom_filename_example))]
     public void Constructor_uses_custom_filename()
     {
-        Assert.EndsWith("\\myfilename.log", Constructor_uses_custom_filename_example());
+        Assert.EndsWith($"{Path.DirectorySeparatorChar}myfilename.log", Constructor_uses_custom_filename_example());
     }
 
     [CodeSnippet]
