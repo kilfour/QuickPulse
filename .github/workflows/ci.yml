@@ -32,14 +32,14 @@ jobs:
         name: dotnet-results
         path: TestResults
       if: ${{ always() }}
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      if: (!cancelled())
-      with:
-        files: |
-          TestResults/**/*.xml
-          TestResults/**/*.trx
-          TestResults/**/*.json
+    # - name: Publish Test Results
+    #   uses: EnricoMi/publish-unit-test-result-action@v2
+    #   if: (!cancelled())
+    #   with:
+    #     files: |
+    #       TestResults/**/*.xml
+    #       TestResults/**/*.trx
+    #       TestResults/**/*.json
     - name: Run scc and save output
       run: |
         docker run --rm -v "$PWD":/src ghcr.io/boyter/scc:latest \
