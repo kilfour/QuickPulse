@@ -8,7 +8,7 @@ QuickPulse lets you write LINQ expressions that react to values, accumulate stat
 ```csharp
  Signal.From(
         from input in Pulse.Start<string>()
-        from isFirst in Pulse.Ensure(() => true)
+        from isFirst in Pulse.Prime(() => true)
         let capitalized = char.ToUpper(input[0]) + input[1..]
         let evenLength = input.Length % 2 == 0
         from _1 in Pulse.TraceIf(isFirst, () => capitalized)

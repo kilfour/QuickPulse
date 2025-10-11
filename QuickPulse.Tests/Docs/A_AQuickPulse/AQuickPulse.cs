@@ -1,6 +1,5 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
-using QuickPulse.Explains.Formatters;
 
 
 namespace QuickPulse.Tests.Docs.A_AQuickPulse;

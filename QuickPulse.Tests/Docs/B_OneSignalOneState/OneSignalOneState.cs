@@ -2,7 +2,7 @@ using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 using QuickPulse.Explains;
 
-namespace QuickPulse.Tests.Docs.C_OneSignalOneState;
+namespace QuickPulse.Tests.Docs.B_OneSignalOneState;
 
 [DocFile]
 [DocFileHeader("Pulsing a Flow: One Signal, One State")]
@@ -32,7 +32,7 @@ In short: **one signal, one evolving state**.
 
 This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
 ")]
-public class OneSignalOneStateTests
+public class OneSignalOneState
 {
     [DocHeader("From")]
     [DocContent(
