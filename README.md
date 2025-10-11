@@ -1,8 +1,8 @@
 # QuickPulse
 
 > **LINQ with a heartbeat.**
->
-> A tiny library for building stateful, inspectable, composable flows.  
+
+A tiny library for building stateful, inspectable, composable flows.  
 ## Getting Started
 QuickPulse lets you write LINQ expressions that react to values, accumulate state, and emit traces along the way.  
 ```csharp

@@ -8,8 +8,8 @@ namespace QuickPulse.Tests;
 [DocContent(
 @"
 > **LINQ with a heartbeat.**
->
-> A tiny library for building stateful, inspectable, composable flows.")]
+
+A tiny library for building stateful, inspectable, composable flows.")]
 public class ReadMe
 {
     [Fact]
