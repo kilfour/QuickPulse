@@ -5,6 +5,7 @@
     - [The Heart](B_OneSignalOneState/SignalReference/C_TheHeart.md)
   - [Memory And Manipulation](C_MemoryAndManipulation/MemoryAndManipulation.md)
   - [Make It Flow](D_MakeItFlow/MakeItFlow.md)
-  - [Arteries Included](E_ArteriesIncluded/ArteriesIncluded.md)
+  - [Bending The River](E_BendingTheRiver/BendingTheRiver.md)
+  - [Arteries Included](F_ArteriesIncluded/ArteriesIncluded.md)
   - [Addendum: No Where](H_NoWhere/PulseNoWhereTests.md)
   - [Why QuickPulse Exists](WhyQuickPulseExists/PulseOutroTests.md)

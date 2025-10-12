@@ -67,7 +67,7 @@ dotnet add package QuickPulse
 ```")]
     private static void Installation() { }
 
-    [Fact]
+    [Fact(Skip = "explicit")]
     [DocHeader("Documentation")]
     [DocContent(@"
 QuickPulse is fully documented, with real, executable examples for each combinator and concept.

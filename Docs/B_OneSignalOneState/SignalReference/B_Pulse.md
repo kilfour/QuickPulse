@@ -22,7 +22,7 @@ Assert.Equal(42, collector.TheExhibit[0]);
 Assert.Equal(43, collector.TheExhibit[1]);
 Assert.Equal(44, collector.TheExhibit[2]);
 ```
-This behaves exactly like the previous example.  
+Same behaviour as the single-pulse example.  
 ## Pulsing Nothing
 Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Unit` type.  
 So in order to advance a flow of type `Flow<Unit>` you can use the `Signal.Pulse()` overload.  
