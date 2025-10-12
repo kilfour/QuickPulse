@@ -8,7 +8,7 @@ namespace QuickPulse.Tests.Docs.B_OneSignalOneState;
 @"
 In QuickPulse, a `Signal<T>` is more than just a way to push values into a flow;
 it's a **stateful conduit**. Each `Signal<T>` instance wraps a specific `Flow<T>` and carries its own **internal state**,
-including any `Gather(...)` values or scoped manipulations applied along the way.
+including any `Prime(...)` values or scoped manipulations applied along the way.
 
 When you call `Signal.Pulse(...)`, you're not broadcasting into some shared pipeline,
 you're feeding **a single stateful flow machine**,
@@ -28,6 +28,6 @@ In short: **one signal, one evolving state**.
        +---- Pulse(x) ------+
 ```
 
-This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
+This design lets you model streaming behaviour, accumulate context, or isolate runs simply by managing signals explicitly.
 ")]
 public class OneSignalOneState { /* Placeholder */ }

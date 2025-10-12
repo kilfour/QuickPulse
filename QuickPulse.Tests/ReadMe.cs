@@ -20,7 +20,7 @@ public class ReadMe
         Assert.Equal("A deep dark forest, a looking glass and a trail of dead generators.", SignalExample());
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static string SignalExample()
     {
         return Signal.From(

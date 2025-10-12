@@ -87,3 +87,4 @@ Signal.From(
     .Pulse(42);
 Assert.Equal("x = 42", holden.Whispers());
 ```
+You can also reset/clear the *caught* values using the `.Forgets()` method.  

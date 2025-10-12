@@ -57,6 +57,23 @@ public class MemoryAndManipulation
     }
 
     [Fact]
+    [DocContent("The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.")]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_return_value))]
+    [CodeSnippet]
+    public void Manipulate_return_value()
+    {
+        var flow =
+            from input in Pulse.Start<int>()
+            from _1 in Pulse.Prime(() => 0)
+            from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
+            from _2 in Pulse.Trace(i + input)            // <= use the new value
+            select input;
+        var latch = TheLatch.Holds<int>();
+        Signal.From(flow).SetArtery(latch).Pulse(32);
+        Assert.Equal(42, latch.Q);
+    }
+
+    [Fact]
     [DocHeader("Scoped: temporary overrides with automatic restore.")]
     [DocContent("`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the gathered cell of type `T`. On exit, the outer value is restored.")]
     public void Scoped_applies_temp_value_and_restores()
@@ -115,7 +132,7 @@ public class MemoryAndManipulation
     public record Int2(int Number) { }
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static Flow<Unit> Type_matters_using_records_flow()
     {
         return from start in Pulse.Start<Unit>()
@@ -123,5 +140,28 @@ public class MemoryAndManipulation
                from _2 in Pulse.Prime(() => new Int2(2))
                from _3 in Pulse.Trace(_1.Number + _2.Number)
                select start;
+    }
+
+    [Fact]
+    [DocHeader("Postfix Operators")]
+    [DocContent(
+@"Although the behaviour is logical once you think about it, it can feel a bit unintuitive,
+but when using Postfix operators, beware that they return the *old* value.")]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_postfix_operators))]
+    [CodeSnippet]
+    [DocContent(
+@"Use prefix form or pure expressions instead.  
+* **Recommended:** `Pulse.Manipulate<int>(a => a + 1)`")]
+    public void Manipulate_postfix_operators()
+    {
+        var flow =
+            from input in Pulse.Start<int>()
+            from _ in Pulse.Prime(() => 0)
+            from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
+            from now in Pulse.Trace<int>(a => a + input)
+            select input;
+        var latch = TheLatch.Holds<int>();
+        Signal.From(flow).SetArtery(latch).Pulse(42);
+        Assert.Equal(42, latch.Q);
     }
 }

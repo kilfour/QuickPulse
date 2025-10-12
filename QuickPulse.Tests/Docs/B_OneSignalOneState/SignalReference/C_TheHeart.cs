@@ -43,7 +43,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     }
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static Holden Signal_set_and_return_Artery_example()
     {
         return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
@@ -110,7 +110,7 @@ Suppose we have the following flow: ")]
 **An Example**:")]
     [DocExample(typeof(C_TheHeart), nameof(Grafting_starting_flow_usage))]
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     [CodeReplace("Grafting_starting_flow()", "flow")]
     private Signal<char> Grafting_starting_flow_usage()
     {
@@ -139,7 +139,7 @@ First we define a new typed Artery:")]
     [DocContent("Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.")]
     [DocExample(typeof(C_TheHeart), nameof(Grafting_inspected_flow_usage))]
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     [CodeReplace("Grafting_inspected_flow()", "flow")]
     private Signal<char> Grafting_inspected_flow_usage()
     {
@@ -192,7 +192,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static List<string> Grafting_checking_diagnostics_expected()
     {
         return
@@ -232,7 +232,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     }
 
     [DocContent(
-@"`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrecte type of `IArtery` that the heart is unaware of.
+@"`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrete type of `IArtery` that the heart is unaware of.
     ")]
     [Fact]
     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()

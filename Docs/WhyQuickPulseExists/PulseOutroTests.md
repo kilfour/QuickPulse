@@ -33,7 +33,7 @@ Implementing this wasn't trivial. And I was, let's say, a muppet, more than once
 Writing a unit test for a fixed depth like `(min:1, max:1)` or `(min:2, max:2)`? Not a problem.  
 But when you're fuzzing with a range like `(min:2, max:5).` Yeah, ... good luck.
 
-Debugging this kind of behavior was as much fun as writing an F# compiler in JavaScript.  
+Debugging this kind of behaviour was as much fun as writing an F# compiler in JavaScript.  
 So I wrote a few diagnostic helpers: visualizers, inspectors, and composable tools
 that could take a generated value and help me see why things were behaving oddly.
 

@@ -2,7 +2,7 @@ using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.E_ArteriesIncluded;
+namespace QuickPulse.Tests.Docs.F_ArteriesIncluded;
 
 
 [DocFile]
@@ -70,7 +70,7 @@ Example:
 ")]
     [DocExample(typeof(ArteriesIncluded), nameof(TheLedger_Example))]
     [CodeSnippet]
-    [CodeReplace("File.Delete(filePath);", "")]
+    [CodeRemove("File.Delete(filePath);")]
     public void TheLedger_Example()
     {
         var filePath =
@@ -117,7 +117,7 @@ Example:")]
     }
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     public string Constructor_uses_custom_filename_example()
     {
         return TheLedger.Records("myfilename.log").FilePath;
@@ -137,7 +137,7 @@ Example:")]
 @"The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:")]
     [CodeSnippet]
-    [CodeReplace("File.Delete(filePath);", "")]
+    [CodeRemove("File.Delete(filePath);")]
     public void ClearFile_writes_empty_string_to_file()
     {
         // Setup a file with content
@@ -185,6 +185,24 @@ Use the static helper `TheString.Catcher()` to create a new catcher.")]
                 select x)
             .SetArtery(holden)
             .Pulse(42);
+        Assert.Equal("x = 42", holden.Whispers());
+    }
+
+    [Fact]
+    [DocContent("You can also reset/clear the *caught* values using the `.Forgets()` method.")]
+    public void TheStringCatcher_Forgets()
+    {
+        var holden = TheString.Catcher();
+        var signal =
+            Signal.From(
+                    from x in Pulse.Start<int>()
+                    from _ in Pulse.Trace("x = ")
+                    from __ in Pulse.Trace(42)
+                    select x)
+                .SetArtery(holden)
+                .Pulse(1);
+        holden.Forgets();
+        signal.Pulse(42);
         Assert.Equal("x = 42", holden.Whispers());
     }
 }

@@ -120,5 +120,5 @@ var holden =
         .GetArtery<Holden>();
 Assert.Equal("42", holden.Whispers());
 ```
-`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrecte type of `IArtery` that the heart is unaware of.
+`Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrete type of `IArtery` that the heart is unaware of.
       

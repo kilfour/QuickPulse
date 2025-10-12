@@ -14,7 +14,7 @@ public class A_From
         => Assert.IsType<Signal<int>>(Signal_from_example());
 
     [CodeSnippet]
-    [CodeReplace("return signal;", "")]
+    [CodeRemove("return signal;")]
     private static Signal<int> Signal_from_example()
     {
         var flow =
@@ -31,7 +31,7 @@ public class A_From
         => Assert.IsType<Signal<int>>(Signal_from_factory_example());
 
     [CodeSnippet]
-    [CodeReplace("return signal;", "")]
+    [CodeRemove("return signal;")]
     private static Signal<int> Signal_from_factory_example()
     {
         var signal = Signal.From<int>(a => Pulse.Trace(a));

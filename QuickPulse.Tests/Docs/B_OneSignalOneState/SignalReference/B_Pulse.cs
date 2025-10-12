@@ -27,7 +27,7 @@ public class B_Pulse
     [DocHeader("Pulsing Many Values")]
     [DocContent("For ease of use, when dealing with `IEnumerable` return values from various sources, an overload exists: `Signal.Pulse(IEnumerable<T> inputs)`. ")]
     [DocExample(typeof(B_Pulse), nameof(Signal_pulse_thrice_enumerable))]
-    [DocContent("This behaves exactly like the previous example.")]
+    [DocContent("Same behaviour as the single-pulse example.")]
     [CodeSnippet]
     public void Signal_pulse_thrice_enumerable()
     {

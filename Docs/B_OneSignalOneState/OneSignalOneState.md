@@ -22,5 +22,5 @@ In short: **one signal, one evolving state**.
        +---- Pulse(x) ------+
 ```
 
-This design lets you model streaming behavior, accumulate context, or isolate runs simply by managing signals explicitly.
+This design lets you model streaming behaviour, accumulate context, or isolate runs simply by managing signals explicitly.
   

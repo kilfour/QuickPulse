@@ -7,6 +7,7 @@ public class CreateDocs
     [Fact]
     public void Now()
     {
-        Explain.These<CreateDocs>("Docs/");
+        //Explain.These<CreateDocs>("Docs/");
+        Explain.This<CreateDocs>("temp.md");
     }
 }

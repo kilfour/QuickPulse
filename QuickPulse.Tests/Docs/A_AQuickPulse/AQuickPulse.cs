@@ -20,13 +20,35 @@ public class AQuickPulse
     }
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static Flow<int> Minimal_definition_start_example()
     {
         return
             from anInt in Pulse.Start<int>()
             select anInt;
     }
+
+    [DocHeader("A Mental Map", 1)]
+    [DocContent(
+@"> See the river through the flows.
+
+Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
+
+1. `Flow<T>`: 
+A flow is a *recipe for behaviour*. It defines how input values are transformed, traced, or manipulated.
+You can think of it as the *program*, declarative, reusable, and testable.
+A flow itself doesn't do anything until it's pulsed.
+
+2. `Signal<T>`: 
+A signal is a *living instance* of a flow. It remembers, reacts, and evolves with each pulse.
+Every signal carries its own internal state and provides the entry point for execution.
+You can have multiple signals from the same flow, each one a separate, independent life.
+
+3. `IArtery`: 
+Arteries are the *output channels* of a signal. They collect, display, or record whatever the flow emits,
+be it traces, diagnostics, or effects.
+Arteries make flows observable, enabling introspection, debugging, and persistence.")]
+    private void MentalMap() { /* Placeholder */ }
 
     [Fact]
     [DocHeader("Doing Something with the Input")]
@@ -36,7 +58,7 @@ public class AQuickPulse
         => Assert.IsType<Flow<int>>(Adding_a_trace_example());
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static Flow<int> Adding_a_trace_example()
     {
         return
@@ -56,7 +78,7 @@ Example:")]
         => Assert.IsType<Signal<int>>(Adding_a_signal_example());
 
     [CodeSnippet]
-    [CodeReplace("return signal;", "")]
+    [CodeRemove("return signal;")]
     private static Signal<int> Adding_a_signal_example()
     {
         var flow =
@@ -81,7 +103,7 @@ For example, sending the value `42` into the flow:")]
     }
 
     [CodeSnippet]
-    [CodeReplace("return", "")]
+    [CodeRemove("return")]
     private static Signal<int> Adding_a_pulse_example()
     {
         return Signal.From(

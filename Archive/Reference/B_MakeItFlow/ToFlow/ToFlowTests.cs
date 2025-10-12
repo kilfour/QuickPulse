@@ -9,56 +9,6 @@ public class ToFlowTests
 {
     [DocContent(
 @"
-**`Pulse.ToFlow(...)`** Executes a subflow over a value or collection.
-
-**Example:**
-```csharp
-var subFlow =
-    from anInt in Pulse.Start<int>()
-    from _ in Pulse.Trace(anInt)
-    select anInt;
-var flow =
-    from box in Pulse.Start<Box<int>>()
-    from _ in Pulse.ToFlow(subFlow, box.Value) // <=
-    select box;
-```
-")]
-    [Fact]
-    public void Pulse_to_flow()
-    {
-        var subFlow =
-            from anInt in Pulse.Start<int>()
-            from _ in Pulse.Trace(anInt)
-            select anInt;
-        var flow =
-            from box in Pulse.Start<Box<int>>()
-            from _ in Pulse.ToFlow(subFlow, box.Value)
-            select box;
-        var collector = TheCollector.Exhibits<int>();
-        var signal = Signal.From(flow).SetArtery(collector);
-        signal.Pulse(new Box<int>(42));
-        Assert.Equal([42], collector.TheExhibit);
-    }
-
-    [Fact]
-    public void Pulse_to_flow_collection()
-    {
-        var subFlow =
-            from anInt in Pulse.Start<int>()
-            from _ in Pulse.Trace(anInt + 1)
-            select anInt;
-        var flow =
-            from input in Pulse.Start<List<int>>()
-            from _ in Pulse.ToFlow(subFlow, input)
-            select input;
-        var collector = TheCollector.Exhibits<int>();
-        var signal = Signal.From(flow).SetArtery(collector);
-        signal.Pulse([41, 41]);
-        Assert.Equal([42, 42], collector.TheExhibit);
-    }
-
-    [DocContent(
-@"
 **`Pulse.ToFlowIf(...)`** Executes a subflow over a value or collection, conditionally.
 
 **Example:**
