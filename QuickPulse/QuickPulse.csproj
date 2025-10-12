@@ -3,41 +3,34 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
     <Version>0.3.0</Version>
     <Authors>Kilfour</Authors>
     <PackageId>QuickPulse</PackageId>
     <Title>QuickPulse</Title>
     <Description>LINQ with a heartbeat.</Description>
-
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/kilfour/QuickPulse</RepositoryUrl>
     <PackageProjectUrl>https://github.com/kilfour/QuickPulse</PackageProjectUrl>
-
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>LINQ;Flows;Diagnostics</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn> <!-- ignore missing xml doc warnings -->
-
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-
     <EnablePackageValidation>true</EnablePackageValidation>
     <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryBranch>main</RepositoryBranch>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" />
     <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
