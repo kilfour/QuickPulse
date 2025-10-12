@@ -52,7 +52,7 @@ QuickPulse is fully documented, with real, executable examples for each combinat
 
 You can explore it here:
 
-* **[Table of Contents](https://github.com/kilfour/QuickPulse/blob/main/Docs//ToC.md)**
+* **[Table of Contents](https://github.com/kilfour/QuickPulse/blob/main/Docs/ToC.md)**
 
 Or, ... see [A Quick Pulse](https://github.com/kilfour/QuickPulse/blob/main/Docs/A_AQuickPulse/AQuickPulse.md) for a hands-on quickstart.  
 ## License

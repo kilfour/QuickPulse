@@ -23,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- <PackageReference Include="QuickPulse.Explains" Version="0.2.8" /> -->
+    <PackageReference Include="QuickPulse.Explains" Version="0.2.9" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\QuickPulse.Explains\QuickPulse.Explains\QuickPulse.Explains.csproj" />
+    <!-- <ProjectReference Include="..\..\QuickPulse.Explains\QuickPulse.Explains\QuickPulse.Explains.csproj" /> -->
     <!-- <ProjectReference Include="..\..\QuickPulse.Show\QuickPulse.Show\QuickPulse.Show.csproj" /> -->
   </ItemGroup>
 

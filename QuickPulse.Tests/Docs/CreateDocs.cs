@@ -8,6 +8,6 @@ public class CreateDocs
     public void Now()
     {
         Explain.These<CreateDocs>("Docs/");
-        Explain.This<CreateDocs>("temp.md");
+        Explain.This<CreateDocs>("Docs/all-in-one.md");
     }
 }
