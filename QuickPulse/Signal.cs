@@ -1,4 +1,3 @@
-using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
@@ -10,12 +9,12 @@ namespace QuickPulse;
 public static class Signal
 {
     /// <summary>
-    /// Creates a new signal from a predefined flow use when you already have a composed Flow<T>.
+    /// Creates a new signal from a predefined flow. Use when you already have a composed Flow&lt;T&gt;.
     /// </summary>
     public static Signal<T> From<T>(Flow<T> flow) => new(flow);
 
     /// <summary>
-    /// Creates a new signal from a flow factory, use to inline or lazily construct small flows.
+    /// Creates a new signal from a flow factory. Use to inline or lazily construct small flows.
     /// </summary>
     public static Signal<T> From<T>(Func<T, Flow<Unit>> flowFactory) =>
         new(Pulse.GetFlowFromFactory(flowFactory));
@@ -35,7 +34,7 @@ public class Signal<T>(Flow<T> flow)
     public bool FlowRanDry => state.FlowRanDry;
 
     /// <summary>
-    /// Pulses a flow that takes no input (Flow<Unit>), advances the flow by one step.
+    /// Pulses a flow that takes no input (Flow&lt;Unit&gt;). Advances the flow by one step.
     /// </summary>
     public Signal<T> Pulse()
         => typeof(T) == typeof(Unit)
@@ -45,12 +44,12 @@ public class Signal<T>(Flow<T> flow)
     private static IEnumerable<T> Single(T value) { yield return value; }
 
     /// <summary>
-    /// Sends a single value through the flow, use for simple one-off pulses.
+    /// Sends a single value through the flow. Use for simple one-off pulses.
     /// </summary>
     public Signal<T> Pulse(T value) => Pulse(Single(value));
 
     /// <summary>
-    /// Sends multiple values through the flow in sequence, preserves internal state between pulses.
+    /// Sends multiple values through the flow in sequence. Preserves internal state between pulses.
     /// </summary>
     public Signal<T> Pulse(IEnumerable<T> inputs)
     {
@@ -64,30 +63,30 @@ public class Signal<T>(Flow<T> flow)
     }
 
     /// <summary>
-    /// Sets the main artery for this signal, determines where emitted traces and outputs flow.
+    /// Sets the main artery for this signal. Determines where emitted traces and outputs flow.
     /// </summary>
     public Signal<T> SetArtery(IArtery artery) => Chain.It(() => state.SetArtery(artery), this);
 
     /// <summary>
-    /// Sets and returns the given artery, a convenient way to wire and capture an artery inline.
+    /// Sets and returns the given artery. A convenient way to wire and capture an artery inline.
     /// </summary>
     public TArtery SetAndReturnArtery<TArtery>(TArtery artery) where TArtery : IArtery =>
         Chain.It(() => state.SetArtery(artery), artery);
 
     /// <summary>
-    /// Retrieves the current artery of the specified type, throws if not grafted or registered.
+    /// Retrieves the current artery of the specified type. Throws if not grafted or registered.
     /// </summary>
     public TArtery GetArtery<TArtery>() where TArtery : class, IArtery
         => state.GetArtery<TArtery>();
 
     /// <summary>
-    /// Grafts an additional artery onto the signal, use for diagnostics or side-channel tracing.
+    /// Grafts an additional artery onto the signal. Use for diagnostics or side-channel tracing.
     /// </summary>
     public Signal<T> Graft<TArtery>(TArtery artery) where TArtery : IArtery
         => Chain.It(() => state.Graft(artery), this);
 
     /// <summary>
-    /// Executes a finalizing flow once the signal has completed, use for cleanup or summary actions.
+    /// Executes a finalizing flow once the signal has completed. Use for cleanup or summary actions.
     /// </summary>
     public Signal<T> FlatLine(Flow<Unit> finisher)
         => Chain.It(() => finisher(state), this);
