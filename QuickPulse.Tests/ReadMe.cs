@@ -4,12 +4,16 @@ using QuickPulse.Explains;
 namespace QuickPulse.Tests;
 
 [DocFile]
-[DocFileHeader("<img src='icon-white-on-blue.png' width='40' align='top'/> QuickPulse")]
+[DocFileHeader("<img src='icon.png' width='40' align='top'/> QuickPulse")]
 [DocContent(
 @"
 > **LINQ with a heartbeat.**
 
-A tiny library for building stateful, inspectable, composable flows.")]
+A tiny library for building stateful, inspectable, composable flows.
+
+[![Docs](https://img.shields.io/badge/docs-QuickPulse-blue?style=flat-square&logo=readthedocs)](https://github.com/kilfour/QuickPulse/blob/main/Docs/ToC.md)
+[![NuGet](https://img.shields.io/nuget/v/QuickPulse.svg?style=flat-square&logo=nuget)](https://www.nuget.org/packages/QuickPulse)
+[![License: MIT](https://img.shields.io/badge/license-MIT-success?style=flat-square)](https://github.com/kilfour/QuickPulse/blob/main/LICENSE)")]
 public class ReadMe
 {
     [Fact]
@@ -46,7 +50,7 @@ public class ReadMe
 * Composable `Flow<T>` pipelines using LINQ.
 * Stateful `Signal<T>` execution.
 * Built-in tracing via `IArtery`.
-* Conditional logic (`TraceIf`, `EffectIf`, `When`).
+* Conditional logic.
 * Scoped state and reversible manipulations.
 * Integration with file logging and value capture.")]
     private static void Highlights() { }
@@ -70,10 +74,15 @@ QuickPulse is fully documented, with real, executable examples for each combinat
 
 You can explore it here:
 
-* **[Table of Contents](./Docs/ToC.md)**
+* **[Table of Contents](https://github.com/kilfour/QuickPulse/blob/main/Docs//ToC.md)**
 
-Or, ... see [A Quick Pulse](./Docs/AQuickPulse.md) for a hands-on quickstart.")]
+Or, ... see [A Quick Pulse](https://github.com/kilfour/QuickPulse/blob/main/Docs/A_AQuickPulse/AQuickPulse.md) for a hands-on quickstart.")]
     public void Documentation() { Explain.OnlyThis<ReadMe>("README.md"); }
+
+    [DocHeader("License")]
+    [DocContent(@"
+This project is licensed under the [MIT License](https://github.com/kilfour/QuickPulse/blob/main//LICENSE).")]
+    private static void License() { }
 
     [DocHeader("Why QuickPulse Exists?")]
     [DocContent(@"

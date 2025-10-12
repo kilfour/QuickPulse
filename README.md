@@ -1,8 +1,12 @@
-# <img src='icon-white-on-blue.png' width='40' align='top'/> QuickPulse
+# <img src='icon.png' width='40' align='top'/> QuickPulse
 
 > **LINQ with a heartbeat.**
 
-A tiny library for building stateful, inspectable, composable flows.  
+A tiny library for building stateful, inspectable, composable flows.
+
+[![Docs](https://img.shields.io/badge/docs-QuickPulse-blue?style=flat-square&logo=readthedocs)](https://github.com/kilfour/QuickPulse/blob/main/Docs/ToC.md)
+[![NuGet](https://img.shields.io/nuget/v/QuickPulse.svg?style=flat-square&logo=nuget)](https://www.nuget.org/packages/QuickPulse)
+[![License: MIT](https://img.shields.io/badge/license-MIT-success?style=flat-square)](https://github.com/kilfour/QuickPulse/blob/main/LICENSE)  
 ## Getting Started
 QuickPulse lets you write LINQ expressions that react to values, accumulate state, and emit traces along the way.  
 ```csharp
@@ -29,7 +33,7 @@ QuickPulse lets you write LINQ expressions that react to values, accumulate stat
 * Composable `Flow<T>` pipelines using LINQ.
 * Stateful `Signal<T>` execution.
 * Built-in tracing via `IArtery`.
-* Conditional logic (`TraceIf`, `EffectIf`, `When`).
+* Conditional logic.
 * Scoped state and reversible manipulations.
 * Integration with file logging and value capture.  
 ## Installation
@@ -48,9 +52,12 @@ QuickPulse is fully documented, with real, executable examples for each combinat
 
 You can explore it here:
 
-* **[Table of Contents](./Docs/ToC.md)**
+* **[Table of Contents](https://github.com/kilfour/QuickPulse/blob/main/Docs//ToC.md)**
 
-Or, ... see [A Quick Pulse](./Docs/AQuickPulse.md) for a hands-on quickstart.  
+Or, ... see [A Quick Pulse](https://github.com/kilfour/QuickPulse/blob/main/Docs/A_AQuickPulse/AQuickPulse.md) for a hands-on quickstart.  
+## License
+
+This project is licensed under the [MIT License](https://github.com/kilfour/QuickPulse/blob/main//LICENSE).  
 ## Why QuickPulse Exists?
 
 Do you know how you sometimes leave your house, maybe to get some cigarettes, and start thinking about something?
