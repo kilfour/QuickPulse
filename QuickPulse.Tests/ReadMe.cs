@@ -4,7 +4,7 @@ using QuickPulse.Explains;
 namespace QuickPulse.Tests;
 
 [DocFile]
-[DocFileHeader("QuickPulse")]
+[DocFileHeader("<img src='icon-white-on-blue.png' width='40' align='top'/> QuickPulse")]
 [DocContent(
 @"
 > **LINQ with a heartbeat.**

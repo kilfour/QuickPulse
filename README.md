@@ -1,4 +1,4 @@
-# QuickPulse
+# <img src='icon-white-on-blue.png' width='40' align='top'/> QuickPulse
 
 > **LINQ with a heartbeat.**
 
