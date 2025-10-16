@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="QuickPulse.Explains" Version="0.2.9" />
+    <PackageReference Include="QuickPulse.Explains" Version="0.3.0" />
   </ItemGroup>
   
   <ItemGroup>
