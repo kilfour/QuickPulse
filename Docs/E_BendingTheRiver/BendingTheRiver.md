@@ -53,20 +53,20 @@ uneven
     from _ in Pulse.When(input % 2 == 0, Pulse.Trace("even"))
     select input;
 ```
-### Flow Factory Version
+#### Flow Factory Version
 ```csharp
     from input in Pulse.Start<int>()
     from _ in Pulse.When(input % 2 == 0, () => Pulse.Trace("even"))
     select input;
 ```
-### Using State
+#### Using State
 ```csharp
     from input in Pulse.Start<int>()
     from _1 in Pulse.Prime(() => 2)
     from _2 in Pulse.When<int>(a => input % a == 0, Pulse.Trace("even"))
     select input;
 ```
-### Using State: Flow Factory Version
+#### Using State: Flow Factory Version
 ```csharp
     from input in Pulse.Start<int>()
     from _1 in Pulse.Prime(() => 2)
@@ -81,14 +81,14 @@ uneven
     from _ in Pulse.TraceIf(input % 2 == 0, () => "even")
     select input;
 ```
-### Using State
+#### Using State
 ```csharp
     from input in Pulse.Start<int>()
     from _1 in Pulse.Prime(() => 2)
     from _2 in Pulse.TraceIf<int>(a => input % a == 0, () => "even")
     select input;
 ```
-### Using State, ... Twice
+#### Using State, ... Twice
 ```csharp
     from input in Pulse.Start<int>()
     from _1 in Pulse.Prime(() => 2)
@@ -99,4 +99,43 @@ uneven
 ```bash
 2:even
 2:even
+```
+## ToFlowIf
+All examples in this section use the following *sub* flow definition:  
+```csharp
+    from input in Pulse.Start<int>()
+    from _ in Pulse.Trace(input.ToString())
+    select input;
+```
+The `ToFlowIf` family conditionally executes a subflow.
+
+Use it to embed optional or context-sensitive subflows declaratively.  
+```csharp
+    from input in Pulse.Start<int>()
+    from _ in Pulse.ToFlowIf(input % 2 == 0, subFlow, () => input)
+    select input;
+```
+Results in:  
+```csharp
+ ["2", "4"]
+```
+An overload exist that allows for executing a subflow over a collection of values.  
+Given the following `Signal`:  
+```csharp
+Signal.From(flow)
+    .SetArtery(TheCollector.Exhibits<string>())
+    .Pulse([42, 43])
+    .Pulse([1, 2, 3, 4, 5])
+    .Pulse([42, 43, 44])
+    .GetArtery<Collector<string>>()
+    .TheExhibit;
+```
+And this `Flow`:  
+```csharp
+    from input in Pulse.Start<List<int>>()
+    from _ in Pulse.ToFlowIf(input.Count == 5, subFlow, () => input)
+    select input;
+```
+```csharp
+ ["1", "2", "3", "4", "5"]
 ```
