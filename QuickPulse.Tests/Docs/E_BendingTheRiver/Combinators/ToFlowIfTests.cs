@@ -8,7 +8,6 @@ namespace QuickPulse.Tests.Docs.E_BendingTheRiver.Combinators;
 public class ToFlowIfTests
 {
     [CodeSnippet]
-    //[CodeFormat(typeof(StringArrayToString))]
     [CodeRemove("return")]
     [CodeRemove(";")]
     public static string[] Even_result_values()
@@ -17,7 +16,6 @@ public class ToFlowIfTests
     }
 
     [CodeSnippet]
-    //[CodeFormat(typeof(StringArrayToString))]
     [CodeRemove("return")]
     [CodeRemove(";")]
     public static string[] All_result_values()
@@ -95,36 +93,44 @@ Use it to embed optional or context-sensitive subflows declaratively.")]
     {
         Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_collection(ToFlowIf_SubFlow())));
     }
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<int> ToFlowIf_flow_factory()
+    {
+        return
+            from input in Pulse.Start<int>()
+            from _ in Pulse.ToFlowIf(input % 2 == 0, a => Pulse.Trace(a.ToString()), () => input)
+            select input;
+    }
 
-    // [Fact]
-    // [DocHeader("Flag: Factory Single")]
-    // [DocContent("Uses a flow factory when the flag is true.")]
-    // public void Flag_Factory_Single()
-    // {
-    //     var collector = TheCollector.Exhibits<int>();
-    //     Signal.From<Unit>(
-    //             from start in Pulse.Start<Unit>()
-    //             from _ in Pulse.ToFlowIf(true, (int x) => Pulse.Trace(x + 1), () => 1)
-    //             select start)
-    //         .SetArtery(collector)
-    //         .Pulse();
-    //     Assert.Single(collector.TheExhibit, 2);
-    // }
+    [Fact]
+    [DocContent("Both the above methods can be used with a *Flow Factory Method*.")]
+    [DocContent("Single value:")]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_factory))]
+    [CodeSnippet]
+    public void Pulse_to_flowif_factory()
+    {
+        Assert.Equal(Even_result_values(), BendingTheRiver.GetResult(ToFlowIf_flow_factory()));
+    }
 
-    // [Fact]
-    // [DocHeader("Flag: Factory Many")]
-    // [DocContent("Runs factory-generated subflows for each value when flag is true.")]
-    // public void Flag_Factory_Many()
-    // {
-    //     var collector = TheCollector.Exhibits<int>();
-    //     Signal.From<Unit>(
-    //             from start in Pulse.Start<Unit>()
-    //             from _ in Pulse.ToFlowIf(true, (int x) => Pulse.Trace(x + 1), () => new[] { 1, 2 })
-    //             select start)
-    //         .SetArtery(collector)
-    //         .Pulse();
-    //     Assert.Equal(new[] { 2, 3 }, collector.TheExhibit);
-    // }
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<List<int>> ToFlowIf_flow_collection_factory()
+    {
+        return
+            from input in Pulse.Start<List<int>>()
+            from _ in Pulse.ToFlowIf(input.Count == 5, a => Pulse.Trace(((int)a).ToString()), () => input)
+            select input;
+    }
+
+    [Fact]
+    [DocContent("Multiple values:")]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_collection_factory))]
+    [CodeSnippet]
+    public void Pulse_to_flowIf_factory_collection()
+    {
+        Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_collection_factory()));
+    }
 
     // [Fact]
     // [DocHeader("Predicate: Single Value")]

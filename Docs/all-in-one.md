@@ -566,6 +566,19 @@ And this `Flow`:
 ```csharp
  ["1", "2", "3", "4", "5"]
 ```
+Both the above methods can be used with a *Flow Factory Method*.  
+Single value:  
+```csharp
+    from input in Pulse.Start<int>()
+    from _ in Pulse.ToFlowIf(input % 2 == 0, a => Pulse.Trace(a.ToString()), () => input)
+    select input;
+```
+Multiple values:  
+```csharp
+    from input in Pulse.Start<List<int>>()
+    from _ in Pulse.ToFlowIf(input.Count == 5, a => Pulse.Trace(((int)a).ToString()), () => input)
+    select input;
+```
 ## Arteries Included
 QuickPulse comes with a couple of built-in arteries:  
 ### The Shunt, a.k.a. `/dev/null`

@@ -14,8 +14,8 @@ public static partial class Pulse
     // --------------------------------------------------------------------------------
     // -- Value Shapers
     // --
-    private static Func<State, IEnumerable<T>> Single<T>(T value) => _ => new[] { value };
-    private static Func<State, IEnumerable<T>> Single<T>(Func<T> value) => _ => new[] { value() };
+    private static Func<State, IEnumerable<T>> Single<T>(T value) => _ => [value];
+    private static Func<State, IEnumerable<T>> Single<T>(Func<T> value) => _ => [value()];
     private static Func<State, IEnumerable<T>> Many<T>(IEnumerable<T> values) => _ => values;
     private static Func<State, IEnumerable<T>> Many<T>(Func<IEnumerable<T>> values) => _ => values();
     // --------------------------------------------------------------------------------
