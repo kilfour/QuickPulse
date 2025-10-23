@@ -152,3 +152,30 @@ Multiple values:
     from _ in Pulse.ToFlowIf(input.Count == 5, a => Pulse.Trace(((int)a).ToString()), () => input)
     select input;
 ```
+#### Using State
+```csharp
+    from input in Pulse.Start<int>()
+    from _1 in Pulse.Prime(() => 2)
+    from _2 in Pulse.ToFlowIf<int, int>(a => input % a == 0, subFlow, () => input)
+    select input;
+```
+#### Using State: Collection.
+```csharp
+    from input in Pulse.Start<List<int>>()
+    from _1 in Pulse.Prime(() => 5)
+    from _2 in Pulse.ToFlowIf<int, int>(a => input.Count == a, subFlow, () => input)
+    select input;
+```
+#### Using State: Factory
+```csharp
+    from input in Pulse.Start<int>()
+    from _1 in Pulse.Prime(() => 2)
+    from _2 in Pulse.ToFlowIf<int, int>(a => input % a == 0, a => Pulse.Trace(a.ToString()), () => input)
+    select input;
+```
+```csharp
+    from input in Pulse.Start<List<int>>()
+    from _1 in Pulse.Prime(() => 5)
+    from _2 in Pulse.ToFlowIf<int, int>(a => input.Count == a, a => Pulse.Trace(a.ToString()), () => input)
+    select input;
+```

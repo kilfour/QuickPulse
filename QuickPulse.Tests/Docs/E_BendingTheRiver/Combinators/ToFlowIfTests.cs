@@ -93,6 +93,7 @@ Use it to embed optional or context-sensitive subflows declaratively.")]
     {
         Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_collection(ToFlowIf_SubFlow())));
     }
+
     [CodeSnippet]
     [CodeRemove("return")]
     private static Flow<int> ToFlowIf_flow_factory()
@@ -132,50 +133,83 @@ Use it to embed optional or context-sensitive subflows declaratively.")]
         Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_collection_factory()));
     }
 
-    // [Fact]
-    // [DocHeader("Predicate: Single Value")]
-    // [DocContent("Executes when predicate returns true for the current state.")]
-    // public void Predicate_Single()
-    // {
-    //     var collector = TheCollector.Exhibits<int>();
-    //     Signal.From<Unit>(
-    //             from start in Pulse.Start<Unit>()
-    //             from _ in Pulse.Prime(() => 42)
-    //             from __ in Pulse.ToFlowIf<int, int>(x => x == 42, TraceFlow(), () => 99)
-    //             select start)
-    //         .SetArtery(collector)
-    //         .Pulse();
-    //     Assert.Single(collector.TheExhibit, 99);
-    // }
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<int> ToFlowIf_flow_using_state(Flow<int> subFlow)
+    {
+        return
+            from input in Pulse.Start<int>()
+            from _1 in Pulse.Prime(() => 2)
+            from _2 in Pulse.ToFlowIf<int, int>(a => input % a == 0, subFlow, () => input)
+            select input;
+    }
 
-    // [Fact]
-    // [DocHeader("Predicate: Collection")]
-    // [DocContent("Runs subflow for each value when predicate holds.")]
-    // public void Predicate_Collection()
-    // {
-    //     var collector = TheCollector.Exhibits<int>();
-    //     Signal.From<Unit>(
-    //             from start in Pulse.Start<Unit>()
-    //             from _ in Pulse.Prime(() => 1)
-    //             from __ in Pulse.ToFlowIf<int, int>(x => x == 1, TraceFlow(), () => new[] { 10, 11 })
-    //             select start)
-    //         .SetArtery(collector)
-    //         .Pulse();
-    //     Assert.Equal(new[] { 10, 11 }, collector.TheExhibit);
-    // }
+    [Fact]
+    [DocHeader("Using State", 1)]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_using_state))]
+    [CodeSnippet]
+    public void Pulse_to_flowif_using_state()
+    {
+        Assert.Equal(Even_result_values(), BendingTheRiver.GetResult(ToFlowIf_flow_using_state(ToFlowIf_SubFlow())));
+    }
 
-    // [Fact]
-    // [DocHeader("False Path")]
-    // [DocContent("When flag is false or predicate fails, no subflow executes.")]
-    // public void Skipped_When_False()
-    // {
-    //     var collector = TheCollector.Exhibits<int>();
-    //     Signal.From<Unit>(
-    //             from start in Pulse.Start<Unit>()
-    //             from _ in Pulse.ToFlowIf(false, TraceFlow(), () => 42)
-    //             select start)
-    //         .SetArtery(collector)
-    //         .Pulse();
-    //     Assert.Empty(collector.TheExhibit);
-    // }
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<List<int>> ToFlowIf_flow_using_state_collection(Flow<int> subFlow)
+    {
+        return
+            from input in Pulse.Start<List<int>>()
+            from _1 in Pulse.Prime(() => 5)
+            from _2 in Pulse.ToFlowIf<int, int>(a => input.Count == a, subFlow, () => input)
+            select input;
+    }
+
+    [Fact]
+    [DocHeader("Using State: Collection.", 1)]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_using_state_collection))]
+    [CodeSnippet]
+    public void Pulse_to_flowif_using_state_collection()
+    {
+        Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_using_state_collection(ToFlowIf_SubFlow())));
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<int> ToFlowIf_flow_using_state_factory()
+    {
+        return
+            from input in Pulse.Start<int>()
+            from _1 in Pulse.Prime(() => 2)
+            from _2 in Pulse.ToFlowIf<int, int>(a => input % a == 0, a => Pulse.Trace(a.ToString()), () => input)
+            select input;
+    }
+
+    [Fact]
+    [DocHeader("Using State: Factory", 1)]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_using_state_factory))]
+    [CodeSnippet]
+    public void Pulse_to_flowif_using_state_factory()
+    {
+        Assert.Equal(Even_result_values(), BendingTheRiver.GetResult(ToFlowIf_flow_using_state_factory()));
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return")]
+    private static Flow<List<int>> ToFlowIf_flow_using_state_factor_collection()
+    {
+        return
+            from input in Pulse.Start<List<int>>()
+            from _1 in Pulse.Prime(() => 5)
+            from _2 in Pulse.ToFlowIf<int, int>(a => input.Count == a, a => Pulse.Trace(a.ToString()), () => input)
+            select input;
+    }
+
+    [Fact]
+    [DocHeader("Using State: Factory", 1)]
+    [DocExample(typeof(ToFlowIfTests), nameof(ToFlowIf_flow_using_state_factor_collection))]
+    [CodeSnippet]
+    public void Pulse_to_flowif_using_state_factory_collection()
+    {
+        Assert.Equal(All_result_values(), RunCollectionSignal(ToFlowIf_flow_using_state_factor_collection()));
+    }
 }
