@@ -5,7 +5,13 @@ using QuickPulse.Bolts;
 namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 
 [DocFile]
-[DocContent("> How QuickPulse remembers, updates, and temporarily alters state.")]
+[DocContent(
+@"> How QuickPulse remembers, updates, and temporarily alters state.
+
+Each signal maintains **gathered cells**, think of them as the signal's **internal organs**
+that store and process specific data types.
+Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
+")]
 [DocExample(typeof(MemoryAndManipulation), nameof(Scoped_with_Manipulate))]
 public class MemoryAndManipulation
 {
@@ -58,7 +64,7 @@ public class MemoryAndManipulation
 
     [Fact]
     [DocHeader("Manipulate: controlled mutation of *primed* state.")]
-    [DocContent("`Manipulate<T>(Func<T,T>)` updates the current value of the gathered cell for type `T`.")]
+    [DocContent("`Manipulate<T>(Func<T,T>)` updates the current value of the *gathered cell* for type `T`.")]
     public void Manipulate_updates_gathered_state()
     {
         var flow =
@@ -91,7 +97,7 @@ public class MemoryAndManipulation
 
     [Fact]
     [DocHeader("Scoped: temporary overrides with automatic restore.")]
-    [DocContent("`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the gathered cell of type `T`. On exit, the outer value is restored.")]
+    [DocContent("`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.")]
     public void Scoped_applies_temp_value_and_restores()
     {
         var seen = TheCollector.Exhibits<string>();

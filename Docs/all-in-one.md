@@ -173,7 +173,12 @@ It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.
         .Q; // <= returns 3
 ```
 ## Memory And Manipulation
-> How QuickPulse remembers, updates, and temporarily alters state.  
+> How QuickPulse remembers, updates, and temporarily alters state.
+
+Each signal maintains **gathered cells**, think of them as the signal's **internal organs**
+that store and process specific data types.
+Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
+  
 ```csharp
 var seen = TheCollector.Exhibits<string>();
 var flow =
@@ -196,7 +201,7 @@ Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "res
 `Draw<T>()` retrieves the current value from the signal's memory for type `T`.  
 The `Draw<TBox, T>(Func<TBox, T> func)` is just a bit of sugar to enable accessing nested values.  
 ### Manipulate: controlled mutation of *primed* state.
-`Manipulate<T>(Func<T,T>)` updates the current value of the gathered cell for type `T`.  
+`Manipulate<T>(Func<T,T>)` updates the current value of the *gathered cell* for type `T`.  
 The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.  
 ```csharp
 var flow =
@@ -210,7 +215,7 @@ Signal.From(flow).SetArtery(latch).Pulse(32);
 Assert.Equal(42, latch.Q);
 ```
 ### Scoped: temporary overrides with automatic restore.
-`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the gathered cell of type `T`. On exit, the outer value is restored.  
+`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.  
 Any `Manipulate<T>` inside the scope affects the **scoped** value and is discarded on exit.  
 ### Type Identity Matters
 Use wrapper records to keep multiple cells of the same underlying type.    
@@ -246,8 +251,11 @@ Use prefix form or pure expressions instead.
 ## Circulation
 > Make it flow, number one.  
 
-QuickPulse is about *composing* small, predictable `Flow<T>` building blocks. 
-This chapter shows how to wire those flows together.  
+While it is entirely possible, and sometimes weirdly intellectually satisfying,
+to write an entire QuickPulse Flow as one big LINQ expression,
+it would be silly to ignore one of the main strengths of the LINQy approach: Composability.
+
+QuickPulse provides two main ways to achieve this.  
 ### Then
 `Then` runs `flow`, discards its value, and continues with `next` in the **same** state.
 It's the flow-level equivalent of do this, *then* do that.  
@@ -282,40 +290,8 @@ var latch = TheLatch.Holds<int>();
 Signal.From(flow).SetArtery(latch).Pulse(41);
 Assert.Equal(42, latch.Q);
 ```
-An overload exist that allows for executing a subflow over a collection of values.  
-```csharp
-var flow =
-    from input in Pulse.Start<List<int>>()
-    from _ in Pulse.ToFlow(SubFlow(), input)    // <=
-    select input;
-var collector = TheCollector.Exhibits<int>();
-var signal = Signal.From(flow).SetArtery(collector);
-signal.Pulse([41, 41]);
-Assert.Equal([42, 42], collector.TheExhibit);
-```
-Furthermore both the above methods can be used with a *Flow Factory Method*.  
-Single value:  
-```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.ToFlow(a => Pulse.Trace(a + 1), input)    // <=
-    select input;
-var latch = TheLatch.Holds<int>();
-var signal = Signal.From(flow).SetArtery(latch);
-signal.Pulse(41);
-Assert.Equal(42, latch.Q);
-```
-Multiple values:  
-```csharp
-var flow =
-    from input in Pulse.Start<List<int>>()
-    from _ in Pulse.ToFlow(a => Pulse.Trace(a + 1), input)    // <=
-    select input;
-var collector = TheCollector.Exhibits<int>();
-var signal = Signal.From(flow).SetArtery(collector);
-signal.Pulse([41, 41]);
-Assert.Equal([42, 42], collector.TheExhibit);
-```
+### Query Syntax vs Method Syntax
+> Maybe now is the time to talk about Kevin.  
 ## Capillaries and Arterioles
 > A.k.a. Pulse Regulation
 
@@ -406,7 +382,7 @@ Example:
 Note that the `Ledger` will throw an exception if no `.sln` file can be found.  
 The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:  
-### TheStringCatcher
+### The String Catcher
 This catcher quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
@@ -590,49 +566,4 @@ Avoiding `.Where(...)` keeps evaluation order predictable and prevents accidenta
 * Custom combinators and trace sequences
 
 It's a minor trade-off in exchange for greater composability and correctness.
-  
-## Why QuickPulse Exists
-> A.k.a. A deep dark forest, a looking glass, and a trail of dead generators.
-
-A little while back I was writing a test for a method that took some JSON as input.
-I got my fuzzers out and went to work. And then... my fuzzers gave up.
-
-So I added the following to **QuickFuzzr**:
-```csharp
-    var generator =
-        from _ in Fuzz.For<Tree>().Depth(2, 5)
-        from __ in Fuzz.For<Tree>().GenerateAsOneOf(typeof(Branch), typeof(Leaf))
-        from ___ in Fuzz.For<Tree>().TreeLeaf<Leaf>()
-        from tree in Fuzz.One<Tree>().Inspect()
-        select tree;
-```
-Which can generate output like this:
-```
-    └── Node
-        ├── Leaf(60)
-        └── Node
-            ├── Node
-            │   ├── Node
-            │   │   ├── Leaf(6)
-            │   │   └── Node
-            │   │       ├── Leaf(30)
-            │   │       └── Leaf(21)
-            │   └── Leaf(62)
-            └── Leaf(97)
-```
-Neat. But this story isn't about the output, it's about the journey.  
-Implementing this wasn't trivial. And I was, let's say, a muppet, more than once along the way.
-
-Writing a unit test for a fixed depth like `(min:1, max:1)` or `(min:2, max:2)`? Not a problem.  
-But when you're fuzzing with a range like `(min:2, max:5).` Yeah, ... good luck.
-
-Debugging this kind of behaviour was as much fun as writing an F# compiler in JavaScript.  
-So I wrote a few diagnostic helpers: visualizers, inspectors, and composable tools
-that could take a generated value and help me see why things were behaving oddly.
-
-Eventually, I nailed the last bug and got tree generation working fine.
-
-Then I looked at this little helper I'd written for combining stuff and thought: **"Now *that's* a nice-looking rabbit hole."**
-
-One week and exactly nine combinators later, I had this surprisingly useful, lightweight little library.
   

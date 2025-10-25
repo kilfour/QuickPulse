@@ -97,7 +97,9 @@ Well, okay.
 
 It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
-And yes, it did *literally* involve Trees.")]
+And yes, it did *literally* involve Trees.
+
+[The origin story](./why-quickpulse-exists.md)")]
     private static void WhyQuickPulseExists() { }
 
 }

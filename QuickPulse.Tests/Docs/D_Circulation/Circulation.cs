@@ -7,8 +7,11 @@ namespace QuickPulse.Tests.Docs.D_Circulation;
 [DocContent(
 @"> Make it flow, number one.  
 
-QuickPulse is about *composing* small, predictable `Flow<T>` building blocks. 
-This chapter shows how to wire those flows together.")]
+While it is entirely possible, and sometimes weirdly intellectually satisfying,
+to write an entire QuickPulse Flow as one big LINQ expression,
+it would be silly to ignore one of the main strengths of the LINQy approach: Composability.
+
+QuickPulse provides two main ways to achieve this.")]
 public class Circulation
 {
     [DocHeader("Then")]
@@ -69,9 +72,6 @@ It's the flow-level equivalent of do this, *then* do that.")]
     }
 
     [Fact]
-    [DocContent("An overload exist that allows for executing a subflow over a collection of values.")]
-    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_collection))]
-    [CodeSnippet]
     public void Pulse_to_flow_collection()
     {
         var flow =
@@ -85,10 +85,6 @@ It's the flow-level equivalent of do this, *then* do that.")]
     }
 
     [Fact]
-    [DocContent("Furthermore both the above methods can be used with a *Flow Factory Method*.")]
-    [DocContent("Single value:")]
-    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_factory))]
-    [CodeSnippet]
     public void Pulse_to_flow_factory()
     {
         var flow =
@@ -102,9 +98,6 @@ It's the flow-level equivalent of do this, *then* do that.")]
     }
 
     [Fact]
-    [DocContent("Multiple values:")]
-    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_factory_collection))]
-    [CodeSnippet]
     public void Pulse_to_flow_factory_collection()
     {
         var flow =
@@ -115,5 +108,13 @@ It's the flow-level equivalent of do this, *then* do that.")]
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse([41, 41]);
         Assert.Equal([42, 42], collector.TheExhibit);
+    }
+
+    [Fact]
+    [DocHeader("Query Syntax vs Method Syntax")]
+    [DocContent("> Maybe now is the time to talk about Kevin.")]
+    public void QueryOrMethod()
+    {
+
     }
 }

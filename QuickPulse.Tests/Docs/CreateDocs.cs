@@ -7,7 +7,7 @@ public class CreateDocs
     [Fact]// (Skip = "explicit")
     public void Now()
     {
-        //Explain.These<CreateDocs>("Docs/");
+        // Explain.These<CreateDocs>("Docs/");
         Explain.This<CreateDocs>("Docs/all-in-one.md");
     }
 }

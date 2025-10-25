@@ -159,7 +159,7 @@ This is an idiomatic way to log repeatedly to a file that should start out empty
     }
 
     [Fact]
-    [DocHeader("TheStringCatcher")]
+    [DocHeader("The String Catcher")]
     [DocContent(
 @"This catcher quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
