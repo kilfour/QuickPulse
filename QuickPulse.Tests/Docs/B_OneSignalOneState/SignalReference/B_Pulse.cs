@@ -44,18 +44,18 @@ public class B_Pulse
     [Fact]
     [DocHeader("Pulsing Nothing")]
     [DocContent(
-@"Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Unit` type.  
-So in order to advance a flow of type `Flow<Unit>` you can use the `Signal.Pulse()` overload.")]
+@"Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Flow` type.  
+So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse()` overload.")]
     [DocExample(typeof(B_Pulse), nameof(Signal_pulse_unit))]
     [CodeSnippet]
     public void Signal_pulse_unit()
     {
         var flow =
-            from input in Pulse.Start<Unit>()
+            from _ in Pulse.Start<Flow>()
             from _1 in Pulse.Prime(() => 42)
             from _2 in Pulse.Trace<int>(a => a)
             from _3 in Pulse.Manipulate<int>(a => a + 1)
-            select input;
+            select Flow.Continue;
         var collector = TheCollector.Exhibits<int>();
         Signal.From(flow)
             .SetArtery(collector)

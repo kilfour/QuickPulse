@@ -6,6 +6,6 @@ public class SpikeStops
     public void Turns_flow_into_unit_Flow()
     {
         Flow<int> flow = Pulse.Start<int>();
-        Assert.IsType<Flow<Unit>>(flow.Dissipate());
+        Assert.IsType<Flow<Flow>>(flow.Dissipate());
     }
 }

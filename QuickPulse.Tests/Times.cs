@@ -7,27 +7,27 @@ namespace QuickPulse.Tests;
 public static class TimesExtensions
 {
     public static void Times(this int times, Action action) =>
-        Signal.From<Unit>(a => Pulse.Trace(Chain.It(action, Unit.Instance)))
-            .Pulse(Enumerable.Repeat(Unit.Instance, times));
+        Signal.From<Flow>(a => Pulse.Trace(Chain.It(action, Flow.Continue)))
+            .Pulse(Enumerable.Repeat(Flow.Continue, times));
 
     public static IEnumerable<T> Times<T>(this int times, Func<T> func) =>
-        Signal.From<Unit>(a => Pulse.Trace(func()!))
+        Signal.From<Flow>(a => Pulse.Trace(func()!))
             .GetResult<T>(times);
 
     public static IEnumerable<T> TimesUntil<T>(this int times, Predicate<T> predicate, Func<T> func) =>
-        Signal.From<Unit>(a =>
-                from i in Pulse.Start<Unit>()
+        Signal.From<Flow>(a =>
+                from _ in Pulse.Start<Flow>()
                 let value = func()
                 let stop = predicate(value)
                 from _1 in Pulse.TraceIf(!stop, () => value)
                 from _2 in Pulse.StopFlowingIf(stop)
-                select i)
+                select Flow.Continue)
             .GetResult<T>(times);
 
-    private static List<T> GetResult<T>(this Signal<Unit> signal, int times) =>
+    private static List<T> GetResult<T>(this Signal<Flow> signal, int times) =>
         signal
             .SetArtery(TheCollector.Exhibits<T>())
-            .Pulse(Enumerable.Repeat(Unit.Instance, times))
+            .Pulse(Enumerable.Repeat(Flow.Continue, times))
             .GetArtery<Collector<T>>()
             .TheExhibit;
 }

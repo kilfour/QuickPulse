@@ -32,8 +32,8 @@ Runs the given action a fixed number of times.
 Internally, this builds a signal from a unit flow that traces the given action, and pulses it `times` times:
 
 ```csharp
-Signal.From<Unit>(a => Pulse.Trace(Chain.It(action, Unit.Instance)))
-    .Pulse(Enumerable.Repeat(Unit.Instance, times));
+Signal.From<Flow>(a => Pulse.Trace(Chain.It(action, Flow.Instance)))
+    .Pulse(Enumerable.Repeat(Flow.Instance, times));
 ```
 
 ### `Times<T>(this int times, Func<T> func)`
@@ -61,13 +61,13 @@ var seq = 10.TimesUntil(x => x > 3, () => n++);
 Flow equivalent:
 
 ```csharp
-Signal.From<Unit>(a =>
-        from i in Pulse.Start<Unit>()
+Signal.From<Flow>(a =>
+        from _in Pulse.Start<Flow>()
         let value = func()
         let stop = predicate(value)
         from _1 in Pulse.TraceIf(!stop, () => value)
         from _2 in Pulse.StopFlowingIf(stop)
-        select i)
+        select Flow.Continue)
     .GetResult<T>(times);
 ```
 

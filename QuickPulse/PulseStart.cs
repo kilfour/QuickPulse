@@ -13,8 +13,8 @@ public static partial class Pulse
     /// <summary>
     /// Runs a subflow derived from the current input and then continues with the original input. Use for side-effects, tracing, or auxiliary work without changing T.
     /// </summary>
-    public static Flow<T> Start<T>(Func<T, Flow<Unit>> step) =>
-        Start<T, Unit>(step);
+    public static Flow<T> Start<T>(Func<T, Flow<Flow>> step) =>
+        Start<T, Flow>(step);
 
     /// <summary>
     /// Runs a subflow (returning any inner type) and discards its result, passing the original input downstream. Use when you need the behavior of the subflow, not its value.

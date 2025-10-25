@@ -21,12 +21,12 @@ public static partial class Pulse
     // --------------------------------------------------------------------------------
     // -- Runnels
     // --
-    private static Flow<Unit> HandMeACask(Action<State> action) => s => { action(s); return Cask.Empty(s); };
-    private static Flow<Unit> Runnel(Func<State, bool> shouldRun, Action<State> effect) =>
+    private static Flow<Flow> HandMeACask(Action<State> action) => s => { action(s); return Cask.Empty(s); };
+    private static Flow<Flow> Runnel(Func<State, bool> shouldRun, Action<State> effect) =>
         HandMeACask(s => { if (shouldRun(s)) effect(s); });
-    private static Flow<Unit> Runnel<TValue>(Func<State, bool> shouldRun, Func<State, TValue> value, Action<State, TValue> action) =>
+    private static Flow<Flow> Runnel<TValue>(Func<State, bool> shouldRun, Func<State, TValue> value, Action<State, TValue> action) =>
         HandMeACask(s => { if (shouldRun(s)) action(s, value(s)); });
-    private static Flow<Unit> Runnel<TValue>(Func<State, bool> shouldRun, Func<State, IEnumerable<TValue>> values, Action<State, TValue> action) =>
+    private static Flow<Flow> Runnel<TValue>(Func<State, bool> shouldRun, Func<State, IEnumerable<TValue>> values, Action<State, TValue> action) =>
         HandMeACask(s => { if (shouldRun(s)) foreach (var v in values(s)) { action(s, v); } });
     private static Flow<TValue> Fyke<TValue>(Func<State, bool> shouldRun, Func<State, IEnumerable<TValue>> values, Action<State, TValue> action) =>
         s =>
@@ -45,6 +45,6 @@ public static partial class Pulse
     // --------------------------------------------------------------------------------
     // -- Flow Factory
     // --
-    internal static Flow<T> GetFlowFromFactory<T>(Func<T, Flow<Unit>> flowFactory) =>
+    internal static Flow<T> GetFlowFromFactory<T>(Func<T, Flow<Flow>> flowFactory) =>
         from i in Start<T>() from _ in flowFactory(i) select i;
 }

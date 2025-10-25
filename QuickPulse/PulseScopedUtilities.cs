@@ -4,7 +4,7 @@ namespace QuickPulse;
 
 public static partial class Pulse
 {
-    private static Action<State> WithScope<TValue>(Func<TValue, TValue> enter, Flow<Unit> flow) =>
+    private static Action<State> WithScope<TValue>(Func<TValue, TValue> enter, Flow<Flow> flow) =>
         state =>
         {
             var box = state.GetTheBox<TValue>();

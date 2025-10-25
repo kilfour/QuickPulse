@@ -68,12 +68,12 @@ var flow =
 
     // They allow you to define a short-lived, focused subflow inline, often in combination with `Signal.From(...)` over a function.
 
-    // ## `ToFlow(Func<T, Flow<Unit>>, T)`
+    // ## `ToFlow(Func<T, Flow<Flow>>, T)`
 
     // Applies a flow-producing function to a **single value**. Useful for wrapping a value with a small diagnostic or assertive flow.
 
     // ```csharp
-    // public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, T value)
+    // public static Flow<Flow> ToFlow<T>(Func<T, Flow<Flow>> flowFactory, T value)
     // ```
 
     // ### Example:
@@ -88,12 +88,12 @@ var flow =
 
     // ---
 
-    // ## `ToFlow(Func<T, Flow<Unit>>, IEnumerable<T>)`
+    // ## `ToFlow(Func<T, Flow<Flow>>, IEnumerable<T>)`
 
     // Applies a flow-producing function to **each value** in a collection.
 
     // ```csharp
-    // public static Flow<Unit> ToFlow<T>(Func<T, Flow<Unit>> flowFactory, IEnumerable<T> values)
+    // public static Flow<Flow> ToFlow<T>(Func<T, Flow<Flow>> flowFactory, IEnumerable<T> values)
     // ```
 
     // ### Example:

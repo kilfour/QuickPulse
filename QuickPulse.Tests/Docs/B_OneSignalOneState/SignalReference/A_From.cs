@@ -25,7 +25,7 @@ public class A_From
     }
 
     [Fact]
-    [DocContent("`Signal.From<T>(Func<T, Flow<Unit>>` is a useful overload that allows for inlining simple flows upon Signal creation.")]
+    [DocContent("`Signal.From<T>(Func<T, Flow<Flow>>` is a useful overload that allows for inlining simple flows upon Signal creation.")]
     [DocExample(typeof(A_From), nameof(Signal_from_factory_example))]
     public void Signal_from_factory()
         => Assert.IsType<Signal<int>>(Signal_from_factory_example());

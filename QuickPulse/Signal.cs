@@ -1,3 +1,4 @@
+using QuickPulse.Arteries;
 using QuickPulse.Bolts;
 using QuickPulse.Instruments;
 
@@ -16,7 +17,7 @@ public static class Signal
     /// <summary>
     /// Creates a new signal from a flow factory. Use to inline or lazily construct small flows.
     /// </summary>
-    public static Signal<T> From<T>(Func<T, Flow<Unit>> flowFactory) =>
+    public static Signal<T> From<T>(Func<T, Flow<Flow>> flowFactory) =>
         new(Pulse.GetFlowFromFactory(flowFactory));
 }
 
@@ -34,12 +35,12 @@ public class Signal<T>(Flow<T> flow)
     public bool FlowRanDry => state.FlowRanDry;
 
     /// <summary>
-    /// Pulses a flow that takes no input (Flow&lt;Unit&gt;). Advances the flow by one step.
+    /// Pulses a flow that takes no input (Flow&lt;Flow&gt;). Advances the flow by one step.
     /// </summary>
     public Signal<T> Pulse()
-        => typeof(T) == typeof(Unit)
-            ? Pulse((T)(object)Unit.Instance)
-            : ComputerSays.No<Signal<T>>("Pulse() without arguments only allowed for Signal<Unit>.");
+        => typeof(T) == typeof(Flow)
+            ? Pulse((T)(object)Flow.Continue)
+            : ComputerSays.No<Signal<T>>("Pulse() without arguments only allowed for Signal<Flow>.");
 
     private static IEnumerable<T> Single(T value) { yield return value; }
 
@@ -88,6 +89,6 @@ public class Signal<T>(Flow<T> flow)
     /// <summary>
     /// Executes a finalizing flow once the signal has completed. Use for cleanup or summary actions.
     /// </summary>
-    public Signal<T> FlatLine(Flow<Unit> finisher)
+    public Signal<T> FlatLine(Flow<Flow> finisher)
         => Chain.It(() => finisher(state), this);
 }

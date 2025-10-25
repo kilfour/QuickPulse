@@ -19,9 +19,9 @@ public class MemoryAndManipulation
             from first in Pulse.Prime(() => { created++; return true; })
             from _1 in Pulse.Trace(first)
             from _2 in Pulse.Manipulate<bool>(_ => false)
-            select Unit.Instance;
+            select Flow.Continue;
         var signal = Signal.From(flow).SetArtery(TheCollector.Exhibits<bool>());
-        signal.Pulse([Unit.Instance, Unit.Instance]);
+        signal.Pulse([Flow.Continue, Flow.Continue]);
         Assert.Equal(1, created);
     }
 
@@ -31,13 +31,13 @@ public class MemoryAndManipulation
     public void Draw_reads_current_value()
     {
         var flow =
-            from start in Pulse.Start<Unit>()
-            from _ in Pulse.Prime(() => 42)
+            from _ in Pulse.Start<Flow>()
+            from __ in Pulse.Prime(() => 42)
             from value in Pulse.Draw<int>()
-            from __ in Pulse.Trace(value)
-            select start;
+            from ___ in Pulse.Trace(value)
+            select Flow.Continue;
         var latch = TheLatch.Holds<int>();
-        Signal.From(flow).SetArtery(latch).Pulse(Unit.Instance);
+        Signal.From(flow).SetArtery(latch).Pulse(Flow.Continue);
         Assert.Equal(42, latch.Q);
     }
 
@@ -46,13 +46,13 @@ public class MemoryAndManipulation
     public void Draw_reads_current_value_project()
     {
         var flow =
-            from start in Pulse.Start<Unit>()
-            from _ in Pulse.Prime(() => new Box<int>(42))
+            from _ in Pulse.Start<Flow>()
+            from __ in Pulse.Prime(() => new Box<int>(42))
             from value in Pulse.Draw<Box<int>, int>(a => a.Value)
-            from __ in Pulse.Trace(value)
-            select start;
+            from ___ in Pulse.Trace(value)
+            select Flow.Continue;
         var latch = TheLatch.Holds<int>();
-        Signal.From(flow).SetArtery(latch).Pulse(Unit.Instance);
+        Signal.From(flow).SetArtery(latch).Pulse(Flow.Continue);
         Assert.Equal(42, latch.Q);
     }
 
@@ -96,13 +96,13 @@ public class MemoryAndManipulation
     {
         var seen = TheCollector.Exhibits<string>();
         var flow =
-            from input in Pulse.Start<Unit>()
+            from _ in Pulse.Start<Flow>()
             from _1 in Pulse.Prime(() => 1)
             from _2 in Pulse.Trace<int>(a => $"outer: {a}")
             from _3 in Pulse.Scoped<int>(a => a + 1, Pulse.Trace<int>(a => $"inner: {a}"))
             from _4 in Pulse.Trace<int>(a => $"restored: {a}")
-            select Unit.Instance;
-        Signal.From(flow).SetArtery(seen).Pulse(Unit.Instance);
+            select Flow.Continue;
+        Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
         Assert.Equal(new object[] { "outer: 1", "inner: 2", "restored: 1" }, seen.TheExhibit);
     }
 
@@ -113,17 +113,17 @@ public class MemoryAndManipulation
     {
         var seen = TheCollector.Exhibits<string>();
         var flow =
-            from input in Pulse.Start<Unit>()
+            from _ in Pulse.Start<Flow>()
             from _1 in Pulse.Prime(() => 1)
             from _2 in Pulse.Trace<int>(a => $"outer: {a}")
             from _3 in Pulse.Scoped<int>(a => a + 1,
                 from __1 in Pulse.Trace<int>(a => $"inner: {a}")
                 from __2 in Pulse.Manipulate<int>(a => a + 1)
                 from __3 in Pulse.Trace<int>(a => $"inner manipulated: {a}")
-                select Unit.Instance)
+                select Flow.Continue)
             from _4 in Pulse.Trace<int>(a => $"restored: {a}")
-            select Unit.Instance;
-        Signal.From(flow).SetArtery(seen).Pulse(Unit.Instance);
+            select Flow.Continue;
+        Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
         Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, seen.TheExhibit);
     }
 
@@ -149,13 +149,13 @@ public class MemoryAndManipulation
 
     [CodeSnippet]
     [CodeRemove("return")]
-    private static Flow<Unit> Type_matters_using_records_flow()
+    private static Flow<Flow> Type_matters_using_records_flow()
     {
-        return from start in Pulse.Start<Unit>()
+        return from _ in Pulse.Start<Flow>()
                from _1 in Pulse.Prime(() => new Int1(1))
                from _2 in Pulse.Prime(() => new Int2(2))
                from _3 in Pulse.Trace(_1.Number + _2.Number)
-               select start;
+               select Flow.Continue;
     }
 
     [Fact]
