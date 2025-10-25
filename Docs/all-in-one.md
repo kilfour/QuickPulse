@@ -529,7 +529,7 @@ Assert.Equal("42", holden.Whispers());
 
 In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
 
-But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses — and **evaluates them eagerly**.
+But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses and **evaluates them eagerly**.
 
 This means:
 
@@ -539,7 +539,7 @@ where x != null
 let y = x.SomeProperty // NRE: still evaluated even if x is null!
 ```
 
-The `let` runs *before* the `where`, causing runtime exceptions — even though it looks safe.
+The `let` runs *before* the `where`, causing runtime exceptions even though it looks safe.
   
 ### Instead of `where`, use:
 

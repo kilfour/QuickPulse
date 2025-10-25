@@ -11,8 +11,6 @@ They are built using `Signal.From`, `Pulse.Trace`, and `Pulse.StopFlowingIf`, co
 
 This example highlights QuickPulse's ability to model control structures as composable flows, not syntax. Even something as simple as a repeat loop becomes observable, testable, and pluggable into the artery system.
 
----
-
 ## API
 
 ### `Times(this int times, Action action)`
@@ -68,24 +66,7 @@ Signal.From<Flow>(a =>
         from _1 in Pulse.TraceIf(!stop, () => value)
         from _2 in Pulse.StopFlowingIf(stop)
         select Flow.Continue)
-    .GetResult<T>(times);
+    .Pulse(Enumerable.Repeat(Flow.Continue, times));
 ```
 
----
 
-## Concepts Illustrated
-
-* **Declarative repetition:** Loops expressed as flows.
-* **Side-effect tracing:** Each iteration observed through arteries.
-* **Early termination:** Implemented using `Pulse.StopFlowingIf`.
-* **Eager evaluation:** Sequence materialized immediately, consistent with QuickPulse semantics.
-
----
-
-## Potential Extensions
-
-* `TimesWhile` — continue while predicate remains `true`.
-* `RepeatUntilSuccess` — rerun an action until a specific condition succeeds.
-* `TraceEvery` — attach a trace artery to every iteration.
-
-These could be used as real examples or demos in future QuickPulse documentation to show composable control flow.
