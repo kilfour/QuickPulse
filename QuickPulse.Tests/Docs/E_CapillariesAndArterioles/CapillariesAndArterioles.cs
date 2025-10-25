@@ -3,25 +3,24 @@ using QuickPulse.Explains;
 using QuickPulse.Explains.Formatters;
 using QuickPulse.Tests.Docs.E_BendingTheRiver.Combinators;
 
-namespace QuickPulse.Tests.Docs.E_BendingTheRiver;
+namespace QuickPulse.Tests.Docs.E_OnCapillariesAndArterioles;
 
 [DocFile]
+[DocFileHeader("Capillaries and Arterioles")]
 [DocContent(
-@"> About knees and meanders.
+@"> A.k.a. Pulse Regulation
 
-This chapter explores and explains the various ways you can control the execution flow of an ... erm ... `Flow`.  
-It is more of a reference chapter and more prone to changes, than any of the other chapters.
-This area is still evolving, expect simplifications.
+This chapter explores and explains the various ways you can control the execution of a `Flow`.
 
 All flow examples below will be executed using the following `Signal`:")]
-[DocExample(typeof(BendingTheRiver), nameof(GetResult))]
+[DocExample(typeof(CapillariesAndArterioles), nameof(GetResult))]
 [DocContent("In addition, unless explicitly specified the result of executing the example flow will always be: ")]
-[DocExample(typeof(BendingTheRiver), nameof(Default_result_values), "bash")]
-[DocInclude(typeof(UsingConditionalTernaryOperator))]
-[DocInclude(typeof(WhenTests))]
-[DocInclude(typeof(TraceIfTests))]
-[DocInclude(typeof(ToFlowIfTests))]
-public class BendingTheRiver
+[DocExample(typeof(CapillariesAndArterioles), nameof(Default_result_values), "bash")]
+// [DocInclude(typeof(UsingConditionalTernaryOperator))]
+// [DocInclude(typeof(WhenTests))]
+// [DocInclude(typeof(TraceIfTests))]
+// [DocInclude(typeof(ToFlowIfTests))]
+public class CapillariesAndArterioles
 {
     [CodeSnippet]
     [CodeRemove("return ")]
@@ -44,6 +43,6 @@ public class BendingTheRiver
     [Fact]
     public void Foo()
     {
-        Explain.This<BendingTheRiver>("temp.md");
+        Explain.This<CapillariesAndArterioles>("temp.md");
     }
 }

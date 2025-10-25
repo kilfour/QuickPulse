@@ -1,5 +1,6 @@
 using QuickPulse.Explains;
 using QuickPulse.Explains.Formatters;
+using QuickPulse.Tests.Docs.E_OnCapillariesAndArterioles;
 
 namespace QuickPulse.Tests.Docs.E_BendingTheRiver.Combinators;
 
@@ -34,7 +35,7 @@ public class UsingConditionalTernaryOperator
     [DocExample(typeof(UsingConditionalTernaryOperator), nameof(TernaryConditionalOperator_result), "bash")]
     public void TernaryConditionalOperator()
     {
-        Assert.Equal(TernaryConditionalOperator_result(), BendingTheRiver.GetResult(TernaryConditionalOperator_flow()));
+        Assert.Equal(TernaryConditionalOperator_result(), CapillariesAndArterioles.GetResult(TernaryConditionalOperator_flow()));
     }
 
     [CodeSnippet]
@@ -57,7 +58,7 @@ public class UsingConditionalTernaryOperator
     [DocContent("*Note:* While the ternary operator works, QuickPulse provides more idiomatic ways to deal with conditional statemens, which we will look at below.")]
     public void TernaryConditionalOperator_noop()
     {
-        Assert.Equal(BendingTheRiver.Default_result_values(), BendingTheRiver.GetResult(TernaryConditionalOperator_flow_noop()));
+        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(TernaryConditionalOperator_flow_noop()));
     }
 
 }

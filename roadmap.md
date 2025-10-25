@@ -4,7 +4,6 @@
 ## Finish the Doc
 
 ### Todo 
-- Finish `ToFlowIf`
 - `FirstOf`
 - `ToFlowAs`
 - `TraceToIf`
@@ -16,6 +15,7 @@
 - `Drain`
 - `StopFlowing` + If
 - `Valve`
+- `Start` factory methods
 
 
 ## Pulse.ToFlowIf

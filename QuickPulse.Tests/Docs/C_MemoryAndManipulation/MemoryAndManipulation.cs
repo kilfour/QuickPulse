@@ -1,5 +1,6 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
+using QuickPulse.Bolts;
 
 namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 
@@ -33,6 +34,21 @@ public class MemoryAndManipulation
             from start in Pulse.Start<Unit>()
             from _ in Pulse.Prime(() => 42)
             from value in Pulse.Draw<int>()
+            from __ in Pulse.Trace(value)
+            select start;
+        var latch = TheLatch.Holds<int>();
+        Signal.From(flow).SetArtery(latch).Pulse(Unit.Instance);
+        Assert.Equal(42, latch.Q);
+    }
+
+    [Fact]
+    [DocContent("The `Draw<TBox, T>(Func<TBox, T> func)` is just a bit of sugar to enable accessing nested values.")]
+    public void Draw_reads_current_value_project()
+    {
+        var flow =
+            from start in Pulse.Start<Unit>()
+            from _ in Pulse.Prime(() => new Box<int>(42))
+            from value in Pulse.Draw<Box<int>, int>(a => a.Value)
             from __ in Pulse.Trace(value)
             select start;
         var latch = TheLatch.Holds<int>();

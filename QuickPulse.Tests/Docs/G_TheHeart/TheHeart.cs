@@ -2,7 +2,7 @@ using QuickPulse.Arteries;
 using QuickPulse.Explains;
 using QuickPulse.Instruments;
 
-namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
+namespace QuickPulse.Tests.Docs.G_TheHeart;
 
 [DocFile]
 [DocContent("> Hunting for Flows.\n\n")]
@@ -10,14 +10,14 @@ namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 @"The Heart is the typed Artery registry: it remembers where pulses can go, based on Artery type, and lets you target them deliberately.  
 It is *not* an output by itself. 
 ")]
-public class C_TheHeart
+public class TheHeart
 {
     [Fact]
     [DocHeader("The Main Artery")]
     [DocContent(
 @"There is *always* exactly one Main Artery. It is the default outflow for a signal. Use `Signal.SetArtery(...)` to set it.  
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
-    [DocExample(typeof(C_TheHeart), nameof(Signal_set_Artery_example))]
+    [DocExample(typeof(TheHeart), nameof(Signal_set_Artery_example))]
     public void Signal_set_Artery()
     {
         var holden = TheString.Catcher();
@@ -36,7 +36,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [Fact]
     [DocContent(
 @"`Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):")]
-    [DocExample(typeof(C_TheHeart), nameof(Signal_set_and_return_Artery_example))]
+    [DocExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example))]
     public void Signal_set_and_return_Artery()
     {
         Assert.IsType<Holden>(Signal_set_and_return_Artery_example());
@@ -51,7 +51,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [Fact]
     [DocContent(@"Setting an Artery on a signal that already has one **replaces** the previous Artery.  ")]
-    [DocExample(typeof(C_TheHeart), nameof(Signal_setting_Artery_twice))]
+    [DocExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice))]
     [CodeSnippet]
     public void Signal_setting_Artery_twice()
     {
@@ -91,7 +91,7 @@ In the following section we will discuss how to set up one particular use case:
 'Adding a diagnostic trace to an existing flow.' 
 
 Suppose we have the following flow: ")]
-    [DocExample(typeof(C_TheHeart), nameof(Grafting_starting_flow))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_starting_flow))]
     [CodeSnippet]
 
     private Flow<char> Grafting_starting_flow()
@@ -108,7 +108,7 @@ Suppose we have the following flow: ")]
     [DocContent(
 @"This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:")]
-    [DocExample(typeof(C_TheHeart), nameof(Grafting_starting_flow_usage))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_starting_flow_usage))]
     [CodeSnippet]
     [CodeRemove("return")]
     [CodeReplace("Grafting_starting_flow()", "flow")]
@@ -137,7 +137,7 @@ So let's try and find out what's going on.
 First we define a new typed Artery:")]
     [DocExample(typeof(Diagnostic))]
     [DocContent("Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.")]
-    [DocExample(typeof(C_TheHeart), nameof(Grafting_inspected_flow_usage))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_inspected_flow_usage))]
     [CodeSnippet]
     [CodeRemove("return")]
     [CodeReplace("Grafting_inspected_flow()", "flow")]
@@ -160,7 +160,7 @@ First we define a new typed Artery:")]
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 ")]
-    [DocExample(typeof(C_TheHeart), nameof(Grafting_inspected_flow))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_inspected_flow))]
     [CodeSnippet]
     [CodeReplace("return", "var flow = ")]
     private Flow<char> Grafting_inspected_flow()
@@ -182,7 +182,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     [DocContent(
 @"When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:")]
-    [DocExample(typeof(C_TheHeart), nameof(Grafting_checking_diagnostics_expected))]
+    [DocExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected))]
     [DocContent("We can now use this information to correct the original flow")]
     public void Grafting_checking_diagnostics()
     {
@@ -219,7 +219,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocContent(
 @"`Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
 ")]
-    [DocExample(typeof(C_TheHeart), nameof(Signal_get_Artery))]
+    [DocExample(typeof(TheHeart), nameof(Signal_get_Artery))]
     [CodeSnippet]
     public void Signal_get_Artery()
     {

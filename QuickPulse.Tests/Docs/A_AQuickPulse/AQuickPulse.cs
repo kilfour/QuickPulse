@@ -30,9 +30,7 @@ public class AQuickPulse
 
     [DocHeader("A Mental Map", 1)]
     [DocContent(
-@"> See the river through the flows.
-
-Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
+@"Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
 
 1. `Flow<T>`: 
 A flow is a *recipe for behaviour*. It defines how input values are transformed, traced, or manipulated.

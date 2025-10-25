@@ -1,22 +1,22 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 
-namespace QuickPulse.Tests.Docs.D_MakeItFlow;
+namespace QuickPulse.Tests.Docs.D_Circulation;
 
 [DocFile]
 [DocContent(
-@"> Building larger behaviours from tiny flows.  
+@"> Make it flow, number one.  
 
 QuickPulse is about *composing* small, predictable `Flow<T>` building blocks. 
 This chapter shows how to wire those flows together.")]
-public class MakeItFlow
+public class Circulation
 {
     [DocHeader("Then")]
     [DocContent(
 @"`Then` runs `flow`, discards its value, and continues with `next` in the **same** state.
 It's the flow-level equivalent of do this, *then* do that.")]
     [Fact]
-    [DocExample(typeof(MakeItFlow), nameof(Then_get_flow))]
+    [DocExample(typeof(Circulation), nameof(Then_get_flow))]
     public void Then()
     {
         var holden = TheString.Catcher();
@@ -53,9 +53,9 @@ It's the flow-level equivalent of do this, *then* do that.")]
     [Fact]
     [DocHeader("ToFlow")]
     [DocContent("Given this *sub* flow:")]
-    [DocExample(typeof(MakeItFlow), nameof(SubFlow))]
+    [DocExample(typeof(Circulation), nameof(SubFlow))]
     [DocContent("`Pulse.ToFlow(...)` Executes a subflow over a value.")]
-    [DocExample(typeof(MakeItFlow), nameof(Pulse_to_flow))]
+    [DocExample(typeof(Circulation), nameof(Pulse_to_flow))]
     [CodeSnippet]
     public void Pulse_to_flow()
     {
@@ -70,7 +70,7 @@ It's the flow-level equivalent of do this, *then* do that.")]
 
     [Fact]
     [DocContent("An overload exist that allows for executing a subflow over a collection of values.")]
-    [DocExample(typeof(MakeItFlow), nameof(Pulse_to_flow_collection))]
+    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_collection))]
     [CodeSnippet]
     public void Pulse_to_flow_collection()
     {
@@ -87,7 +87,7 @@ It's the flow-level equivalent of do this, *then* do that.")]
     [Fact]
     [DocContent("Furthermore both the above methods can be used with a *Flow Factory Method*.")]
     [DocContent("Single value:")]
-    [DocExample(typeof(MakeItFlow), nameof(Pulse_to_flow_factory))]
+    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_factory))]
     [CodeSnippet]
     public void Pulse_to_flow_factory()
     {
@@ -103,7 +103,7 @@ It's the flow-level equivalent of do this, *then* do that.")]
 
     [Fact]
     [DocContent("Multiple values:")]
-    [DocExample(typeof(MakeItFlow), nameof(Pulse_to_flow_factory_collection))]
+    [DocExample(typeof(Circulation), nameof(Pulse_to_flow_factory_collection))]
     [CodeSnippet]
     public void Pulse_to_flow_factory_collection()
     {

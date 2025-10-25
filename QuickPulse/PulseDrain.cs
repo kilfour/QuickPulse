@@ -12,5 +12,5 @@ public static partial class Pulse
     /// Executes a subflow returning any inner type and discards both its result and the original input. Use for one-way, sink-like operations.
     /// </summary>
     public static Flow<Unit> Drain<T, TInner>(Func<T, Flow<TInner>> step)
-        => Circulate(step).Dissipate();
+        => Start(step).Dissipate();
 }

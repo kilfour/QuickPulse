@@ -1,4 +1,5 @@
 using QuickPulse.Explains;
+using QuickPulse.Tests.Docs.E_OnCapillariesAndArterioles;
 
 namespace QuickPulse.Tests.Docs.E_BendingTheRiver.Combinators;
 
@@ -19,7 +20,7 @@ public class WhenTests
     [DocExample(typeof(WhenTests), nameof(When_flow))]
     public void When()
     {
-        Assert.Equal(BendingTheRiver.Default_result_values(), BendingTheRiver.GetResult(When_flow()));
+        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(When_flow()));
     }
 
     [CodeSnippet]
@@ -37,7 +38,7 @@ public class WhenTests
     [DocExample(typeof(WhenTests), nameof(When_flow_factory))]
     public void When_factory()
     {
-        Assert.Equal(BendingTheRiver.Default_result_values(), BendingTheRiver.GetResult(When_flow_factory()));
+        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(When_flow_factory()));
     }
 
     [CodeSnippet]
@@ -56,7 +57,7 @@ public class WhenTests
     [DocExample(typeof(WhenTests), nameof(When_flow_state))]
     public void When_state()
     {
-        Assert.Equal(BendingTheRiver.Default_result_values(), BendingTheRiver.GetResult(When_flow_state()));
+        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(When_flow_state()));
     }
 
     [CodeSnippet]
@@ -78,6 +79,6 @@ public class WhenTests
 > `When(..., () => flow)` and many other `Pulse` methods using the factory flow pattern defer creating the subflow/value until the condition is true, avoiding work and allocations on the false path.")]
     public void When_state_factory()
     {
-        Assert.Equal(BendingTheRiver.Default_result_values(), BendingTheRiver.GetResult(When_flow_state_factory()));
+        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(When_flow_state_factory()));
     }
 }
