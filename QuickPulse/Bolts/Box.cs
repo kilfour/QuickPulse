@@ -1,7 +1,6 @@
 namespace QuickPulse.Bolts;
 
-public class Box<T>
+public class Box<T>(T value)
 {
-    public T Value { get; set; }
-    public Box(T value) { Value = value; }
+    public T Value { get; set; } = value;
 }
