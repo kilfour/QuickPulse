@@ -257,8 +257,8 @@ it would be silly to ignore one of the main strengths of the LINQy approach: Com
 
 QuickPulse provides two main ways to achieve this.  
 ### Then
-`Then` runs `flow`, discards its value, and continues with `next` in the **same** state.
-It's the flow-level equivalent of do this, *then* do that.  
+The `Then` combinator joins two flows sequentially while sharing the same internal state.
+It's the flow-level equivalent of saying *do this, then that*.  
 ```csharp
 var dot = Pulse.Trace(".");
 var space = Pulse.Trace(" ");

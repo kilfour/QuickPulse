@@ -39,10 +39,4 @@ public class CapillariesAndArterioles
     {
         return ["even", "even"];
     }
-
-    [Fact]
-    public void Foo()
-    {
-        Explain.This<CapillariesAndArterioles>("temp.md");
-    }
 }

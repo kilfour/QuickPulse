@@ -13,4 +13,11 @@ public static partial class Pulse
     /// </summary>
     public static Flow<Flow> Trace<T>(Func<T, object> extractor) =>
         Runnel(Always, ExtractDataFromBox(extractor), IntoArtery);
+
+    /// <summary>
+    /// Emits the current value of type <typeparamref name="T"/> from memory into the artery.  
+    /// Use to trace stored state directly, without computing or transforming it.
+    /// </summary>
+    public static Flow<Flow> Trace<T>() =>
+        Runnel(Always, s => s.GetTheBox<T>().Value!, IntoArtery);
 }
