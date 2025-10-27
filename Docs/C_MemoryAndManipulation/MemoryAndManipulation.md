@@ -25,7 +25,7 @@ Signal.From(flow).Pulse(Flow.Continue);
 `Prime(() => T)` computes and stores a value **once per signal lifetime**.  
 ## Draw: read from memory.
 `Draw<T>()` retrieves the current value from the signal's memory for type `T`.  
-The `Draw<TBox, T>(Func<TBox, T> func)` is just a bit of sugar to enable accessing nested values.  
+The `Draw<TCell, T>(Func<TCell, T> func)` is just a bit of sugar to enable accessing nested values.  
 ## State aware overloads.
 Most `Pulse` methods have one or more utility overloads that combines `.Draw()` functionality
 with the overloaded method's functionality.  
