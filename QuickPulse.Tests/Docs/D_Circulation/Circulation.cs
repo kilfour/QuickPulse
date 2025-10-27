@@ -192,9 +192,9 @@ Here are the same examples rewritten using **method syntax**:")]
     [CodeRemove("return ")]
     private static Flow<List<int>> ToFlow_get_collection_flow_method()
     {
-        return Pulse.Start<List<int>>(input =>
+        return Pulse.Start<List<int>>(numbers =>
             Pulse.Prime(() => 0)
-                .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), input))
+                .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), numbers))
                 .Then(Pulse.Trace<int>(a => $"Sum = {a}")));
     }
 

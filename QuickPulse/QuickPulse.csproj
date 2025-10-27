@@ -4,7 +4,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Authors>Kilfour</Authors>
 
     <PackageId>QuickPulse</PackageId>
@@ -31,7 +31,7 @@
     <!-- SourceLink / determinism / validation -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <!-- <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild> -->
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <EnablePackageValidation>true</EnablePackageValidation>
 
     <NeutralLanguage>en</NeutralLanguage>

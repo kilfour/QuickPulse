@@ -8,7 +8,7 @@ namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 [DocContent(
 @"> How QuickPulse remembers, updates, and temporarily alters state.
 
-Each signal maintains **gathered cells**, think of them as the signal's **internal organs**
+Each signal maintains **gathered cells** (keyed by *type identity*), think of them as the signal's **internal organs**
 that store and process specific data types.
 Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
 ")]
@@ -60,6 +60,33 @@ public class MemoryAndManipulation
         var latch = TheLatch.Holds<int>();
         Signal.From(flow).SetArtery(latch).Pulse(Flow.Continue);
         Assert.Equal(42, latch.Q);
+    }
+
+    [Fact]
+    [DocHeader("State aware overloads.")]
+    [DocContent(
+@"Most `Pulse` methods have one or more utility overloads that combines `.Draw()` functionality
+with the overloaded method's functionality.  
+It can be seen in the example at the top, but here's another one, showing a more focused usage:")]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Pulse_State_overloads_example))]
+    public void Pulse_State_overloads()
+    {
+        var latch = TheLatch.Holds<int>();
+        Signal.From(Pulse_State_overloads_example()).SetArtery(latch).Pulse(Flow.Continue);
+        Assert.Equal(42, latch.Q);
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return flow;")]
+    private static Flow<Flow> Pulse_State_overloads_example()
+    {
+        var flow =
+            from _ in Pulse.Start<Flow>()
+            from __ in Pulse.Prime(() => 41)
+            from ___ in Pulse.Trace<int>(a => a + 1)
+            select Flow.Continue;
+        // Pulse() => results in 42
+        return flow;
     }
 
     [Fact]
@@ -132,8 +159,6 @@ public class MemoryAndManipulation
         Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
         Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, seen.TheExhibit);
     }
-
-
 
     [Fact]
     [DocHeader("Type Identity Matters")]

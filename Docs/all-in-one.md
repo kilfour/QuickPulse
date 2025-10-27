@@ -175,7 +175,7 @@ It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.
 ## Memory And Manipulation
 > How QuickPulse remembers, updates, and temporarily alters state.
 
-Each signal maintains **gathered cells**, think of them as the signal's **internal organs**
+Each signal maintains **gathered cells** (keyed by *type identity*), think of them as the signal's **internal organs**
 that store and process specific data types.
 Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
   
@@ -200,6 +200,18 @@ Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "res
 ### Draw: read from memory.
 `Draw<T>()` retrieves the current value from the signal's memory for type `T`.  
 The `Draw<TBox, T>(Func<TBox, T> func)` is just a bit of sugar to enable accessing nested values.  
+### State aware overloads.
+Most `Pulse` methods have one or more utility overloads that combines `.Draw()` functionality
+with the overloaded method's functionality.  
+It can be seen in the example at the top, but here's another one, showing a more focused usage:  
+```csharp
+var flow =
+    from _ in Pulse.Start<Flow>()
+    from __ in Pulse.Prime(() => 41)
+    from ___ in Pulse.Trace<int>(a => a + 1)
+    select Flow.Continue;
+// Pulse() => results in 42
+```
 ### Manipulate: controlled mutation of *primed* state.
 `Manipulate<T>(Func<T,T>)` updates the current value of the *gathered cell* for type `T`.  
 The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.  
@@ -270,45 +282,161 @@ var flow =
 // Pulse 42 => results in '... 42'.
 ```
 ### ToFlow
-Given this *sub* flow:  
+If `Then` is about sequence, `ToFlow` is about delegation. It executes another flow *as part* of the current one.  
 ```csharp
-private static Flow<int> SubFlow()
-{
-    return
-        from input in Pulse.Start<int>()
-        from _ in Pulse.Trace(input + 1)
-        select input;
-}
+var subflow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.Trace<int>(a => input + a)
+    select input;
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.Prime(() => 1)
+    from __ in Pulse.ToFlow(subflow, input)    // <=
+    select input;
+// Pulse 41 => results in 42.
 ```
-`Pulse.ToFlow(...)` Executes a subflow over a value.  
+This lets you reuse a named or shared flow inside another.
+The subflow inherits the same signal state, so memory cells and arteries are visible across layers.  
+`ToFlow` can also iterate through collections:  
+```csharp
+var subflow =
+    from input in Pulse.Start<int>()
+    from result in Pulse.Manipulate<int>(a => a + input)
+    select input;
+var flow =
+    from input in Pulse.Start<List<int>>()
+    from _1 in Pulse.Prime(() => 0)
+    from _2 in Pulse.ToFlow(subflow, input)
+    from _3 in Pulse.Trace<int>(a => $"Sum = {a}")
+    select input;
+// Pulse [1, 2, 3] => results in "Sum = 6".
+```
+This version of `ToFlow` is the declarative way to write what would otherwise be a `loop`, `foreach`, `for`, etcetera.  
+### Query Syntax vs Method Syntax
+> Maybe now is the time to talk about Kevin.  
+
+Another feature of LINQ is the two syntactically different but computationally equal styles of expression.  
+In general the query syntax is more declarative (*what* you want to do),
+while the method syntax can be more practical (*how* it actually executes).  
+
+QuickPulse offers two similar dialects. The examples above are written in what could be called QuickPulse **query syntax**.  
+Here are the same examples rewritten using **method syntax**:  
+```csharp
+var dot = Pulse.Trace(".");
+var space = Pulse.Trace(" ");
+Pulse.Start<int>(a =>
+    dot.Then(dot).Then(dot).Then(space).Then(Pulse.Trace(a)));
+```
+```csharp
+Pulse.Start<int>(a =>
+    Pulse.Prime(() => 1)
+        .Then(Pulse.ToFlow(b => Pulse.Trace<int>(c => b + c), a)));
+```
+```csharp
+Pulse.Start<List<int>>(numbers =>
+    Pulse.Prime(() => 0)
+        .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), numbers))
+        .Then(Pulse.Trace<int>(a => $"Sum = {a}")));
+```
+Ultimately, the choice between query syntax and method syntax comes down to readability and personal preference.
+Query syntax often provides a more declarative, linear flow that clearly expresses the sequence of operations,
+while method syntax can offer a more functional, compositional style that some developers find more natural.  
+
+**Note:** The .`Dissipate()` extension method runs the targeted flow and discards its output, returning a `Flow<Flow>`.  
+It's often used in method syntax to glue flows together seamlessly.  
+## Capillaries and Arterioles
+> A.k.a. Pulse Regulation. Branching and conditional control in QuickPulse.
+ 
+
+So far we've mostly seen flows that travel forever on.
+Useful for things like declarative composition,
+but where would we be without the ability to branch off an Artery into an Arteriole or even a Capillary.
+
+QuickPulse provides the following ways to control the *direction* of a flow.  
+### Using a Ternary Conditional Operator (*If/Then/Else*)
 ```csharp
 var flow =
     from input in Pulse.Start<int>()
-    from _ in Pulse.ToFlow(SubFlow(), input)    // <=
+    let conditional =
+        input % 2 == 0
+        ? Pulse.Trace("even")
+        : Pulse.Trace("uneven")
+    from _ in conditional
     select input;
-var latch = TheLatch.Holds<int>();
-Signal.From(flow).SetArtery(latch).Pulse(41);
-Assert.Equal(42, latch.Q);
+// Pulse [1, 2, 3, 4, 5] => results in ["uneven", "even", "uneven", "even", "uneven"].
 ```
-### Query Syntax vs Method Syntax
-> Maybe now is the time to talk about Kevin.  
-## Capillaries and Arterioles
-> A.k.a. Pulse Regulation
-
-This chapter explores and explains the various ways you can control the execution of a `Flow`.
-
-All flow examples below will be executed using the following `Signal`:  
+Prefer `Pulse.NoOp()` when you want an if/then without an else-branch:  
 ```csharp
-Signal.From(flow)
-    .SetArtery(TheCollector.Exhibits<string>())
-    .Pulse([1, 2, 3, 4, 5])
-    .GetArtery<Collector<string>>()
-    .TheExhibit;
+var flow =
+    from input in Pulse.Start<int>()
+    let conditional =
+        input % 2 == 0
+        ? Pulse.Trace("even")
+        : Pulse.NoOp()
+    from _ in conditional
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
 ```
-In addition, unless explicitly specified the result of executing the example flow will always be:   
-```bash
-even
-even
+*Note:* While the ternary operator works, QuickPulse provides more idiomatic ways to deal with conditional statemens, which we will look at below.  
+### When
+`Pulse.When` is the declarative equivalent of the ternary operator combined with `.NoOp()`.  
+```csharp
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.When(input % 2 == 0, Pulse.Trace("even"))
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
+```
+### The `Pulse.{SomeMethod}If()` Variants
+In a similar vein to the state aware utility overloads,
+most `Pulse` methods have an `If` variant that allows for conditional execution.  
+
+  
+**Examples:**  
+  
+*Conditional tracing:*  
+```csharp
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.TraceIf(input % 2 == 0, () => "even")
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
+```
+*Branching a flow:*  
+```csharp
+var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
+var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
+    from __ in Pulse.ToFlowIf(input == 3, three, () => input)
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
+```
+*Counting even numbers using `ManipulateIf()`:*  
+```csharp
+var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
+var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.Prime(() => 0)
+    from __ in Pulse.ManipulateIf<int>(input % 2 == 0, a => a + 1)
+    from ___ in Pulse.Trace<int>(a => $"{input}: {a}")
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"].
+```
+### FirstOf
+Pulse.FirstOf(...) lets you chain multiple conditional flows and automatically
+runs the first one whose condition evaluates to true.
+It's like a compact, declarative if / else if / else ladder for flows.  
+```csharp
+var flow =
+    from input in Pulse.Start<int>()
+    from _ in Pulse.FirstOf(
+        (() => input % 2 == 0, () => Pulse.Trace("even")),
+        (() => input == 3, () => Pulse.Trace("three")))
+    select input;
+// Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
 ```
 ## Arteries Included
 QuickPulse comes with a couple of built-in arteries:  

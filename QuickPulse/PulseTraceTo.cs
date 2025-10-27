@@ -1,5 +1,4 @@
 using QuickPulse.Arteries;
-using QuickPulse.Bolts;
 
 namespace QuickPulse;
 

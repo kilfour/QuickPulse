@@ -9,7 +9,7 @@ public class Spike_Valve
     {
         var flow =
             from input in Pulse.Start<string>()
-            from valve in Pulse.Prime(() => Valve.Install())
+            from valve in Pulse.Prime(Valve.Install)
             from _ in Pulse.TraceIf(valve.Passable(), () => "Look ")
             from __ in Pulse.Trace(input)
             select input;
@@ -25,7 +25,7 @@ public class Spike_Valve
     {
         var flow =
             from input in Pulse.Start<string>()
-            from valve in Pulse.Prime(() => Valve.Install())
+            from valve in Pulse.Prime(Valve.Install)
             from _ in Pulse.TraceIf(valve.Restricted(), () => ", ")
             from __ in Pulse.Trace(input)
             select input;
@@ -41,7 +41,7 @@ public class Spike_Valve
     {
         var flow =
             from input in Pulse.Start<string>()
-            from valve in Pulse.Prime(() => Valve.Install())
+            from valve in Pulse.Prime(Valve.Install)
             from _ in Pulse.TraceIf(valve.Restricted(), () => ", ")
             from __ in Pulse.ManipulateIf<Valve>(input == "open", a => a.Open())
             from ___ in Pulse.Trace(input)
@@ -70,12 +70,13 @@ public class Spike_Valve
             select input;
         var flow =
             from input in Pulse.Start<string[]>()
-            from valve in Pulse.Prime(() => Valve.Install())
+            from valve in Pulse.Prime(Valve.Install)
             from _1 in Pulse.Scoped<Valve>(_ => Valve.Install(), Pulse.ToFlow(innerFlow1, input))
             from _2 in Pulse.Trace(" ")
             from _3 in Pulse.Trace(input)
             from _4 in Pulse.Trace(" ")
             from _5 in Pulse.Scoped<Valve>(_ => Valve.Install(), Pulse.ToFlow(innerFlow2, input))
+                // from _5 in Pulse.ToFlow(innerFlow2, input) == same result
             select input;
         var holden = TheString.Catcher();
         Signal.From(flow)

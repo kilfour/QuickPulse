@@ -1,18 +1,17 @@
+using QuickPulse.Arteries;
 using QuickPulse.Explains;
-using QuickPulse.Explains.Formatters;
-using QuickPulse.Tests.Docs.E_OnCapillariesAndArterioles;
 
-namespace QuickPulse.Tests.Docs.E_BendingTheRiver.Combinators;
+namespace QuickPulse.Tests.Docs.E_CapillariesAndArterioles.Combinators;
 
 
 [DocFileHeader("Using a Ternary Conditional Operator (*If/Then/Else*)")]
 public class UsingConditionalTernaryOperator
 {
     [CodeSnippet]
-    [CodeRemove("return")]
+    [CodeRemove("return flow;")]
     private static Flow<int> TernaryConditionalOperator_flow()
     {
-        return
+        var flow =
             from input in Pulse.Start<int>()
             let conditional =
                 input % 2 == 0
@@ -20,29 +19,26 @@ public class UsingConditionalTernaryOperator
                 : Pulse.Trace("uneven")
             from _ in conditional
             select input;
-    }
-
-    [CodeSnippet]
-    [CodeFormat(typeof(StringArrayToString))]
-    private static string[] TernaryConditionalOperator_result()
-    {
-        return ["uneven", "even", "uneven", "even", "uneven"];
+        // Pulse [1, 2, 3, 4, 5] => results in ["uneven", "even", "uneven", "even", "uneven"].
+        return flow;
     }
 
     [Fact]
     [DocExample(typeof(UsingConditionalTernaryOperator), nameof(TernaryConditionalOperator_flow))]
-    [DocContent("**Result:**")]
-    [DocExample(typeof(UsingConditionalTernaryOperator), nameof(TernaryConditionalOperator_result), "bash")]
     public void TernaryConditionalOperator()
     {
-        Assert.Equal(TernaryConditionalOperator_result(), CapillariesAndArterioles.GetResult(TernaryConditionalOperator_flow()));
+        var collector = TheCollector.Exhibits<string>();
+        Signal.From(TernaryConditionalOperator_flow())
+            .SetArtery(collector)
+            .Pulse([1, 2, 3, 4, 5]);
+        Assert.Equal(["uneven", "even", "uneven", "even", "uneven"], collector.TheExhibit);
     }
 
     [CodeSnippet]
-    [CodeRemove("return")]
+    [CodeRemove("return flow;")]
     private static Flow<int> TernaryConditionalOperator_flow_noop()
     {
-        return
+        var flow =
             from input in Pulse.Start<int>()
             let conditional =
                 input % 2 == 0
@@ -50,15 +46,20 @@ public class UsingConditionalTernaryOperator
                 : Pulse.NoOp()
             from _ in conditional
             select input;
+        // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
+        return flow;
     }
 
     [Fact]
-    [DocContent("> Prefer Pulse.NoOp() when you want an If/Then without an else-branch:")]
+    [DocContent("Prefer `Pulse.NoOp()` when you want an if/then without an else-branch:")]
     [DocExample(typeof(UsingConditionalTernaryOperator), nameof(TernaryConditionalOperator_flow_noop))]
     [DocContent("*Note:* While the ternary operator works, QuickPulse provides more idiomatic ways to deal with conditional statemens, which we will look at below.")]
     public void TernaryConditionalOperator_noop()
     {
-        Assert.Equal(CapillariesAndArterioles.Default_result_values(), CapillariesAndArterioles.GetResult(TernaryConditionalOperator_flow_noop()));
+        var collector = TheCollector.Exhibits<string>();
+        Signal.From(TernaryConditionalOperator_flow_noop())
+            .SetArtery(collector)
+            .Pulse([1, 2, 3, 4, 5]);
+        Assert.Equal(["even", "even"], collector.TheExhibit);
     }
-
 }

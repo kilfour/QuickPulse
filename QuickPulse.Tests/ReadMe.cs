@@ -67,7 +67,6 @@ dotnet add package QuickPulse
 ```")]
     private static void Installation() { }
 
-    [Fact(Skip = "explicit")]
     [DocHeader("Documentation")]
     [DocContent(@"
 QuickPulse is fully documented, with real, executable examples for each combinator and concept.
@@ -77,7 +76,7 @@ You can explore it here:
 * **[Table of Contents](https://github.com/kilfour/QuickPulse/blob/main/Docs/ToC.md)**
 
 Or, ... see [A Quick Pulse](https://github.com/kilfour/QuickPulse/blob/main/Docs/A_AQuickPulse/AQuickPulse.md) for a hands-on quickstart.")]
-    public void Documentation() { Explain.OnlyThis<ReadMe>("README.md"); }
+    private static void Documentation() { }
 
     [DocHeader("License")]
     [DocContent(@"
@@ -97,9 +96,7 @@ Well, okay.
 
 It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
-And yes, it did *literally* involve Trees.
-
-[The origin story](./why-quickpulse-exists.md)")]
+And yes, it did *literally* [involve Trees](./why-quickpulse-exists.md).")]
     private static void WhyQuickPulseExists() { }
 
 }
