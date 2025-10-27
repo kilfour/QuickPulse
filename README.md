@@ -57,7 +57,7 @@ You can explore it here:
 Or, ... see [A Quick Pulse](https://github.com/kilfour/QuickPulse/blob/main/Docs/A_AQuickPulse/AQuickPulse.md) for a hands-on quickstart.  
 ## License
 
-This project is licensed under the [MIT License](https://github.com/kilfour/QuickPulse/blob/main//LICENSE).  
+This project is licensed under the [MIT License](https://github.com/kilfour/QuickPulse/blob/main/LICENSE).  
 ## Why QuickPulse Exists?
 
 Do you know how you sometimes leave your house, maybe to get some cigarettes, and start thinking about something?
@@ -71,4 +71,4 @@ Well, okay.
 
 It happens in code too, ... quite a lot.
 This library is the result of one of those walks through a dark forest.
-And yes, it did *literally* involve [Trees](./why-quickpulse-exists.md).  
+And yes, it did *literally* involve [Trees](https://github.com/kilfour/QuickPulse/blob/main/why-quickpulse-exists.md).  

@@ -5,7 +5,7 @@ namespace QuickPulse.Tests.Docs;
 
 public class CreateDocs
 {
-    [Fact]//(Skip = "explicit")]
+    [Fact(Skip = "explicit")]
     public void Now()
     {
         // Explain.OnlyThis<ReadMe>("README.md");
