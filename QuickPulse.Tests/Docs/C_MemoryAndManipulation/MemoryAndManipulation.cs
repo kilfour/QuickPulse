@@ -48,13 +48,13 @@ public class MemoryAndManipulation
     }
 
     [Fact]
-    [DocContent("The `Draw<TBox, T>(Func<TBox, T> func)` is just a bit of sugar to enable accessing nested values.")]
+    [DocContent("The `Draw<TCell, T>(Func<TCell, T> func)` is just a bit of sugar to enable accessing nested values.")]
     public void Draw_reads_current_value_project()
     {
         var flow =
             from _ in Pulse.Start<Flow>()
-            from __ in Pulse.Prime(() => new Box<int>(42))
-            from value in Pulse.Draw<Box<int>, int>(a => a.Value)
+            from __ in Pulse.Prime(() => new Cell<int>(42))
+            from value in Pulse.Draw<Cell<int>, int>(a => a.Value)
             from ___ in Pulse.Trace(value)
             select Flow.Continue;
         var latch = TheLatch.Holds<int>();

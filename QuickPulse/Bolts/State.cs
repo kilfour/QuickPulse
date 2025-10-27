@@ -37,22 +37,22 @@ public class State
     }
 
     private readonly Dictionary<Type, object> Memory = [];
-    public Box<TValue> GetTheBox<TValue>()
+    public Cell<TValue> GetTheCell<TValue>()
     {
         if (!Memory.TryGetValue(typeof(TValue), out var obj))
             ComputerSays.No($"No value of type {typeof(TValue).Name} found.");
-        return (Box<TValue>)obj!;
+        return (Cell<TValue>)obj!;
     }
 
-    public Box<TValue> GetTheBox<TValue>(Func<TValue> factory)
+    public Cell<TValue> GetTheCell<TValue>(Func<TValue> factory)
     {
         if (!Memory.TryGetValue(typeof(TValue), out var obj))
         {
-            var box = new Box<TValue>(factory());
+            var box = new Cell<TValue>(factory());
             Memory[typeof(TValue)] = box;
             return box;
         }
-        return (Box<TValue>)obj!;
+        return (Cell<TValue>)obj!;
     }
 
     public bool FlowRanDry { get; private set; }

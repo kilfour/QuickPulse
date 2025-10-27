@@ -6,5 +6,5 @@ public static partial class Pulse
     /// Updates the stored value of type T using the given function and emits the new value. Use to evolve state between pulses.
     /// </summary>
     public static Flow<T> Manipulate<T>(Func<T, T> manipulate) =>
-        Fyke(Always, ManipulatedValue(manipulate), SetTheBox<T>());
+        Transduce(Always, ManipulatedValue(manipulate), SetTheCell<T>());
 }

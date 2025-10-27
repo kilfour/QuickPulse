@@ -8,7 +8,7 @@ public static partial class Pulse
     /// Begins a new flow by pulling the current input value from the signal. Use as the entry point in every LINQ flow.
     /// </summary>
     public static Flow<TOut> Start<TOut>() =>
-        s => Cask.Some(s, s.GetValue<TOut>());
+        s => Beat.Some(s, s.GetValue<TOut>());
 
     /// <summary>
     /// Runs a subflow derived from the current input and then continues with the original input. Use for side-effects, tracing, or auxiliary work without changing T.

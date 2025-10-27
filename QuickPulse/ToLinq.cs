@@ -10,7 +10,7 @@ public static class ToLinq
         state =>
         {
             var result = runner(state);
-            return Cask.Some(result.state, selector(result.Value));
+            return Beat.Some(result.State, selector(result.Value));
         };
 
     public static Flow<TResult> SelectMany<TSource, TResult>(
@@ -19,7 +19,7 @@ public static class ToLinq
         state =>
         {
             var result = source(state);
-            return selector(result.Value)(result.state);
+            return selector(result.Value)(result.State);
         };
 
     public static Flow<TValueThree> SelectMany<TValueOne, TValueTwo, TValueThree>(
