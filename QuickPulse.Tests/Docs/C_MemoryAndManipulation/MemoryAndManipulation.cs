@@ -12,7 +12,7 @@ Each signal maintains **gathered cells** (keyed by *type identity*), think of th
 that store and process specific data types.
 Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
 ")]
-[DocExample(typeof(MemoryAndManipulation), nameof(Scoped_with_Manipulate))]
+[DocExample(typeof(MemoryAndManipulation), nameof(Scoped_with_Manipulate_example))]
 public class MemoryAndManipulation
 {
     [Fact]
@@ -107,9 +107,17 @@ It can be seen in the example at the top, but here's another one, showing a more
 
     [Fact]
     [DocContent("The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.")]
-    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_return_value))]
-    [CodeSnippet]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_return_value_example))]
     public void Manipulate_return_value()
+    {
+        var latch = TheLatch.Holds<int>();
+        Manipulate_return_value_example(latch);
+        Assert.Equal(42, latch.Q);
+    }
+
+    [CodeSnippet]
+    [CodeRemove(".SetArtery(latch)")]
+    private static void Manipulate_return_value_example(Latch<int> latch)
     {
         var flow =
             from input in Pulse.Start<int>()
@@ -117,9 +125,7 @@ It can be seen in the example at the top, but here's another one, showing a more
             from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
             from _2 in Pulse.Trace(i + input)            // <= use the new value
             select input;
-        var latch = TheLatch.Holds<int>();
         Signal.From(flow).SetArtery(latch).Pulse(32);
-        Assert.Equal(42, latch.Q);
     }
 
     [Fact]
@@ -141,10 +147,17 @@ It can be seen in the example at the top, but here's another one, showing a more
 
     [Fact]
     [DocContent("Any `Manipulate<T>` inside the scope affects the **scoped** value and is discarded on exit.")]
-    [CodeSnippet]
     public void Scoped_with_Manipulate()
     {
-        var seen = TheCollector.Exhibits<string>();
+        var collector = TheCollector.Exhibits<string>();
+        Scoped_with_Manipulate_example(collector);
+        Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, collector.TheExhibit);
+    }
+
+    [CodeSnippet]
+    [CodeRemove(".SetArtery(collector)")]
+    private static void Scoped_with_Manipulate_example(Collector<string> collector)
+    {
         var flow =
             from _ in Pulse.Start<Flow>()
             from _1 in Pulse.Prime(() => 1)
@@ -156,8 +169,9 @@ It can be seen in the example at the top, but here's another one, showing a more
                 select Flow.Continue)
             from _4 in Pulse.Trace<int>(a => $"restored: {a}")
             select Flow.Continue;
-        Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
-        Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, seen.TheExhibit);
+        Signal.From(flow).SetArtery(collector).Pulse(Flow.Continue);
+        // Results in => 
+        //     [ "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" ]
     }
 
     [Fact]
@@ -194,12 +208,20 @@ It can be seen in the example at the top, but here's another one, showing a more
     [DocContent(
 @"Although the behaviour is logical once you think about it, it can feel a bit unintuitive,
 but when using Postfix operators, beware that they return the *old* value.")]
-    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_postfix_operators))]
-    [CodeSnippet]
+    [DocExample(typeof(MemoryAndManipulation), nameof(Manipulate_postfix_operators_example))]
     [DocContent(
 @"Use prefix form or pure expressions instead.  
 * **Recommended:** `Pulse.Manipulate<int>(a => a + 1)`")]
     public void Manipulate_postfix_operators()
+    {
+        var latch = TheLatch.Holds<int>();
+        Manipulate_postfix_operators_example(latch);
+        Assert.Equal(41, latch.Q);
+    }
+
+    [CodeSnippet]
+    [CodeRemove(".SetArtery(latch)")]
+    private static void Manipulate_postfix_operators_example(Latch<int> latch)
     {
         var flow =
             from input in Pulse.Start<int>()
@@ -207,8 +229,7 @@ but when using Postfix operators, beware that they return the *old* value.")]
             from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
             from now in Pulse.Trace<int>(a => a + input)
             select input;
-        var latch = TheLatch.Holds<int>();
-        Signal.From(flow).SetArtery(latch).Pulse(42);
-        Assert.Equal(42, latch.Q);
+        Signal.From(flow).SetArtery(latch).Pulse(41);
+        // Result => 41. Not 42!
     }
 }

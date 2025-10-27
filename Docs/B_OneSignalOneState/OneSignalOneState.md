@@ -41,27 +41,19 @@ var signal = Signal.From<int>(a => Pulse.Trace(a));
 ### Pulsing One Value
 `Signal.Pulse(...)` is the main way a flow can be instructed to do useful work.  
 ```csharp
-var collector = TheCollector.Exhibits<int>();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(collector)
-    .Pulse(42);
-Assert.Single(collector.TheExhibit);
-Assert.Equal(42, collector.TheExhibit[0]);
+    .Pulse(42)
+    .Pulse(43)
+    .Pulse(44);
 ```
-As the `Assert`'s demonstrate, this sends the int `42` into the flow.  
+This sends the int's `42`, `43` and `44` into the flow.  
 ### Pulsing Many Values
 For ease of use, when dealing with `IEnumerable` return values from various sources, an overload exists: `Signal.Pulse(IEnumerable<T> inputs)`.   
 ```csharp
-var collector = TheCollector.Exhibits<int>();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(collector)
     .Pulse([42, 43, 44]);
-Assert.Equal(3, collector.TheExhibit.Count);
-Assert.Equal(42, collector.TheExhibit[0]);
-Assert.Equal(43, collector.TheExhibit[1]);
-Assert.Equal(44, collector.TheExhibit[2]);
 ```
-Same behaviour as the single-pulse example.  
+Same behaviour as the single pulse example.  
 ### Pulsing Nothing
 Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Flow` type.  
 So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse()` overload.  
@@ -72,28 +64,25 @@ var flow =
     from _2 in Pulse.Trace<int>(a => a)
     from _3 in Pulse.Manipulate<int>(a => a + 1)
     select Flow.Continue;
-var collector = TheCollector.Exhibits<int>();
 Signal.From(flow)
-    .SetArtery(collector)
-    .Pulse().Pulse().Pulse();
-Assert.Equal(3, collector.TheExhibit.Count);
-Assert.Equal(42, collector.TheExhibit[0]);
-Assert.Equal(43, collector.TheExhibit[1]);
-Assert.Equal(44, collector.TheExhibit[2]);
+    .Pulse()
+    .Pulse()
+    .Pulse();
+// This one also results in [42, 43, 44]
 ```
 ## Flatline
 `Signal.FlatLine(...)` is a terminal operation that runs a final flow once the main signal has completed pulsing.
 It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.  
+
+The following example does use some features fully explained in the chapter **'Memory And Manipulation'**.  
 ```csharp
-    Signal.From(
-            from _ in Pulse.Start<Flow>()
-            from __ in Pulse.Prime(() => 0)
-            from ___ in Pulse.Manipulate<int>(a => a + 1)
-            select Flow.Continue
-        )
-        .SetArtery(TheLatch.Holds<int>())
-        .Pulse().Pulse().Pulse()
-        .FlatLine(Pulse.Trace<int>(a => a))
-        .GetArtery<Latch<int>>()
-        .Q; // <= returns 3
+var flow =
+    from _ in Pulse.Start<Flow>()
+    from __ in Pulse.Prime(() => 0)
+    from ___ in Pulse.Manipulate<int>(a => a + 1)
+    select Flow.Continue;
+Signal.From(flow)
+    .Pulse().Pulse().Pulse()
+    .FlatLine(Pulse.Trace<int>(a => a);
+// Results in => 3
 ```

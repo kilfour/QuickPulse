@@ -58,20 +58,14 @@ To observe what flows through, we can add an `IArtery` by using `SetArtery` dire
 
 Example:  
 ```csharp
-public void Adding_an_artery()
-{
-    var collector = TheCollector.Exhibits<int>();
-    Signal.From(
-            from anInt in Pulse.Start<int>()
-            from trace in Pulse.Trace(anInt)
-            select anInt)
-        .SetArtery(collector)
-        .Pulse([42, 43, 44]);
-    Assert.Equal(3, collector.TheExhibit.Count);
-    Assert.Equal(42, collector.TheExhibit[0]);
-    Assert.Equal(43, collector.TheExhibit[1]);
-    Assert.Equal(44, collector.TheExhibit[2]);
-}
+var collector = TheCollector.Exhibits<int>();
+Signal.From(
+        from anInt in Pulse.Start<int>()
+        from trace in Pulse.Trace(anInt)
+        select anInt)
+    .SetArtery(collector)
+    .Pulse([42, 43, 44]);
+// TheCollector.Exhibit now holds => [42, 43, 44]."
 ```
 ## Pulsing a Flow: One Signal, One State
 
@@ -116,27 +110,19 @@ var signal = Signal.From<int>(a => Pulse.Trace(a));
 #### Pulsing One Value
 `Signal.Pulse(...)` is the main way a flow can be instructed to do useful work.  
 ```csharp
-var collector = TheCollector.Exhibits<int>();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(collector)
-    .Pulse(42);
-Assert.Single(collector.TheExhibit);
-Assert.Equal(42, collector.TheExhibit[0]);
+    .Pulse(42)
+    .Pulse(43)
+    .Pulse(44);
 ```
-As the `Assert`'s demonstrate, this sends the int `42` into the flow.  
+This sends the int's `42`, `43` and `44` into the flow.  
 #### Pulsing Many Values
 For ease of use, when dealing with `IEnumerable` return values from various sources, an overload exists: `Signal.Pulse(IEnumerable<T> inputs)`.   
 ```csharp
-var collector = TheCollector.Exhibits<int>();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(collector)
     .Pulse([42, 43, 44]);
-Assert.Equal(3, collector.TheExhibit.Count);
-Assert.Equal(42, collector.TheExhibit[0]);
-Assert.Equal(43, collector.TheExhibit[1]);
-Assert.Equal(44, collector.TheExhibit[2]);
 ```
-Same behaviour as the single-pulse example.  
+Same behaviour as the single pulse example.  
 #### Pulsing Nothing
 Lastly, in some rare circumstances, a flow does not take any input. In `QuickPulse` *nothing* is represented by a `Flow` type.  
 So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse()` overload.  
@@ -147,30 +133,27 @@ var flow =
     from _2 in Pulse.Trace<int>(a => a)
     from _3 in Pulse.Manipulate<int>(a => a + 1)
     select Flow.Continue;
-var collector = TheCollector.Exhibits<int>();
 Signal.From(flow)
-    .SetArtery(collector)
-    .Pulse().Pulse().Pulse();
-Assert.Equal(3, collector.TheExhibit.Count);
-Assert.Equal(42, collector.TheExhibit[0]);
-Assert.Equal(43, collector.TheExhibit[1]);
-Assert.Equal(44, collector.TheExhibit[2]);
+    .Pulse()
+    .Pulse()
+    .Pulse();
+// This one also results in [42, 43, 44]
 ```
 ### Flatline
 `Signal.FlatLine(...)` is a terminal operation that runs a final flow once the main signal has completed pulsing.
 It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.  
+
+The following example does use some features fully explained in the chapter **'Memory And Manipulation'**.  
 ```csharp
-    Signal.From(
-            from _ in Pulse.Start<Flow>()
-            from __ in Pulse.Prime(() => 0)
-            from ___ in Pulse.Manipulate<int>(a => a + 1)
-            select Flow.Continue
-        )
-        .SetArtery(TheLatch.Holds<int>())
-        .Pulse().Pulse().Pulse()
-        .FlatLine(Pulse.Trace<int>(a => a))
-        .GetArtery<Latch<int>>()
-        .Q; // <= returns 3
+var flow =
+    from _ in Pulse.Start<Flow>()
+    from __ in Pulse.Prime(() => 0)
+    from ___ in Pulse.Manipulate<int>(a => a + 1)
+    select Flow.Continue;
+Signal.From(flow)
+    .Pulse().Pulse().Pulse()
+    .FlatLine(Pulse.Trace<int>(a => a);
+// Results in => 3
 ```
 ## Memory And Manipulation
 > How QuickPulse remembers, updates, and temporarily alters state.
@@ -180,7 +163,6 @@ that store and process specific data types.
 Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
   
 ```csharp
-var seen = TheCollector.Exhibits<string>();
 var flow =
     from _ in Pulse.Start<Flow>()
     from _1 in Pulse.Prime(() => 1)
@@ -192,8 +174,9 @@ var flow =
         select Flow.Continue)
     from _4 in Pulse.Trace<int>(a => $"restored: {a}")
     select Flow.Continue;
-Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
-Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, seen.TheExhibit);
+Signal.From(flow).Pulse(Flow.Continue);
+// Results in => 
+//     [ "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" ]
 ```
 ### Prime: one-time lazy initialization.
 `Prime(() => T)` computes and stores a value **once per signal lifetime**.  
@@ -222,9 +205,7 @@ var flow =
     from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
     from _2 in Pulse.Trace(i + input)            // <= use the new value
     select input;
-var latch = TheLatch.Holds<int>();
-Signal.From(flow).SetArtery(latch).Pulse(32);
-Assert.Equal(42, latch.Q);
+Signal.From(flow).Pulse(32);
 ```
 ### Scoped: temporary overrides with automatic restore.
 `Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.  
@@ -254,9 +235,8 @@ var flow =
     from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
     from now in Pulse.Trace<int>(a => a + input)
     select input;
-var latch = TheLatch.Holds<int>();
-Signal.From(flow).SetArtery(latch).Pulse(42);
-Assert.Equal(42, latch.Q);
+Signal.From(flow).Pulse(41);
+// Result => 41. Not 42!
 ```
 Use prefix form or pure expressions instead.  
 * **Recommended:** `Pulse.Manipulate<int>(a => a + 1)`  

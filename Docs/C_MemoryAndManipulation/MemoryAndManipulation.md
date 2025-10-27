@@ -6,7 +6,6 @@ that store and process specific data types.
 Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
   
 ```csharp
-var seen = TheCollector.Exhibits<string>();
 var flow =
     from _ in Pulse.Start<Flow>()
     from _1 in Pulse.Prime(() => 1)
@@ -18,8 +17,9 @@ var flow =
         select Flow.Continue)
     from _4 in Pulse.Trace<int>(a => $"restored: {a}")
     select Flow.Continue;
-Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
-Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, seen.TheExhibit);
+Signal.From(flow).Pulse(Flow.Continue);
+// Results in => 
+//     [ "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" ]
 ```
 ## Prime: one-time lazy initialization.
 `Prime(() => T)` computes and stores a value **once per signal lifetime**.  
@@ -48,9 +48,7 @@ var flow =
     from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
     from _2 in Pulse.Trace(i + input)            // <= use the new value
     select input;
-var latch = TheLatch.Holds<int>();
-Signal.From(flow).SetArtery(latch).Pulse(32);
-Assert.Equal(42, latch.Q);
+Signal.From(flow).Pulse(32);
 ```
 ## Scoped: temporary overrides with automatic restore.
 `Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.  
@@ -80,9 +78,8 @@ var flow =
     from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
     from now in Pulse.Trace<int>(a => a + input)
     select input;
-var latch = TheLatch.Holds<int>();
-Signal.From(flow).SetArtery(latch).Pulse(42);
-Assert.Equal(42, latch.Q);
+Signal.From(flow).Pulse(41);
+// Result => 41. Not 42!
 ```
 Use prefix form or pure expressions instead.  
 * **Recommended:** `Pulse.Manipulate<int>(a => a + 1)`  
