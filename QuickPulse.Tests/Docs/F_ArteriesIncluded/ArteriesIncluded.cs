@@ -79,7 +79,7 @@ Example:")]
     [Fact]
     [DocHeader("The Ledger")]
     [DocContent(
-@"The **Ledger**` is a **persistent artery**, it records every absorbed value into a file.
+@"The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
 Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
@@ -113,7 +113,7 @@ Example:
     [Fact]
     [DocContent(
 @"When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
-located at the solution root (i.e., the nearest parent directory containing a .sln file).  
+located at the nearest directory containing a .sln file (the solution root).  
 
 The filename follows this pattern:
 ```bash
@@ -138,14 +138,14 @@ Example:")]
     [DocExample(typeof(ArteriesIncluded), nameof(Constructor_uses_custom_filename_example))]
     public void Constructor_uses_custom_filename()
     {
-        Assert.EndsWith($"{Path.DirectorySeparatorChar}myfilename.log", Constructor_uses_custom_filename_example());
+        Assert.EndsWith($"{Path.DirectorySeparatorChar}myfilename.log", Constructor_uses_custom_filename_example().FilePath);
     }
 
     [CodeSnippet]
-    [CodeRemove("return")]
-    private static string Constructor_uses_custom_filename_example()
+    [CodeRemove("return ")]
+    private static Ledger Constructor_uses_custom_filename_example()
     {
-        return TheLedger.Records("myfilename.log").FilePath;
+        return TheLedger.Records("myfilename.log");
     }
 
     [DocContent(

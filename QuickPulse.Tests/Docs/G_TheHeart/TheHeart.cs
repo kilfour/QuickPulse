@@ -43,7 +43,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     }
 
     [CodeSnippet]
-    [CodeRemove("return")]
+    [CodeRemove("return ")]
     private static Holden Signal_set_and_return_Artery_example()
     {
         return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());

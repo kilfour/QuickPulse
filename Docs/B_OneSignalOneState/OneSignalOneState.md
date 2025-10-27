@@ -83,6 +83,6 @@ var flow =
     select Flow.Continue;
 Signal.From(flow)
     .Pulse().Pulse().Pulse()
-    .FlatLine(Pulse.Trace<int>(a => a);
+    .FlatLine(Pulse.Trace<int>(a => a));
 // Results in => 3
 ```

@@ -152,7 +152,7 @@ var flow =
     select Flow.Continue;
 Signal.From(flow)
     .Pulse().Pulse().Pulse()
-    .FlatLine(Pulse.Trace<int>(a => a);
+    .FlatLine(Pulse.Trace<int>(a => a));
 // Results in => 3
 ```
 ## Memory And Manipulation
@@ -332,7 +332,7 @@ So far we've mostly seen flows that travel forever on.
 Useful for things like declarative composition,
 but where would we be without the ability to branch off an Artery into an Arteriole or even a Capillary.
 
-QuickPulse provides the following ways to control the *direction* of a flow.  
+QuickPulse provides the following ways to control the *direction and branching* of a flow.  
 ### Using a Ternary Conditional Operator (*If/Then/Else*)
 ```csharp
 var flow =
@@ -454,7 +454,7 @@ Signal.From<string>(a => Pulse.Trace(a))
 // latch.Q now equals "latch"
 ```
 ### The Ledger
-The **Ledger**` is a **persistent artery**, it records every absorbed value into a file.
+The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
 Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
@@ -470,7 +470,7 @@ Signal.From<string>(a => Pulse.Trace(a))
 // File.ReadAllLines(...) now equals ["hello", "filesystem"]
 ```
 When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
-located at the solution root (i.e., the nearest parent directory containing a .sln file).  
+located at the nearest directory containing a .sln file (the solution root).  
 
 The filename follows this pattern:
 ```bash
@@ -483,7 +483,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
 
 Example:  
 ```csharp
- TheLedger.Records("myfilename.log").FilePath;
+TheLedger.Records("myfilename.log");
 ```
 Note that the `Ledger` will throw an exception if no `.sln` file can be found.  
 The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
@@ -524,7 +524,7 @@ Signal.From<int>(a => Pulse.Trace(a))
 ```
 `Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
- Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
+Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
 ```
 Setting an Artery on a signal that already has one **replaces** the previous Artery.    
 ```csharp
@@ -636,7 +636,7 @@ var holden =
 
 In standard LINQ-to-objects, the `where` clause is lazily applied and safely filters values *before* any downstream computation happens. This works because `IEnumerable<T>` defers evaluation until iteration.
 
-But **QuickPulse uses monadic LINQ over computation flows** (`Flow<T>`), not sequences. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses and **evaluates them eagerly**.
+But **QuickPulse uses monadic LINQ over computation flows (`Flow<T>`), not sequences**. In monadic LINQ, the C# compiler desugars `where` **after** any preceding `let`, `from`, or `select` clauses and **evaluates them eagerly**.
 
 This means:
 

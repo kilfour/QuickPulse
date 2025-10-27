@@ -34,7 +34,7 @@ Signal.From<string>(a => Pulse.Trace(a))
 // latch.Q now equals "latch"
 ```
 ## The Ledger
-The **Ledger**` is a **persistent artery**, it records every absorbed value into a file.
+The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
 Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
@@ -50,7 +50,7 @@ Signal.From<string>(a => Pulse.Trace(a))
 // File.ReadAllLines(...) now equals ["hello", "filesystem"]
 ```
 When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
-located at the solution root (i.e., the nearest parent directory containing a .sln file).  
+located at the nearest directory containing a .sln file (the solution root).  
 
 The filename follows this pattern:
 ```bash
@@ -63,7 +63,7 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
 
 Example:  
 ```csharp
- TheLedger.Records("myfilename.log").FilePath;
+TheLedger.Records("myfilename.log");
 ```
 Note that the `Ledger` will throw an exception if no `.sln` file can be found.  
 The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.

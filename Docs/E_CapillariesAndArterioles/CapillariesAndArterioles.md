@@ -6,7 +6,7 @@ So far we've mostly seen flows that travel forever on.
 Useful for things like declarative composition,
 but where would we be without the ability to branch off an Artery into an Arteriole or even a Capillary.
 
-QuickPulse provides the following ways to control the *direction* of a flow.  
+QuickPulse provides the following ways to control the *direction and branching* of a flow.  
 ## Using a Ternary Conditional Operator (*If/Then/Else*)
 ```csharp
 var flow =

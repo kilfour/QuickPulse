@@ -15,7 +15,7 @@ Signal.From<int>(a => Pulse.Trace(a))
 ```
 `Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
- Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
+Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
 ```
 Setting an Artery on a signal that already has one **replaces** the previous Artery.    
 ```csharp

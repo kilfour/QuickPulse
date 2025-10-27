@@ -21,7 +21,6 @@ public class C_Flatline
 
     [CodeSnippet]
     [CodeRemove(".SetArtery(latch)")]
-    [CodeReplace(");", ";")]
     private static void FlatLine_runs_on_terminal_state_example(Latch<int> latch)
     {
         var flow =

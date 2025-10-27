@@ -1,5 +1,4 @@
 using QuickPulse.Explains;
-using QuickPulse.Tests.Docs.E_CapillariesAndArterioles;
 
 namespace QuickPulse.Tests.Docs;
 
