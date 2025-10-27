@@ -3,7 +3,6 @@ using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 
-[DocFile]
 [DocContent(
 @"`Signal.FlatLine(...)` is a terminal operation that runs a final flow once the main signal has completed pulsing.
 It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.")]

@@ -1,4 +1,5 @@
 using QuickPulse.Explains;
+using QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 
 namespace QuickPulse.Tests.Docs.B_OneSignalOneState;
 
@@ -30,4 +31,7 @@ In short: **one signal, one evolving state**.
 
 This design lets you model streaming behaviour, accumulate context, or isolate runs simply by managing signals explicitly.
 ")]
+[DocInclude(typeof(A_From))]
+[DocInclude(typeof(B_Pulse))]
+[DocInclude(typeof(C_Flatline))]
 public class OneSignalOneState { /* Placeholder */ }

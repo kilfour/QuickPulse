@@ -3,7 +3,6 @@ using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 
-[DocFile]
 public class B_Pulse
 {
     [Fact]

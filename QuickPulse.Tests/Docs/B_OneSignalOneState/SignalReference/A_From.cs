@@ -2,7 +2,6 @@ using QuickPulse.Explains;
 
 namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 
-[DocFile]
 [DocContent(
 @"`Signal.From(...)` is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.")]
