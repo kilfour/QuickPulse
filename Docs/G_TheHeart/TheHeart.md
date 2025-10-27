@@ -26,8 +26,8 @@ Signal.From<int>(a => Pulse.Trace(a))
     .Pulse(42)
     .SetArtery(caulfield)
     .Pulse(43);
-Assert.Equal("42", holden.Whispers());
-Assert.Equal("43", caulfield.Whispers());
+// holden.Whispers()    => "42"
+// caulfield.Whispers() => "43"
 ```
 - Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?  
@@ -117,8 +117,8 @@ var holden =
     Signal.From<int>(a => Pulse.Trace(a))
         .SetArtery(TheString.Catcher())
         .Pulse(42)
-        .GetArtery<Holden>();
-Assert.Equal("42", holden.Whispers());
+        .GetArtery<Holden>(); // <=
+// holden.Whispers() => "42"
 ```
 `Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrete type of `IArtery` that the heart is unaware of.
       

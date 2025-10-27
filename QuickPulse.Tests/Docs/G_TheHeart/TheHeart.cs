@@ -51,9 +51,17 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
 
     [Fact]
     [DocContent(@"Setting an Artery on a signal that already has one **replaces** the previous Artery.  ")]
-    [DocExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice))]
-    [CodeSnippet]
+    [DocExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice_example))]
     public void Signal_setting_Artery_twice()
+    {
+        var (holden, caulfield) = Signal_setting_Artery_twice_example();
+        Assert.Equal("42", holden.Whispers());
+        Assert.Equal("43", caulfield.Whispers());
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return (holden, caulfield);")]
+    private static (Holden holden, Holden caulfield) Signal_setting_Artery_twice_example()
     {
         var holden = TheString.Catcher();
         var caulfield = TheString.Catcher();
@@ -62,8 +70,9 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
             .Pulse(42)
             .SetArtery(caulfield)
             .Pulse(43);
-        Assert.Equal("42", holden.Whispers());
-        Assert.Equal("43", caulfield.Whispers());
+        // holden.Whispers()    => "42"
+        // caulfield.Whispers() => "43"
+        return (holden, caulfield);
     }
 
     [Fact]
@@ -219,16 +228,24 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocContent(
 @"`Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
 ")]
-    [DocExample(typeof(TheHeart), nameof(Signal_get_Artery))]
-    [CodeSnippet]
+    [DocExample(typeof(TheHeart), nameof(Signal_get_Artery_example))]
     public void Signal_get_Artery()
+    {
+        var holden = Signal_get_Artery_example();
+        Assert.Equal("42", holden.Whispers());
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return holden;")]
+    private static Holden Signal_get_Artery_example()
     {
         var holden =
             Signal.From<int>(a => Pulse.Trace(a))
                 .SetArtery(TheString.Catcher())
                 .Pulse(42)
-                .GetArtery<Holden>();
-        Assert.Equal("42", holden.Whispers());
+                .GetArtery<Holden>(); // <=
+        // holden.Whispers() => "42"
+        return holden;
     }
 
     [DocContent(

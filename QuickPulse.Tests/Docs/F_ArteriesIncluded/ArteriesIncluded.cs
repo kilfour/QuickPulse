@@ -28,16 +28,25 @@ Each call to `Absorb()` appends the incoming objects to the exhibit list, preser
 Think of it as a **curator** for your flows, nothing escapes notice, everything is archived for later inspection.
 
 Example:")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheCollector_Example))]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheCollector_Usage_Example))]
+    public void TheCollector_Usage()
+    {
+        var collector = TheCollector_Usage_Example();
+        Assert.Equal("hello", collector.TheExhibit[0]);
+        Assert.Equal("collector", collector.TheExhibit[1]);
+    }
+
     [CodeSnippet]
-    public void TheCollector_Example()
+    [CodeRemove("return collector;")]
+    private static Collector<string> TheCollector_Usage_Example()
     {
         var collector = TheCollector.Exhibits<string>();
         Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(collector)
-            .Pulse(["hello", "collector"]);
-        Assert.Equal("hello", collector.TheExhibit[0]);
-        Assert.Equal("collector", collector.TheExhibit[1]);
+            .Pulse("hello")
+            .Pulse("collector");
+        // collector.TheExhibit now equals ["hello", "collector"]
+        return collector;
     }
 
     [Fact]
@@ -47,15 +56,24 @@ Example:")]
 This is ideal for tests and probes where you only care about what came out last.
 
 Example:")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheLatch_Example))]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheLatch_Usage_Example))]
+    public void TheLatch_Usage()
+    {
+        var latch = TheLatch_Usage_Example();
+        Assert.Equal("latch", latch.Q);
+    }
+
     [CodeSnippet]
-    public void TheLatch_Example()
+    [CodeRemove("return latch;")]
+    private static Latch<string> TheLatch_Usage_Example()
     {
         var latch = TheLatch.Holds<string>();
         Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(latch)
-            .Pulse(["hello", "latch"]);
-        Assert.Equal("latch", latch.Q);
+            .Pulse("hello")
+            .Pulse("latch");
+        // latch.Q now equals "latch"
+        return latch;
     }
 
     [Fact]
@@ -68,21 +86,28 @@ Think of it as your **flow accountant**, keeping a faithful record of every tran
 
 Example:
 ")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheLedger_Example))]
-    [CodeSnippet]
-    [CodeRemove("File.Delete(filePath);")]
-    public void TheLedger_Example()
+    [DocExample(typeof(ArteriesIncluded), nameof(TheLedger_Usage_Example))]
+    public void TheLedger_Usage()
     {
-        var filePath =
-            Signal.From<string>(a => Pulse.Trace(a))
-                .SetArtery(TheLedger.Records())
-                .Pulse(["hello", "filesystem"])
-                .GetArtery<Ledger>()
-                .FilePath;
+        var ledger = TheLedger_Usage_Example();
+        var filePath = ledger.FilePath;
         var lines = File.ReadAllLines(filePath);
         Assert.Equal("hello", lines[0]);
         Assert.Equal("filesystem", lines[1]);
         File.Delete(filePath);
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return ledger;")]
+    private static Ledger TheLedger_Usage_Example()
+    {
+        var ledger = TheLedger.Records();
+        Signal.From<string>(a => Pulse.Trace(a))
+            .SetArtery(ledger)
+            .Pulse("hello")
+            .Pulse("filesystem");
+        // File.ReadAllLines(...) now equals ["hello", "filesystem"]
+        return ledger;
     }
 
     [Fact]
@@ -118,7 +143,7 @@ Example:")]
 
     [CodeSnippet]
     [CodeRemove("return")]
-    public string Constructor_uses_custom_filename_example()
+    private static string Constructor_uses_custom_filename_example()
     {
         return TheLedger.Records("myfilename.log").FilePath;
     }
@@ -136,8 +161,6 @@ Example:")]
     [DocContent(
 @"The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:")]
-    [CodeSnippet]
-    [CodeRemove("File.Delete(filePath);")]
     public void ClearFile_writes_empty_string_to_file()
     {
         // Setup a file with content
@@ -173,19 +196,25 @@ Use the static helper `TheString.Catcher()` to create a new catcher.")]
 
     [Fact]
     [DocContent("You can get a hold of the string through the `.Whispers()` method.")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheStringCatcher_Whispers))]
-    [CodeSnippet]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheStringCatcher_Whispers_Example))]
     public void TheStringCatcher_Whispers()
+        => Assert.Equal("x = 42", TheStringCatcher_Whispers_Example());
+
+    [CodeSnippet]
+    [CodeRemove("return result;")]
+    private static string TheStringCatcher_Whispers_Example()
     {
         var holden = TheString.Catcher();
         Signal.From(
-                from x in Pulse.Start<int>()
-                from _ in Pulse.Trace("x = ")
-                from __ in Pulse.Trace(42)
-                select x)
-            .SetArtery(holden)
-            .Pulse(42);
-        Assert.Equal("x = 42", holden.Whispers());
+            from x in Pulse.Start<int>()
+            from _ in Pulse.Trace("x = ")
+            from __ in Pulse.Trace(42)
+            select x)
+        .SetArtery(holden)
+        .Pulse(42);
+        var result = holden.Whispers(); // <=
+        // result now equals "x = 42"
+        return result;
     }
 
     [Fact]

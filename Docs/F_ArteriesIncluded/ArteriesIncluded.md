@@ -16,9 +16,9 @@ Example:
 var collector = TheCollector.Exhibits<string>();
 Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(collector)
-    .Pulse(["hello", "collector"]);
-Assert.Equal("hello", collector.TheExhibit[0]);
-Assert.Equal("collector", collector.TheExhibit[1]);
+    .Pulse("hello")
+    .Pulse("collector");
+// collector.TheExhibit now equals ["hello", "collector"]
 ```
 ## The Latch
 The **Latch** is a tiny, type-safe last-value latch. It simply remembers the most recent value absorbed and exposes it via `Q`.  
@@ -29,8 +29,9 @@ Example:
 var latch = TheLatch.Holds<string>();
 Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(latch)
-    .Pulse(["hello", "latch"]);
-Assert.Equal("latch", latch.Q);
+    .Pulse("hello")
+    .Pulse("latch");
+// latch.Q now equals "latch"
 ```
 ## The Ledger
 The **Ledger**` is a **persistent artery**, it records every absorbed value into a file.
@@ -41,15 +42,12 @@ Think of it as your **flow accountant**, keeping a faithful record of every tran
 Example:
   
 ```csharp
-var filePath =
-    Signal.From<string>(a => Pulse.Trace(a))
-        .SetArtery(TheLedger.Records())
-        .Pulse(["hello", "filesystem"])
-        .GetArtery<Ledger>()
-        .FilePath;
-var lines = File.ReadAllLines(filePath);
-Assert.Equal("hello", lines[0]);
-Assert.Equal("filesystem", lines[1]);
+var ledger = TheLedger.Records();
+Signal.From<string>(a => Pulse.Trace(a))
+    .SetArtery(ledger)
+    .Pulse("hello")
+    .Pulse("filesystem");
+// File.ReadAllLines(...) now equals ["hello", "filesystem"]
 ```
 When a filename is not explicitly provided, a unique file is automatically created in a .quickpulse directory
 located at the solution root (i.e., the nearest parent directory containing a .sln file).  
@@ -79,12 +77,13 @@ You can get a hold of the string through the `.Whispers()` method.
 ```csharp
 var holden = TheString.Catcher();
 Signal.From(
-        from x in Pulse.Start<int>()
-        from _ in Pulse.Trace("x = ")
-        from __ in Pulse.Trace(42)
-        select x)
-    .SetArtery(holden)
-    .Pulse(42);
-Assert.Equal("x = 42", holden.Whispers());
+    from x in Pulse.Start<int>()
+    from _ in Pulse.Trace("x = ")
+    from __ in Pulse.Trace(42)
+    select x)
+.SetArtery(holden)
+.Pulse(42);
+var result = holden.Whispers(); // <=
+// result now equals "x = 42"
 ```
 You can also reset/clear the *caught* values using the `.Forgets()` method.  
