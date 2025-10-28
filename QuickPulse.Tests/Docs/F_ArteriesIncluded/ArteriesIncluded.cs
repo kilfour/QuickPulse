@@ -9,14 +9,14 @@ namespace QuickPulse.Tests.Docs.F_ArteriesIncluded;
 public class ArteriesIncluded
 {
     [Fact]
-    [DocHeader("The Shunt, a.k.a. `/dev/null`")]
+    [DocHeader("The NullArtery, a.k.a. `/dev/null`")]
     [DocContent(
-@"The **Shunt** is the default artery installed in every new signal.  
+@"The **NullArtery** is the default artery installed in every new signal.  
 It implements the Null Object pattern: an inert artery that silently absorbs all data.
 Any call to `Absorb()` on a shunt simply vanishes, no storage, no side effects, no errors.
 This ensures that flows without an explicitly attached artery still execute safely.")]
-    public void TheShunt_Is_The_Default()
-        => Assert.NotNull(Signal.From<string>(a => Pulse.Trace(a)).GetArtery<Shunt>());
+    public void TheNullArtery_Is_The_Default()
+        => Assert.NotNull(Signal.From<string>(a => Pulse.Trace(a)).GetArtery<NullArtery>());
 
     [Fact]
     [DocHeader("The Collector")]

@@ -12,7 +12,7 @@ public class State
     public T GetValue<T>() { return (T)CurrentInput!; }
     public State SetValue<T>(T value) { CurrentInput = value!; return this; }
 
-    public IArtery CurrentArtery { get; private set; } = Install.Shunt;
+    public IArtery CurrentArtery { get; private set; } = Install.Null;
     public void SetArtery(IArtery artery)
         => CurrentArtery = artery
             ?? ComputerSays.No<IArtery>("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?");

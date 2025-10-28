@@ -97,7 +97,7 @@ For example, sending the value `42` into the flow:")]
     public void Adding_a_pulse()
     {
         var signal = Adding_a_pulse_example();
-        Assert.NotNull(signal.GetArtery<Shunt>());
+        Assert.NotNull(signal.GetArtery<NullArtery>());
     }
 
     [CodeSnippet]
