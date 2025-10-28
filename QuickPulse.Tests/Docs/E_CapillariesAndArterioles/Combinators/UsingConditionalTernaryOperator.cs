@@ -27,11 +27,11 @@ public class UsingConditionalTernaryOperator
     [DocExample(typeof(UsingConditionalTernaryOperator), nameof(TernaryConditionalOperator_flow))]
     public void TernaryConditionalOperator()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(TernaryConditionalOperator_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["uneven", "even", "uneven", "even", "uneven"], collector.TheExhibit);
+        Assert.Equal(["uneven", "even", "uneven", "even", "uneven"], collector.Values);
     }
 
     [CodeSnippet]
@@ -56,10 +56,10 @@ public class UsingConditionalTernaryOperator
     [DocContent("*Note:* While the ternary operator works, QuickPulse provides more idiomatic ways to deal with conditional statemens, which we will look at below.")]
     public void TernaryConditionalOperator_noop()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(TernaryConditionalOperator_flow_noop())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["even", "even"], collector.TheExhibit);
+        Assert.Equal(["even", "even"], collector.Values);
     }
 }

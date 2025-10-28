@@ -26,10 +26,10 @@ public static class TimesExtensions
 
     private static List<T> GetResult<T>(this Signal<Flow> signal, int times) =>
         signal
-            .SetArtery(TheCollector.Exhibits<T>())
+            .SetArtery(Collect.ValuesOf<T>())
             .Pulse(Enumerable.Repeat(Flow.Continue, times))
             .GetArtery<Collector<T>>()
-            .TheExhibit;
+            .Values;
 }
 
 public class TimesTests

@@ -27,24 +27,24 @@ Each call to `Absorb()` appends the incoming objects to the exhibit list, preser
 Think of it as a **curator** for your flows, nothing escapes notice, everything is archived for later inspection.
 
 Example:")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheCollector_Usage_Example))]
-    public void TheCollector_Usage()
+    [DocExample(typeof(ArteriesIncluded), nameof(Collector_Usage_Example))]
+    public void Collector_Usage()
     {
-        var collector = TheCollector_Usage_Example();
-        Assert.Equal("hello", collector.TheExhibit[0]);
-        Assert.Equal("collector", collector.TheExhibit[1]);
+        var collector = Collector_Usage_Example();
+        Assert.Equal("hello", collector.Values[0]);
+        Assert.Equal("collector", collector.Values[1]);
     }
 
     [CodeSnippet]
     [CodeRemove("return collector;")]
-    private static Collector<string> TheCollector_Usage_Example()
+    private static Collector<string> Collector_Usage_Example()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From<string>(a => Pulse.Trace(a))
             .SetArtery(collector)
             .Pulse("hello")
             .Pulse("collector");
-        // collector.TheExhibit now equals ["hello", "collector"]
+        // collector.Values now equals ["hello", "collector"]
         return collector;
     }
 
@@ -52,7 +52,7 @@ Example:")]
     [DocHeader("The Ledger")]
     [DocContent(
 @"The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
-Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
+Where the `Collector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
 

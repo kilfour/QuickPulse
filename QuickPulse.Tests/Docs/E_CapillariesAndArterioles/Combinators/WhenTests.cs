@@ -23,11 +23,11 @@ public class WhenTests
     [DocExample(typeof(WhenTests), nameof(When_flow))]
     public void When()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(When_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["even", "even"], collector.TheExhibit);
+        Assert.Equal(["even", "even"], collector.Values);
     }
 
     //     [CodeSnippet]

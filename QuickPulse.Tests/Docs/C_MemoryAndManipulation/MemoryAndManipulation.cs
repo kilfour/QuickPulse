@@ -27,7 +27,7 @@ public class MemoryAndManipulation
             from _1 in Pulse.Trace(first)
             from _2 in Pulse.Manipulate<bool>(_ => false)
             select Flow.Continue;
-        var signal = Signal.From(flow).SetArtery(TheCollector.Exhibits<bool>());
+        var signal = Signal.From(flow).SetArtery(Collect.ValuesOf<bool>());
         signal.Pulse([Flow.Continue, Flow.Continue]);
         Assert.Equal(1, created);
     }
@@ -134,7 +134,7 @@ It can be seen in the example at the top, but here's another one, showing a more
     [DocContent("`Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.")]
     public void Scoped_applies_temp_value_and_restores()
     {
-        var seen = TheCollector.Exhibits<string>();
+        var seen = Collect.ValuesOf<string>();
         var flow =
             from _ in Pulse.Start<Flow>()
             from _1 in Pulse.Prime(() => 1)
@@ -143,16 +143,16 @@ It can be seen in the example at the top, but here's another one, showing a more
             from _4 in Pulse.Trace<int>(a => $"restored: {a}")
             select Flow.Continue;
         Signal.From(flow).SetArtery(seen).Pulse(Flow.Continue);
-        Assert.Equal(new object[] { "outer: 1", "inner: 2", "restored: 1" }, seen.TheExhibit);
+        Assert.Equal(new object[] { "outer: 1", "inner: 2", "restored: 1" }, seen.Values);
     }
 
     [Fact]
     [DocContent("Any `Manipulate<T>` inside the scope affects the **scoped** value and is discarded on exit.")]
     public void Scoped_with_Manipulate()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Scoped_with_Manipulate_example(collector);
-        Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, collector.TheExhibit);
+        Assert.Equal(new object[] { "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" }, collector.Values);
     }
 
     [CodeSnippet]

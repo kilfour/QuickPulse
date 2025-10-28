@@ -29,10 +29,10 @@ public class FirstOfTests
     [DocExample(typeof(FirstOfTests), nameof(FirstOf_flow))]
     public void FirstOf()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(FirstOf_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["even", "three", "even"], collector.TheExhibit);
+        Assert.Equal(["even", "three", "even"], collector.Values);
     }
 }

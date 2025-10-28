@@ -30,11 +30,11 @@ public class TheSomethingIfVariants
     [DocExample(typeof(TheSomethingIfVariants), nameof(TraceIf_flow))]
     public void TraceIf()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(TraceIf_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["even", "even"], collector.TheExhibit);
+        Assert.Equal(["even", "even"], collector.Values);
     }
 
     [CodeSnippet]
@@ -57,11 +57,11 @@ public class TheSomethingIfVariants
     [DocExample(typeof(TheSomethingIfVariants), nameof(ToFlowIf_flow))]
     public void ToFlowIf()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(ToFlowIf_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["even", "three", "even"], collector.TheExhibit);
+        Assert.Equal(["even", "three", "even"], collector.Values);
     }
 
     [CodeSnippet]
@@ -85,11 +85,11 @@ public class TheSomethingIfVariants
     [DocExample(typeof(TheSomethingIfVariants), nameof(ManipulateIf_flow))]
     public void ManipulateIf()
     {
-        var collector = TheCollector.Exhibits<string>();
+        var collector = Collect.ValuesOf<string>();
         Signal.From(ManipulateIf_flow())
             .SetArtery(collector)
             .Pulse([1, 2, 3, 4, 5]);
-        Assert.Equal(["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"], collector.TheExhibit);
+        Assert.Equal(["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"], collector.Values);
     }
 
 }

@@ -129,10 +129,10 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
             from input in Pulse.Start<List<int>>()
             from _ in Pulse.ToFlow(a => Pulse.Trace(a + 1), input)    // <=
             select input;
-        var collector = TheCollector.Exhibits<int>();
+        var collector = Collect.ValuesOf<int>();
         var signal = Signal.From(flow).SetArtery(collector);
         signal.Pulse([41, 41]);
-        Assert.Equal([42, 42], collector.TheExhibit);
+        Assert.Equal([42, 42], collector.Values);
     }
 
     [Fact]

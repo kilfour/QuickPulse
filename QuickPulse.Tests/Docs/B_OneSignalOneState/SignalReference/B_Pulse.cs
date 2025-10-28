@@ -12,12 +12,12 @@ public class B_Pulse
     [DocContent("This sends the int's `42`, `43` and `44` into the flow.")]
     public void Signal_pulse()
     {
-        var collector = TheCollector.Exhibits<int>();
+        var collector = Collect.ValuesOf<int>();
         Signal_pulse_example(collector);
-        Assert.Equal(3, collector.TheExhibit.Count);
-        Assert.Equal(42, collector.TheExhibit[0]);
-        Assert.Equal(43, collector.TheExhibit[1]);
-        Assert.Equal(44, collector.TheExhibit[2]);
+        Assert.Equal(3, collector.Values.Count);
+        Assert.Equal(42, collector.Values[0]);
+        Assert.Equal(43, collector.Values[1]);
+        Assert.Equal(44, collector.Values[2]);
     }
 
     [CodeSnippet]
@@ -38,12 +38,12 @@ public class B_Pulse
     [DocContent("Same behaviour as the single pulse example.")]
     public void Signal_pulse_thrice_enumerable()
     {
-        var collector = TheCollector.Exhibits<int>();
+        var collector = Collect.ValuesOf<int>();
         Signal_pulse_thrice_enumerable_example(collector);
-        Assert.Equal(3, collector.TheExhibit.Count);
-        Assert.Equal(42, collector.TheExhibit[0]);
-        Assert.Equal(43, collector.TheExhibit[1]);
-        Assert.Equal(44, collector.TheExhibit[2]);
+        Assert.Equal(3, collector.Values.Count);
+        Assert.Equal(42, collector.Values[0]);
+        Assert.Equal(43, collector.Values[1]);
+        Assert.Equal(44, collector.Values[2]);
     }
 
     [CodeSnippet]
@@ -63,12 +63,12 @@ So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse
     [DocExample(typeof(B_Pulse), nameof(Signal_pulse_unit_example))]
     public void Signal_pulse_unit()
     {
-        var collector = TheCollector.Exhibits<int>();
+        var collector = Collect.ValuesOf<int>();
         Signal_pulse_unit_example(collector);
-        Assert.Equal(3, collector.TheExhibit.Count);
-        Assert.Equal(42, collector.TheExhibit[0]);
-        Assert.Equal(43, collector.TheExhibit[1]);
-        Assert.Equal(44, collector.TheExhibit[2]);
+        Assert.Equal(3, collector.Values.Count);
+        Assert.Equal(42, collector.Values[0]);
+        Assert.Equal(43, collector.Values[1]);
+        Assert.Equal(44, collector.Values[2]);
     }
 
     [CodeSnippet]

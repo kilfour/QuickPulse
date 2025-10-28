@@ -121,24 +121,24 @@ Example:")]
     public void Adding_an_artery()
     {
         var collector = Adding_an_artery_example();
-        Assert.Equal(3, collector.TheExhibit.Count);
-        Assert.Equal(42, collector.TheExhibit[0]);
-        Assert.Equal(43, collector.TheExhibit[1]);
-        Assert.Equal(44, collector.TheExhibit[2]);
+        Assert.Equal(3, collector.Values.Count);
+        Assert.Equal(42, collector.Values[0]);
+        Assert.Equal(43, collector.Values[1]);
+        Assert.Equal(44, collector.Values[2]);
     }
 
     [CodeSnippet]
     [CodeRemove("return collector;")]
     private static Collector<int> Adding_an_artery_example()
     {
-        var collector = TheCollector.Exhibits<int>();
+        var collector = Collect.ValuesOf<int>();
         Signal.From(
                 from anInt in Pulse.Start<int>()
                 from trace in Pulse.Trace(anInt)
                 select anInt)
             .SetArtery(collector)
             .Pulse([42, 43, 44]);
-        // TheCollector.Exhibit now holds => [42, 43, 44]."
+        // collector.Values now holds => [42, 43, 44]."
         return collector;
     }
 }

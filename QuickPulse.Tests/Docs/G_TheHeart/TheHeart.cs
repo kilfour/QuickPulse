@@ -165,7 +165,7 @@ First we define a new typed Artery:")]
     public class Diagnostic : Collector<string> { }
 
     [DocContent(
-@"In this case, we could just Graft the `TheCollector<string>`, but creating a derived class expresses our intent much better.
+@"In this case, we could just Graft a `Collector<string>`, but creating a derived class expresses our intent much better.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 ")]
@@ -196,7 +196,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     public void Grafting_checking_diagnostics()
     {
         var collector = Grafting_inspected_flow_usage().GetArtery<Diagnostic>();
-        Assert.Equal(Grafting_checking_diagnostics_expected(), collector.TheExhibit);
+        Assert.Equal(Grafting_checking_diagnostics_expected(), collector.Values);
     }
 
 
