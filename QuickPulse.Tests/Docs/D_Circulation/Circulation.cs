@@ -1,5 +1,6 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
+using QuickPulse.Tests.Tools;
 
 namespace QuickPulse.Tests.Docs.D_Circulation;
 

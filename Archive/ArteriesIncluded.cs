@@ -1,8 +1,10 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Instruments;
+using QuickPulse.Tests.Tools;
 
 namespace QuickPulse.Tests.Docs.F_ArteriesIncluded;
+
 
 [DocFile]
 [DocContent("QuickPulse comes with a couple of built-in arteries:")]
@@ -46,6 +48,33 @@ Example:")]
             .Pulse("collector");
         // collector.TheExhibit now equals ["hello", "collector"]
         return collector;
+    }
+
+    [Fact]
+    [DocHeader("The Latch")]
+    [DocContent(
+@"The **Latch** is a tiny, type-safe last-value latch. It simply remembers the most recent value absorbed and exposes it via `Q`.  
+This is ideal for tests and probes where you only care about what came out last.
+
+Example:")]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheLatch_Usage_Example))]
+    public void TheLatch_Usage()
+    {
+        var latch = TheLatch_Usage_Example();
+        Assert.Equal("latch", latch.Q);
+    }
+
+    [CodeSnippet]
+    [CodeRemove("return latch;")]
+    private static Latch<string> TheLatch_Usage_Example()
+    {
+        var latch = TheLatch.Holds<string>();
+        Signal.From<string>(a => Pulse.Trace(a))
+            .SetArtery(latch)
+            .Pulse("hello")
+            .Pulse("latch");
+        // latch.Q now equals "latch"
+        return latch;
     }
 
     [Fact]

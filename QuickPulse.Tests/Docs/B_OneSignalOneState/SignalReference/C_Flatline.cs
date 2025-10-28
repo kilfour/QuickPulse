@@ -1,5 +1,5 @@
-using QuickPulse.Arteries;
 using QuickPulse.Explains;
+using QuickPulse.Tests.Tools;
 
 namespace QuickPulse.Tests.Docs.B_OneSignalOneState.SignalReference;
 

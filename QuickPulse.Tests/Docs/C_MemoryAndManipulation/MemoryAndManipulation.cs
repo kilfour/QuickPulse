@@ -1,6 +1,7 @@
 using QuickPulse.Explains;
 using QuickPulse.Arteries;
 using QuickPulse.Bolts;
+using QuickPulse.Tests.Tools;
 
 namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 
