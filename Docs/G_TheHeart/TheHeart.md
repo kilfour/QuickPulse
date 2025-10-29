@@ -10,24 +10,24 @@ There is *always* exactly one Main Artery. It is the default outflow for a signa
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.    
 ```csharp
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(holden) // <= 'holden' is now the Main Artery
+    .SetArtery(stringSink) // <= 'stringSink' is now the Main Artery
     .Pulse(42);
 ```
 `Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
-Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
+Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(Text.Capture());
 ```
 Setting an Artery on a signal that already has one **replaces** the previous Artery.    
 ```csharp
-var holden = TheString.Catcher();
-var caulfield = TheString.Catcher();
+var stringSink = Text.Capture();
+var caulfield = Text.Capture();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Pulse(42)
     .SetArtery(caulfield)
     .Pulse(43);
-// holden.Whispers()    => "42"
-// caulfield.Whispers() => "43"
+// stringSink.Content()    => "42"
+// caulfield.Content()     => "43"
 ```
 - Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?  
@@ -50,9 +50,9 @@ return
 This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 Signal.From(flow)
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Pulse("{ a { b } c }");
 ```
 Unfortunately the result of this is ` a { b } c }` and really, we want it to be ` a { b } c `.    
@@ -65,14 +65,14 @@ public class Diagnostic : Collector<string> { }
 ```
 Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 var diagnostic = new Diagnostic();
 Signal.From(flow)
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Graft(diagnostic)
     .Pulse("{ a { b } c }");
 ```
-In this case, we could just Graft the `TheCollector<string>`, but creating a derived class expresses our intent much better.
+In this case, we could just Graft a `Collector<string>`, but creating a derived class expresses our intent much better.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
   
@@ -90,7 +90,7 @@ var flow =
         $"char='{ch}', enter={enter}, emit={emit}, exit={exit}")
     select ch;
 ```
-When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
+When executing this, the `StringSink` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
 ```csharp
 [
     "char='{', enter=-1, emit=False, exit=0",
@@ -113,12 +113,12 @@ We can now use this information to correct the original flow
 `Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
   
 ```csharp
-var holden =
+var stringSink =
     Signal.From<int>(a => Pulse.Trace(a))
-        .SetArtery(TheString.Catcher())
+        .SetArtery(Text.Capture())
         .Pulse(42)
-        .GetArtery<Holden>(); // <=
-// holden.Whispers() => "42"
+        .GetArtery<StringSink>(); // <=
+// stringSink.Content() => "42"
 ```
 `Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrete type of `IArtery` that the heart is unaware of.
       

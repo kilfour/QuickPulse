@@ -20,11 +20,11 @@ QuickPulse lets you write LINQ expressions that react to values, accumulate stat
         from _3 in Pulse.TraceIf(evenLength, () => ", a looking glass")
         from _ in Pulse.Manipulate<bool>(a => false)
         select input)
-    .SetArtery(TheString.Catcher())
+    .SetArtery(Text.Capture())
     .Pulse("a deep dark forest")
     .Pulse("and a trail of dead generators.")
-    .GetArtery<Holden>()
-    .Whispers();
+    .GetArtery<StringSink>()
+    .Content();
 // Results in =>
 //     "A deep dark forest, a looking glass and a trail of dead generators."
 ```
@@ -63,7 +63,7 @@ The [QuickPulse.Explains](https://github.com/kilfour/QuickPulse.Explains) librar
 ```csharp
 // Generate documentation for an entire book structure
 Signal.From(Scriptorium.Book)
-    .SetArtery(TheLedger.Records("output.md"))
+    .SetArtery(FileLog.Append("output.md"))
     .Pulse(book);
 ```
 [View the full `Scriptorium` implementation.](https://github.com/kilfour/QuickPulse.Explains/blob/main/QuickPulse.Explains/Monastery/Scriptorium.cs) 

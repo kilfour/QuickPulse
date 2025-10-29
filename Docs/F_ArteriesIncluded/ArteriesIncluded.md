@@ -1,7 +1,7 @@
 # Arteries Included
 QuickPulse comes with a couple of built-in arteries:  
-## The Shunt, a.k.a. `/dev/null`
-The **Shunt** is the default artery installed in every new signal.  
+## The NullArtery, a.k.a. `/dev/null`
+The **NullArtery** is the default artery installed in every new signal.  
 It implements the Null Object pattern: an inert artery that silently absorbs all data.
 Any call to `Absorb()` on a shunt simply vanishes, no storage, no side effects, no errors.
 This ensures that flows without an explicitly attached artery still execute safely.  
@@ -13,38 +13,25 @@ Think of it as a **curator** for your flows, nothing escapes notice, everything 
 
 Example:  
 ```csharp
-var collector = TheCollector.Exhibits<string>();
+var collector = Collect.ValuesOf<string>();
 Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(collector)
     .Pulse("hello")
     .Pulse("collector");
-// collector.TheExhibit now equals ["hello", "collector"]
+// collector.Values now equals ["hello", "collector"]
 ```
-## The Latch
-The **Latch** is a tiny, type-safe last-value latch. It simply remembers the most recent value absorbed and exposes it via `Q`.  
-This is ideal for tests and probes where you only care about what came out last.
-
-Example:  
-```csharp
-var latch = TheLatch.Holds<string>();
-Signal.From<string>(a => Pulse.Trace(a))
-    .SetArtery(latch)
-    .Pulse("hello")
-    .Pulse("latch");
-// latch.Q now equals "latch"
-```
-## The Ledger
-The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
-Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
+## The FileLogArtery
+The `**FileLogArtery**` is a **persistent artery**, it records every absorbed value into a file.
+Where the `Collector` keeps its exhibits in memory, The `FileLogArtery` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
 
 Example:
   
 ```csharp
-var ledger = TheLedger.Records();
+var fileLog = FileLog.Append();
 Signal.From<string>(a => Pulse.Trace(a))
-    .SetArtery(ledger)
+    .SetArtery(fileLog)
     .Pulse("hello")
     .Pulse("filesystem");
 // File.ReadAllLines(...) now equals ["hello", "filesystem"]
@@ -63,27 +50,27 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
 
 Example:  
 ```csharp
-TheLedger.Records("myfilename.log");
+FileLog.Append("myfilename.log");
 ```
-Note that the `Ledger` will throw an exception if no `.sln` file can be found.  
-The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
+Note that the `FileLogArtery` will throw an exception if no `.sln` file can be found.  
+The `FileLogArtery.Writes()` clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:  
-## The String Catcher
-This catcher quietly captures everything that flows through it, and returns it as a single string.  
+## The String Sink
+This artery quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
-Use the static helper `TheString.Catcher()` to create a new catcher.  
-You can get a hold of the string through the `.Whispers()` method.  
+Use the static helper `Text.Capture()` to create a new catcher.  
+You can get a hold of the string through the `.Content()` method.  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 Signal.From(
     from x in Pulse.Start<int>()
     from _ in Pulse.Trace("x = ")
     from __ in Pulse.Trace(42)
     select x)
-.SetArtery(holden)
+.SetArtery(stringSink)
 .Pulse(42);
-var result = holden.Whispers(); // <=
+var result = stringSink.Content(); // <=
 // result now equals "x = 42"
 ```
-You can also reset/clear the *caught* values using the `.Forgets()` method.  
+You can also reset/clear the *caught* values using the `.Clear()` method.  

@@ -58,14 +58,14 @@ To observe what flows through, we can add an `IArtery` by using `SetArtery` dire
 
 Example:  
 ```csharp
-var collector = TheCollector.Exhibits<int>();
+var collector = Collect.ValuesOf<int>();
 Signal.From(
         from anInt in Pulse.Start<int>()
         from trace in Pulse.Trace(anInt)
         select anInt)
     .SetArtery(collector)
     .Pulse([42, 43, 44]);
-// TheCollector.Exhibit now holds => [42, 43, 44]."
+// collector.Values now holds => [42, 43, 44]."
 ```
 ## Pulsing a Flow: One Signal, One State
 
@@ -420,8 +420,8 @@ var flow =
 ```
 ## Arteries Included
 QuickPulse comes with a couple of built-in arteries:  
-### The Shunt, a.k.a. `/dev/null`
-The **Shunt** is the default artery installed in every new signal.  
+### The NullArtery, a.k.a. `/dev/null`
+The **NullArtery** is the default artery installed in every new signal.  
 It implements the Null Object pattern: an inert artery that silently absorbs all data.
 Any call to `Absorb()` on a shunt simply vanishes, no storage, no side effects, no errors.
 This ensures that flows without an explicitly attached artery still execute safely.  
@@ -433,38 +433,25 @@ Think of it as a **curator** for your flows, nothing escapes notice, everything 
 
 Example:  
 ```csharp
-var collector = TheCollector.Exhibits<string>();
+var collector = Collect.ValuesOf<string>();
 Signal.From<string>(a => Pulse.Trace(a))
     .SetArtery(collector)
     .Pulse("hello")
     .Pulse("collector");
-// collector.TheExhibit now equals ["hello", "collector"]
+// collector.Values now equals ["hello", "collector"]
 ```
-### The Latch
-The **Latch** is a tiny, type-safe last-value latch. It simply remembers the most recent value absorbed and exposes it via `Q`.  
-This is ideal for tests and probes where you only care about what came out last.
-
-Example:  
-```csharp
-var latch = TheLatch.Holds<string>();
-Signal.From<string>(a => Pulse.Trace(a))
-    .SetArtery(latch)
-    .Pulse("hello")
-    .Pulse("latch");
-// latch.Q now equals "latch"
-```
-### The Ledger
-The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
-Where `TheCollector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
+### The FileLogArtery
+The `**FileLogArtery**` is a **persistent artery**, it records every absorbed value into a file.
+Where the `Collector` keeps its exhibits in memory, The `FileLogArtery` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
 
 Example:
   
 ```csharp
-var ledger = TheLedger.Records();
+var fileLog = FileLog.Append();
 Signal.From<string>(a => Pulse.Trace(a))
-    .SetArtery(ledger)
+    .SetArtery(fileLog)
     .Pulse("hello")
     .Pulse("filesystem");
 // File.ReadAllLines(...) now equals ["hello", "filesystem"]
@@ -483,30 +470,30 @@ In that case, a `myfilename.log` file is created, still in the nearest parent di
 
 Example:  
 ```csharp
-TheLedger.Records("myfilename.log");
+FileLog.Append("myfilename.log");
 ```
-Note that the `Ledger` will throw an exception if no `.sln` file can be found.  
-The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
+Note that the `FileLogArtery` will throw an exception if no `.sln` file can be found.  
+The `FileLogArtery.Writes()` clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:  
-### The String Catcher
-This catcher quietly captures everything that flows through it, and returns it as a single string.  
+### The String Sink
+This artery quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
-Use the static helper `TheString.Catcher()` to create a new catcher.  
-You can get a hold of the string through the `.Whispers()` method.  
+Use the static helper `Text.Capture()` to create a new catcher.  
+You can get a hold of the string through the `.Content()` method.  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 Signal.From(
     from x in Pulse.Start<int>()
     from _ in Pulse.Trace("x = ")
     from __ in Pulse.Trace(42)
     select x)
-.SetArtery(holden)
+.SetArtery(stringSink)
 .Pulse(42);
-var result = holden.Whispers(); // <=
+var result = stringSink.Content(); // <=
 // result now equals "x = 42"
 ```
-You can also reset/clear the *caught* values using the `.Forgets()` method.  
+You can also reset/clear the *caught* values using the `.Clear()` method.  
 ## The Heart
 > Hunting for Flows.
 
@@ -519,24 +506,24 @@ There is *always* exactly one Main Artery. It is the default outflow for a signa
 All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.    
 ```csharp
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(holden) // <= 'holden' is now the Main Artery
+    .SetArtery(stringSink) // <= 'stringSink' is now the Main Artery
     .Pulse(42);
 ```
 `Signal.SetAndReturnArtery(...)` Similar, but returns the Artery you pass in (useful for quick wiring):  
 ```csharp
-Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
+Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(Text.Capture());
 ```
 Setting an Artery on a signal that already has one **replaces** the previous Artery.    
 ```csharp
-var holden = TheString.Catcher();
-var caulfield = TheString.Catcher();
+var stringSink = Text.Capture();
+var caulfield = Text.Capture();
 Signal.From<int>(a => Pulse.Trace(a))
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Pulse(42)
     .SetArtery(caulfield)
     .Pulse(43);
-// holden.Whispers()    => "42"
-// caulfield.Whispers() => "43"
+// stringSink.Content()    => "42"
+// caulfield.Content()     => "43"
 ```
 - Trying to set the Main Artery to null throws:  
     > The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?  
@@ -559,9 +546,9 @@ return
 This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 Signal.From(flow)
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Pulse("{ a { b } c }");
 ```
 Unfortunately the result of this is ` a { b } c }` and really, we want it to be ` a { b } c `.    
@@ -574,14 +561,14 @@ public class Diagnostic : Collector<string> { }
 ```
 Then we *Graft* it onto the Heart through the `Signal.Graft(...)` method.  
 ```csharp
-var holden = TheString.Catcher();
+var stringSink = Text.Capture();
 var diagnostic = new Diagnostic();
 Signal.From(flow)
-    .SetArtery(holden)
+    .SetArtery(stringSink)
     .Graft(diagnostic)
     .Pulse("{ a { b } c }");
 ```
-In this case, we could just Graft the `TheCollector<string>`, but creating a derived class expresses our intent much better.
+In this case, we could just Graft a `Collector<string>`, but creating a derived class expresses our intent much better.
 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
   
@@ -599,7 +586,7 @@ var flow =
         $"char='{ch}', enter={enter}, emit={emit}, exit={exit}")
     select ch;
 ```
-When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
+When executing this, the `StringSink` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
 ```csharp
 [
     "char='{', enter=-1, emit=False, exit=0",
@@ -622,12 +609,12 @@ We can now use this information to correct the original flow
 `Signal.GetArtery<TArtery>(...)` can be used to retrieve the current `IArtery` set on the signal.  
   
 ```csharp
-var holden =
+var stringSink =
     Signal.From<int>(a => Pulse.Trace(a))
-        .SetArtery(TheString.Catcher())
+        .SetArtery(Text.Capture())
         .Pulse(42)
-        .GetArtery<Holden>(); // <=
-// holden.Whispers() => "42"
+        .GetArtery<StringSink>(); // <=
+// stringSink.Content() => "42"
 ```
 `Signal.GetArtery<TArtery>(...)` throws if trying to retrieve a concrete type of `IArtery` that the heart is unaware of.
       

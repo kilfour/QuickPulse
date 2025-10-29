@@ -58,12 +58,12 @@ To observe what flows through, we can add an `IArtery` by using `SetArtery` dire
 
 Example:  
 ```csharp
-var collector = TheCollector.Exhibits<int>();
+var collector = Collect.ValuesOf<int>();
 Signal.From(
         from anInt in Pulse.Start<int>()
         from trace in Pulse.Trace(anInt)
         select anInt)
     .SetArtery(collector)
     .Pulse([42, 43, 44]);
-// TheCollector.Exhibit now holds => [42, 43, 44]."
+// collector.Values now holds => [42, 43, 44]."
 ```
