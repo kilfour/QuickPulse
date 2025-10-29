@@ -49,20 +49,20 @@ Example:")]
     }
 
     [Fact]
-    [DocHeader("The Ledger")]
+    [DocHeader("The FileLogArtery")]
     [DocContent(
-@"The `**Ledger**` is a **persistent artery**, it records every absorbed value into a file.
-Where the `Collector` keeps its exhibits in memory, `TheLedger` writes them down for posterity.
+@"The `**FileLogArtery**` is a **persistent artery**, it records every absorbed value into a file.
+Where the `Collector` keeps its exhibits in memory, The `FileLogArtery` writes them down for posterity.
 It is ideal for tracing long-running flows or auditing emitted data across multiple runs.
 Think of it as your **flow accountant**, keeping a faithful record of every transaction.  
 
 Example:
 ")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheLedger_Usage_Example))]
-    public void TheLedger_Usage()
+    [DocExample(typeof(ArteriesIncluded), nameof(TheFileLog_Usage_Example))]
+    public void TheFileLog_Usage()
     {
-        var ledger = TheLedger_Usage_Example();
-        var filePath = ledger.FilePath;
+        var fileLog = TheFileLog_Usage_Example();
+        var filePath = fileLog.FilePath;
         var lines = File.ReadAllLines(filePath);
         Assert.Equal("hello", lines[0]);
         Assert.Equal("filesystem", lines[1]);
@@ -70,16 +70,16 @@ Example:
     }
 
     [CodeSnippet]
-    [CodeRemove("return ledger;")]
-    private static Ledger TheLedger_Usage_Example()
+    [CodeRemove("return fileLog;")]
+    private static FileLogArtery TheFileLog_Usage_Example()
     {
-        var ledger = TheLedger.Records();
+        var fileLog = FileLog.Append();
         Signal.From<string>(a => Pulse.Trace(a))
-            .SetArtery(ledger)
+            .SetArtery(fileLog)
             .Pulse("hello")
             .Pulse("filesystem");
         // File.ReadAllLines(...) now equals ["hello", "filesystem"]
-        return ledger;
+        return fileLog;
     }
 
     [Fact]
@@ -96,7 +96,7 @@ This ensures that each run generates a distinct, traceable log file without over
     public void Default_constructor_uses_quick_dash_pulse_dot_log()
     {
         // var fake = new FakeFilingCabinet();
-        // _ = new Ledger(cabinet: fake);
+        // _ = new FileLog(cabinet: fake);
         // Assert.StartsWith("/solution/.quickpulse/quick-pulse-", fake.LastCombinedPath);
         // Assert.EndsWith(".log", fake.LastCombinedPath);
     }
@@ -115,40 +115,40 @@ Example:")]
 
     [CodeSnippet]
     [CodeRemove("return ")]
-    private static Ledger Constructor_uses_custom_filename_example()
+    private static FileLogArtery Constructor_uses_custom_filename_example()
     {
-        return TheLedger.Records("myfilename.log");
+        return FileLog.Append("myfilename.log");
     }
 
     [DocContent(
-@"Note that the `Ledger` will throw an exception if no `.sln` file can be found.")]
+@"Note that the `FileLogArtery` will throw an exception if no `.sln` file can be found.")]
     [Fact(Skip = "use temp dir")]
     public void Throws_when_solution_root_is_null()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => new Ledger());
+        var ex = Assert.Throws<ComputerSaysNo>(() => new FileLogArtery());
         Assert.Equal("Cannot find solution root.", ex.Message);
     }
 
     [Fact]
     [DocContent(
-@"The `TheLedger.Rewrites()` factory method does exactly what it says: it clears the file before logging.
+@"The `FileLogArtery.Writes()` clears the file before logging.
 This is an idiomatic way to log repeatedly to a file that should start out empty:")]
     public void ClearFile_writes_empty_string_to_file()
     {
         // Setup a file with content
         var filePath =
             Signal.From<string>(a => Pulse.Trace(a))
-                .SetArtery(TheLedger.Records("myfilename.log"))
+                .SetArtery(FileLog.Append("myfilename.log"))
                 .Pulse(["hello", "filesystem"])
-                .GetArtery<Ledger>()
+                .GetArtery<FileLogArtery>()
                 .FilePath;
         var lines = File.ReadAllLines(filePath);
         Assert.Equal("hello", lines[0]);
         Assert.Equal("filesystem", lines[1]);
         // Clear it
         Signal.From<string>(a => Pulse.Trace(a))
-            .SetArtery(TheLedger.Rewrites("myfilename.log"))
-            .GetArtery<Ledger>();
+            .SetArtery(FileLog.Write("myfilename.log"))
+            .GetArtery<FileLogArtery>();
         Assert.Equal(string.Empty, File.ReadAllText(filePath));
         File.Delete(filePath);
     }

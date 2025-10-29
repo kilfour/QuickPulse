@@ -254,9 +254,9 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(Pulse.NoOp()).SetArtery(TheString.Catcher()).GetArtery<Ledger>());
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(Pulse.NoOp()).SetArtery(TheString.Catcher()).GetArtery<FileLogArtery>());
         var lines = ex.Message.Split(Environment.NewLine);
-        Assert.Equal("No IArtery of type 'Ledger' set on the current Signal.", lines[0]);
+        Assert.Equal("No IArtery of type 'FileLogArtery' set on the current Signal.", lines[0]);
         Assert.Equal("Main IArtery is of type 'Holden'.", lines[1]);
     }
 }

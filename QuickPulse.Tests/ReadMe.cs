@@ -86,7 +86,7 @@ The [QuickPulse.Explains](https://github.com/kilfour/QuickPulse.Explains) librar
 ```csharp
 // Generate documentation for an entire book structure
 Signal.From(Scriptorium.Book)
-    .SetArtery(TheLedger.Records(""output.md""))
+    .SetArtery(FileLog.Append(""output.md""))
     .Pulse(book);
 ```
 [View the full `Scriptorium` implementation.](https://github.com/kilfour/QuickPulse.Explains/blob/main/QuickPulse.Explains/Monastery/Scriptorium.cs) 

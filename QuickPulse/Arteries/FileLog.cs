@@ -3,37 +3,42 @@ using QuickPulse.Instruments;
 namespace QuickPulse.Arteries;
 
 /// <summary>
-/// Factory for creating persistent ledger arteries that record absorbed data to disk.
+/// Provides factory methods for creating persistent <see cref="FileLogArtery"/> instances
+/// that record absorbed flow output to disk.
 /// </summary>
-public static class TheLedger
+public static class FileLog
 {
     /// <summary>
-    /// Creates a ledger that appends all absorbed data to a file. Use for long-running traces or audit logs.
+    /// Creates a <see cref="FileLogArtery"/> that appends all absorbed data to a file.
+    /// Use for continuous traces or audit logs that should retain previous entries.
     /// </summary>
-    public static Ledger Records(string? maybeFileName = null, bool relativeToSolution = true)
+    public static FileLogArtery Append(string? maybeFileName = null, bool relativeToSolution = true)
         => new(maybeFileName, relativeToSolution);
 
     /// <summary>
-    /// Creates a ledger that clears its file before recording. Use for fresh log runs that should start empty.
+    /// Creates a <see cref="FileLogArtery"/> that clears its file before recording.
+    /// Use for clean log runs that should start with an empty file.
     /// </summary>
-    public static Ledger Rewrites(string? maybeFileName = null, bool relativeToSolution = true)
-        => new Ledger(maybeFileName, relativeToSolution).ClearFile();
+    public static FileLogArtery Write(string? maybeFileName = null, bool relativeToSolution = true)
+        => new FileLogArtery(maybeFileName, relativeToSolution).ClearFile();
 }
 
 /// <summary>
-/// An artery that writes every absorbed value to a file on disk for persistent tracing and auditing.
+/// An artery that writes every absorbed value to a file on disk,
+/// providing persistent tracing and audit logging for flows.
 /// </summary>
-public class Ledger : IArtery
+public class FileLogArtery : IArtery
 {
     /// <summary>
-    /// The full file path where this ledger writes its data.
+    /// The full file path where this log writes its data.
     /// </summary>
     public string FilePath { get; init; }
 
     /// <summary>
-    /// Creates a new ledger that writes absorbed data to a log file. Resolves relative paths against the solution root when requested.
+    /// Creates a new <see cref="FileLogArtery"/> that writes absorbed data to a log file.
+    /// Relative paths are resolved against the solution root when <paramref name="relativeToSolution"/> is <see langword="true"/>.
     /// </summary>
-    public Ledger(string? maybeFileName = null, bool relativeToSolution = true)
+    public FileLogArtery(string? maybeFileName = null, bool relativeToSolution = true)
     {
         FilePath = GetFilePath(maybeFileName, relativeToSolution);
         EnsureDirectoryExists();
@@ -69,13 +74,15 @@ public class Ledger : IArtery
     }
 
     /// <summary>
-    /// Clears the ledger file and returns the same instance. Use to reset logging between runs.
+    /// Clears the log file and returns the same instance.
+    /// Use to reset logging between runs.
     /// </summary>
-    public Ledger ClearFile()
+    public FileLogArtery ClearFile()
         => Chain.It(() => File.WriteAllText(FilePath, ""), this);
 
     /// <summary>
-    /// Appends all absorbed data as new lines in the ledger file. Use for persistent logging of emitted values.
+    /// Appends all absorbed data as new lines to the log file.
+    /// Use for durable recording of emitted flow values.
     /// </summary>
     public void Absorb(params object[] data)
         => File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
