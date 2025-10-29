@@ -20,16 +20,16 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [DocExample(typeof(TheHeart), nameof(Signal_set_Artery_example))]
     public void Signal_set_Artery()
     {
-        var holden = TheString.Catcher();
-        Signal_set_Artery_example(holden);
-        Assert.Equal("42", holden.Whispers());
+        var stringSink = Text.Capture();
+        Signal_set_Artery_example(stringSink);
+        Assert.Equal("42", stringSink.Content());
     }
 
     [CodeSnippet]
-    private static void Signal_set_Artery_example(IArtery holden)
+    private static void Signal_set_Artery_example(IArtery stringSink)
     {
         Signal.From<int>(a => Pulse.Trace(a))
-            .SetArtery(holden) // <= 'holden' is now the Main Artery
+            .SetArtery(stringSink) // <= 'stringSink' is now the Main Artery
             .Pulse(42);
     }
 
@@ -39,14 +39,14 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [DocExample(typeof(TheHeart), nameof(Signal_set_and_return_Artery_example))]
     public void Signal_set_and_return_Artery()
     {
-        Assert.IsType<Holden>(Signal_set_and_return_Artery_example());
+        Assert.IsType<StringSink>(Signal_set_and_return_Artery_example());
     }
 
     [CodeSnippet]
     [CodeRemove("return ")]
-    private static Holden Signal_set_and_return_Artery_example()
+    private static StringSink Signal_set_and_return_Artery_example()
     {
-        return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(TheString.Catcher());
+        return Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery(Text.Capture());
     }
 
     [Fact]
@@ -54,25 +54,25 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [DocExample(typeof(TheHeart), nameof(Signal_setting_Artery_twice_example))]
     public void Signal_setting_Artery_twice()
     {
-        var (holden, caulfield) = Signal_setting_Artery_twice_example();
-        Assert.Equal("42", holden.Whispers());
-        Assert.Equal("43", caulfield.Whispers());
+        var (stringSink, caulfield) = Signal_setting_Artery_twice_example();
+        Assert.Equal("42", stringSink.Content());
+        Assert.Equal("43", caulfield.Content());
     }
 
     [CodeSnippet]
-    [CodeRemove("return (holden, caulfield);")]
-    private static (Holden holden, Holden caulfield) Signal_setting_Artery_twice_example()
+    [CodeRemove("return (stringSink, caulfield);")]
+    private static (StringSink stringSink, StringSink caulfield) Signal_setting_Artery_twice_example()
     {
-        var holden = TheString.Catcher();
-        var caulfield = TheString.Catcher();
+        var stringSink = Text.Capture();
+        var caulfield = Text.Capture();
         Signal.From<int>(a => Pulse.Trace(a))
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(42)
             .SetArtery(caulfield)
             .Pulse(43);
-        // holden.Whispers()    => "42"
-        // caulfield.Whispers() => "43"
-        return (holden, caulfield);
+        // stringSink.Content()    => "42"
+        // caulfield.Content()     => "43"
+        return (stringSink, caulfield);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ All `Pulse.Trace(...)` and `Pulse.TraceIf(...)` emissions flow into it.  ")]
     [Fact]
     public void Signal_setting_and_return_null_Artery_throws()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery<Holden>(null!));
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From<int>(a => Pulse.Trace(a)).SetAndReturnArtery<StringSink>(null!));
         Assert.Equal("The Heart can't pump into null. Did you pass a valid Artery to SetArtery(...) ?", ex.Message);
     }
 
@@ -123,10 +123,10 @@ Suppose we have the following flow: ")]
     [CodeReplace("Grafting_starting_flow()", "flow")]
     private Signal<char> Grafting_starting_flow_usage()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         return
         Signal.From(Grafting_starting_flow())
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse("{ a { b } c }");
     }
 
@@ -135,7 +135,7 @@ Suppose we have the following flow: ")]
 @"Unfortunately the result of this is ` a { b } c }` and really, we want it to be ` a { b } c `.  ")]
     public void Grafting_bad_flow()
     {
-        Assert.Equal(" a { b } c }", Grafting_starting_flow_usage().GetArtery<Holden>().Whispers());
+        Assert.Equal(" a { b } c }", Grafting_starting_flow_usage().GetArtery<StringSink>().Content());
     }
 
 
@@ -152,11 +152,11 @@ First we define a new typed Artery:")]
     [CodeReplace("Grafting_inspected_flow()", "flow")]
     private Signal<char> Grafting_inspected_flow_usage()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         var diagnostic = new Diagnostic();
         return
         Signal.From(Grafting_inspected_flow())
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Graft(diagnostic)
             .Pulse("{ a { b } c }");
     }
@@ -190,7 +190,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
 
     [Fact]
     [DocContent(
-@"When executing this, the `Holden` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:")]
+@"When executing this, the `StringSink` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:")]
     [DocExample(typeof(TheHeart), nameof(Grafting_checking_diagnostics_expected))]
     [DocContent("We can now use this information to correct the original flow")]
     public void Grafting_checking_diagnostics()
@@ -231,21 +231,21 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocExample(typeof(TheHeart), nameof(Signal_get_Artery_example))]
     public void Signal_get_Artery()
     {
-        var holden = Signal_get_Artery_example();
-        Assert.Equal("42", holden.Whispers());
+        var stringSink = Signal_get_Artery_example();
+        Assert.Equal("42", stringSink.Content());
     }
 
     [CodeSnippet]
-    [CodeRemove("return holden;")]
-    private static Holden Signal_get_Artery_example()
+    [CodeRemove("return stringSink;")]
+    private static StringSink Signal_get_Artery_example()
     {
-        var holden =
+        var stringSink =
             Signal.From<int>(a => Pulse.Trace(a))
-                .SetArtery(TheString.Catcher())
+                .SetArtery(Text.Capture())
                 .Pulse(42)
-                .GetArtery<Holden>(); // <=
-        // holden.Whispers() => "42"
-        return holden;
+                .GetArtery<StringSink>(); // <=
+        // stringSink.Content() => "42"
+        return stringSink;
     }
 
     [DocContent(
@@ -254,9 +254,9 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [Fact]
     public void Signal_get_Artery_throws_if_wrong_typed_retrieved()
     {
-        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(Pulse.NoOp()).SetArtery(TheString.Catcher()).GetArtery<FileLogArtery>());
+        var ex = Assert.Throws<ComputerSaysNo>(() => Signal.From(Pulse.NoOp()).SetArtery(Text.Capture()).GetArtery<FileLogArtery>());
         var lines = ex.Message.Split(Environment.NewLine);
         Assert.Equal("No IArtery of type 'FileLogArtery' set on the current Signal.", lines[0]);
-        Assert.Equal("Main IArtery is of type 'Holden'.", lines[1]);
+        Assert.Equal("Main IArtery is of type 'StringSink'.", lines[1]);
     }
 }

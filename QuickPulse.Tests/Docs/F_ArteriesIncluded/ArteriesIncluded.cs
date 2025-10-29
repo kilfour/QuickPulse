@@ -154,57 +154,57 @@ This is an idiomatic way to log repeatedly to a file that should start out empty
     }
 
     [Fact]
-    [DocHeader("The String Catcher")]
+    [DocHeader("The String Sink")]
     [DocContent(
-@"This catcher quietly captures everything that flows through it, and returns it as a single string.  
+@"This artery quietly captures everything that flows through it, and returns it as a single string.  
 It is especially useful in testing and example scenarios where the full trace output is needed as a value.
 
-Use the static helper `TheString.Catcher()` to create a new catcher.")]
-    public void TheStringCatcher()
+Use the static helper `Text.Capture()` to create a new catcher.")]
+    public void TheStringSink()
     {
-        var artery = TheString.Catcher();
-        Assert.IsType<Holden>(artery);
+        var artery = Text.Capture();
+        Assert.IsType<StringSink>(artery);
     }
 
     [Fact]
-    [DocContent("You can get a hold of the string through the `.Whispers()` method.")]
-    [DocExample(typeof(ArteriesIncluded), nameof(TheStringCatcher_Whispers_Example))]
-    public void TheStringCatcher_Whispers()
-        => Assert.Equal("x = 42", TheStringCatcher_Whispers_Example());
+    [DocContent("You can get a hold of the string through the `.Content()` method.")]
+    [DocExample(typeof(ArteriesIncluded), nameof(TheStringSink_Content_Example))]
+    public void TheStringSink_Content()
+        => Assert.Equal("x = 42", TheStringSink_Content_Example());
 
     [CodeSnippet]
     [CodeRemove("return result;")]
-    private static string TheStringCatcher_Whispers_Example()
+    private static string TheStringSink_Content_Example()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(
             from x in Pulse.Start<int>()
             from _ in Pulse.Trace("x = ")
             from __ in Pulse.Trace(42)
             select x)
-        .SetArtery(holden)
+        .SetArtery(stringSink)
         .Pulse(42);
-        var result = holden.Whispers(); // <=
+        var result = stringSink.Content(); // <=
         // result now equals "x = 42"
         return result;
     }
 
     [Fact]
-    [DocContent("You can also reset/clear the *caught* values using the `.Forgets()` method.")]
-    public void TheStringCatcher_Forgets()
+    [DocContent("You can also reset/clear the *caught* values using the `.Clear()` method.")]
+    public void TheStringSink_Clear()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         var signal =
             Signal.From(
                     from x in Pulse.Start<int>()
                     from _ in Pulse.Trace("x = ")
                     from __ in Pulse.Trace(42)
                     select x)
-                .SetArtery(holden)
+                .SetArtery(stringSink)
                 .Pulse(1);
-        holden.Forgets();
+        stringSink.Clear();
         signal.Pulse(42);
-        Assert.Equal("x = 42", holden.Whispers());
+        Assert.Equal("x = 42", stringSink.Content());
     }
 }
 

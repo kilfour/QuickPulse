@@ -13,11 +13,11 @@ public class Spike_Valve
             from _ in Pulse.TraceIf(valve.Passable(), () => "Look ")
             from __ in Pulse.Trace(input)
             select input;
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(flow)
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(["over", " ", "there", "."]);
-        Assert.Equal("Look over there.", holden.Whispers());
+        Assert.Equal("Look over there.", stringSink.Content());
     }
 
     [Fact]
@@ -29,11 +29,11 @@ public class Spike_Valve
             from _ in Pulse.TraceIf(valve.Restricted(), () => ", ")
             from __ in Pulse.Trace(input)
             select input;
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(flow)
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(["a", "b", "c"]);
-        Assert.Equal("a, b, c", holden.Whispers());
+        Assert.Equal("a, b, c", stringSink.Content());
     }
 
     [Fact]
@@ -46,11 +46,11 @@ public class Spike_Valve
             from __ in Pulse.ManipulateIf<Valve>(input == "open", a => a.Open())
             from ___ in Pulse.Trace(input)
             select input;
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(flow)
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(["a", "b", "open", "c", "d"]);
-        Assert.Equal("a, b, openc, d", holden.Whispers());
+        Assert.Equal("a, b, openc, d", stringSink.Content());
     }
 
     [Fact]
@@ -78,10 +78,10 @@ public class Spike_Valve
             from _5 in Pulse.Scoped<Valve>(_ => Valve.Install(), Pulse.ToFlow(innerFlow2, input))
                 // from _5 in Pulse.ToFlow(innerFlow2, input) == same result
             select input;
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(flow)
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(["a", "b", "c"]);
-        Assert.Equal("a-b-c abc a, b, c", holden.Whispers());
+        Assert.Equal("a-b-c abc a, b, c", stringSink.Content());
     }
 }

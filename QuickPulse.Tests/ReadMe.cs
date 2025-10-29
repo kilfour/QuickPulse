@@ -37,11 +37,11 @@ public class ReadMe
                 from _3 in Pulse.TraceIf(evenLength, () => ", a looking glass")
                 from _ in Pulse.Manipulate<bool>(a => false)
                 select input)
-            .SetArtery(TheString.Catcher())
+            .SetArtery(Text.Capture())
             .Pulse("a deep dark forest")
             .Pulse("and a trail of dead generators.")
-            .GetArtery<Holden>()
-            .Whispers();
+            .GetArtery<StringSink>()
+            .Content();
         // Results in =>
         //     "A deep dark forest, a looking glass and a trail of dead generators."
     }

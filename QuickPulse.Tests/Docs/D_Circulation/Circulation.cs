@@ -23,11 +23,11 @@ It's the flow-level equivalent of saying *do this, then that*.")]
     [DocExample(typeof(Circulation), nameof(Then_get_flow))]
     public void Then()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(Then_get_flow())
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(42);
-        Assert.Equal("... 42", holden.Whispers());
+        Assert.Equal("... 42", stringSink.Content());
     }
 
     [CodeSnippet]
@@ -151,11 +151,11 @@ Here are the same examples rewritten using **method syntax**:")]
     [DocExample(typeof(Circulation), nameof(ToFlow_get_collection_flow_method))]
     public void ToFlow_method_syntax()
     {
-        var holden = TheString.Catcher();
+        var stringSink = Text.Capture();
         Signal.From(Then_get_flow_method())
-            .SetArtery(holden)
+            .SetArtery(stringSink)
             .Pulse(42);
-        Assert.Equal("... 42", holden.Whispers());
+        Assert.Equal("... 42", stringSink.Content());
 
         var latch1 = TheLatch.Holds<int>();
         Signal.From(ToFlow_get_flow_method())
