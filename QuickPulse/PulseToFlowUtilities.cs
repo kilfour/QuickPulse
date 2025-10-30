@@ -4,8 +4,8 @@ namespace QuickPulse;
 
 public static partial class Pulse
 {
-    private static Action<State, T> IntoFlow<T>(Flow<T> flow)
+    private static Action<State, TValue> IntoFlow<TValue>(Flow<TValue> flow)
         => (s, v) => flow(s.SetValue(v));
-    private static Action<State, T> IntoFactory<T>(Func<T, Flow<Flow>> flowFactory)
+    private static Action<State, TValue> IntoFactory<TValue>(Func<TValue, Flow<Flow>> flowFactory)
         => (s, v) => GetFlowFromFactory(flowFactory)(s.SetValue(v));
 }

@@ -4,11 +4,11 @@ namespace QuickPulse;
 
 public static partial class Pulse
 {
-    private static Action<State, T> SetTheCell<T>() => (s, v) => s.GetTheCell<T>().Value = v;
-    private static Func<State, IEnumerable<T>> ManipulatedValue<T>(Func<T, T> manipulate) =>
+    private static Action<State, TCell> SetTheCell<TCell>() => (s, v) => s.GetTheCell<TCell>().Value = v;
+    private static Func<State, IEnumerable<TCell>> ManipulatedValue<TCell>(Func<TCell, TCell> manipulate) =>
         s =>
         {
-            var box = s.GetTheCell<T>();
+            var box = s.GetTheCell<TCell>();
             var next = manipulate(box.Value);
             return [next];
         };

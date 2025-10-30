@@ -11,6 +11,6 @@ public static partial class Pulse
     /// <summary>
     /// Stops the current flow when the predicate evaluates to true for the current state. Use for data-driven termination.
     /// </summary>
-    public static Flow<Flow> StopFlowingIf<T>(Func<T, bool> predicate) =>
+    public static Flow<Flow> StopFlowingIf<TCell>(Func<TCell, bool> predicate) =>
         When(predicate, StopFlowing());
 }

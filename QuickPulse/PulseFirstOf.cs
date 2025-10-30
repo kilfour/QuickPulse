@@ -17,7 +17,7 @@ public static partial class Pulse
     /// <summary>
     /// Runs the first subflow whose predicate returns true for the current boxed state value. Use for state-driven conditional routing.
     /// </summary>
-    public static Flow<Flow> FirstOf<T, TCell>(params (Func<TCell, bool> Predicate, Func<Flow<Flow>> FlowFactory)[] data) =>
+    public static Flow<Flow> FirstOf<TCell>(params (Func<TCell, bool> Predicate, Func<Flow<Flow>> FlowFactory)[] data) =>
         s =>
         {
             var box = s.GetTheCell<TCell>().Value;

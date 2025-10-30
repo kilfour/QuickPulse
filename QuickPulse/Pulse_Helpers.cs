@@ -14,10 +14,10 @@ public static partial class Pulse
     // --------------------------------------------------------------------------------
     // -- Value Shapers
     // --
-    private static Func<State, IEnumerable<T>> Single<T>(T value) => _ => [value];
-    private static Func<State, IEnumerable<T>> Single<T>(Func<T> value) => _ => [value()];
-    private static Func<State, IEnumerable<T>> Many<T>(IEnumerable<T> values) => _ => values;
-    private static Func<State, IEnumerable<T>> Many<T>(Func<IEnumerable<T>> values) => _ => values();
+    private static Func<State, IEnumerable<TValue>> Single<TValue>(TValue value) => _ => [value];
+    private static Func<State, IEnumerable<TValue>> Single<TValue>(Func<TValue> value) => _ => [value()];
+    private static Func<State, IEnumerable<TValue>> Many<TValue>(IEnumerable<TValue> values) => _ => values;
+    private static Func<State, IEnumerable<TValue>> Many<TValue>(Func<IEnumerable<TValue>> values) => _ => values();
     // --------------------------------------------------------------------------------
     // -- Runnels
     // --
@@ -45,6 +45,6 @@ public static partial class Pulse
     // --------------------------------------------------------------------------------
     // -- Flow Factory
     // --
-    internal static Flow<T> GetFlowFromFactory<T>(Func<T, Flow<Flow>> flowFactory) =>
-        from i in Start<T>() from _ in flowFactory(i) select i;
+    internal static Flow<TValue> GetFlowFromFactory<TValue>(Func<TValue, Flow<Flow>> flowFactory) =>
+        from i in Start<TValue>() from _ in flowFactory(i) select i;
 }
