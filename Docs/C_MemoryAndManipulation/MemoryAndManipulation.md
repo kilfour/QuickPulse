@@ -1,10 +1,5 @@
 # Memory And Manipulation
-> How QuickPulse remembers, updates, and temporarily alters state.
-
-Each signal maintains **gathered cells** (keyed by *type identity*), think of them as the signal's **internal organs**
-that store and process specific data types.
-Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
-  
+Each signal maintains **gathered cells** (keyed by *type identity*), that store and process specific data types.  
 ```csharp
 var flow =
     from _ in Pulse.Start<Flow>()

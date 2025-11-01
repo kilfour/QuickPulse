@@ -11,19 +11,16 @@ The type generic in `Pulse.Start<T>` defines the **input type** to the flow.
 Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
 
 1. `Flow<T>`: 
-A flow is a *recipe for behaviour*. It defines how input values are transformed, traced, or manipulated.
-You can think of it as the *program*, declarative, reusable, and testable.
+A flow is a *recipe for behaviour*. It defines how input values are transformed, traced, or manipulated.  
 A flow itself doesn't do anything until it's pulsed.
 
 2. `Signal<T>`: 
-A signal is a *living instance* of a flow. It remembers, reacts, and evolves with each pulse.
+A signal is an *instance* of a flow. It evolves with each pulse.
 Every signal carries its own internal state and provides the entry point for execution.
-You can have multiple signals from the same flow, each one a separate, independent life.
+You can have multiple signals from the same flow.
 
 3. `IArtery`: 
-Arteries are the *output channels* of a signal. They collect, display, or record whatever the flow emits,
-be it traces, diagnostics, or effects.
-Arteries make flows observable, enabling introspection, debugging, and persistence.  
+Arteries are the *output channels* of a signal. They collect, display, or record whatever the flow emits.  
 ### Doing Something with the Input
 Let's trace the values as they pass through:  
 ```csharp
@@ -156,12 +153,7 @@ Signal.From(flow)
 // Results in => 3
 ```
 ## Memory And Manipulation
-> How QuickPulse remembers, updates, and temporarily alters state.
-
-Each signal maintains **gathered cells** (keyed by *type identity*), think of them as the signal's **internal organs**
-that store and process specific data types.
-Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
-  
+Each signal maintains **gathered cells** (keyed by *type identity*), that store and process specific data types.  
 ```csharp
 var flow =
     from _ in Pulse.Start<Flow>()

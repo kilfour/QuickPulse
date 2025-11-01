@@ -6,13 +6,7 @@ using QuickPulse.Tests.Tools;
 namespace QuickPulse.Tests.Docs.C_MemoryAndManipulation;
 
 [DocFile]
-[DocContent(
-@"> How QuickPulse remembers, updates, and temporarily alters state.
-
-Each signal maintains **gathered cells** (keyed by *type identity*), think of them as the signal's **internal organs**
-that store and process specific data types.
-Just as your heart handles blood and lungs handle air, each gathered cell specializes in a particular data type.
-")]
+[DocContent("Each signal maintains **gathered cells** (keyed by *type identity*), that store and process specific data types.")]
 [DocExample(typeof(MemoryAndManipulation), nameof(Scoped_with_Manipulate_example))]
 public class MemoryAndManipulation
 {
