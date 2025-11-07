@@ -21,8 +21,5 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Complexity analysis using SCC
-      uses: hdmsantander/scc-docker-action@3.0
-      with:
-        args: --exclude-dir obj --exclude-dir bin --include-ext cs --no-cocomo QuickPulse/
+
           
