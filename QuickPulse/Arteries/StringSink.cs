@@ -34,7 +34,7 @@ namespace QuickPulse.Arteries
         /// <summary>
         /// Clears the internal buffer, discarding all previously captured text.
         /// </summary>
-        public void Clear() => builder.Clear();
+        public StringSink Clear() { builder.Clear(); return this; }
 
         /// <summary>
         /// Returns the concatenated string of all absorbed values.
