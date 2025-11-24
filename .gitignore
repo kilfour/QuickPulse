@@ -9,3 +9,4 @@ _ReSharper.*/
 temp*.md
 *.log
 .quickpulse
+nuget.md
