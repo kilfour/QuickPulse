@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using QuickPulse.Instruments;
 
 namespace QuickPulse.Arteries;
@@ -20,7 +21,23 @@ public static class FileLog
     /// Use for clean log runs that should start with an empty file.
     /// </summary>
     public static FileLogArtery Write(string? maybeFileName = null, bool relativeToSolution = true)
-        => new FileLogArtery(maybeFileName, relativeToSolution).ClearFile();
+        => Append(maybeFileName, relativeToSolution).ClearFile();
+
+    /// <summary>
+    /// Creates a <see cref="FileLogArtery"/> that appends all absorbed data to a file
+    /// located alongside the calling source file.
+    /// Use for local, source-adjacent traces without resolving paths relative to the solution.
+    /// </summary>
+    public static FileLogArtery AppendHere(string? maybeFileName = null, [CallerFilePath] string callerPath = "")
+        => new(Path.Combine(Path.GetDirectoryName(callerPath)!, maybeFileName ?? FileLogArtery.GetDefaultFileName()), false);
+
+    /// <summary>
+    /// Creates a <see cref="FileLogArtery"/> that clears its file before recording,
+    /// located alongside the calling source file.
+    /// Use for clean, local log runs scoped to the caller’s source location.
+    /// </summary>
+    public static FileLogArtery WriteHere(string? maybeFileName = null, [CallerFilePath] string callerPath = "")
+        => AppendHere(maybeFileName, callerPath).ClearFile();
 }
 
 /// <summary>
@@ -40,7 +57,7 @@ public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution
 
     private static string GetFilePath(string? maybeFileName, bool relativeToSolution)
     {
-        var fileName = maybeFileName ?? GetDefaultFileName();
+        var fileName = maybeFileName ?? GetDefaultPath();
         if (relativeToSolution)
             fileName = RelateToSolution(fileName);
         return Path.GetFullPath(fileName);
@@ -56,8 +73,11 @@ public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution
         checkedDirectoryExistence = true;
     }
 
-    private static string GetDefaultFileName()
-        => Path.Combine(".quickpulse", $"quick-pulse-{GetUniqueSuffix()}.log");
+    private static string GetDefaultPath()
+        => Path.Combine(".quickpulse", GetDefaultFileName());
+
+    public static string GetDefaultFileName()
+        => $"quick-pulse-{GetUniqueSuffix()}.log";
 
     private static string GetUniqueSuffix()
         => $"{DateTime.UtcNow:yyyyMMdd-HHmmss-fff}_{Path.GetRandomFileName().Replace(".", "")}";
@@ -81,9 +101,10 @@ public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution
     /// Appends all absorbed data as new lines to the log file.
     /// Use for durable recording of emitted flow values.
     /// </summary>
-    public void Absorb(params object[] data)
+    public object[] Absorb(params object[] data)
     {
         EnsureDirectoryExists();
         File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
+        return data;
     }
 }

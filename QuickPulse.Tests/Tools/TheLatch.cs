@@ -11,5 +11,9 @@ public class Latch<T> : IArtery
 {
     private T? value;
     public T? Q => value;
-    public void Absorb(params object[] data) => value = (T)data.Last();
+    public object[] Absorb(params object[] data)
+    {
+        value = (T)data.Last();
+        return data;
+    }
 }

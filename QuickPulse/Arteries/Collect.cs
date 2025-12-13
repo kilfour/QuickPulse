@@ -26,9 +26,10 @@ public class Collector<T> : IArtery
     /// Absorbs incoming data and appends each item to the <see cref="Values"/> list.
     /// Use to verify or inspect emitted values from a flow.
     /// </summary>
-    public void Absorb(params object[] data)
+    public object[] Absorb(params object[] data)
     {
         foreach (var item in data)
             Values.Add((T)item);
+        return data;
     }
 }

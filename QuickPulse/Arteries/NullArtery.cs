@@ -23,5 +23,5 @@ public class NullArtery : IArtery
     /// Accepts data and discards it silently.
     /// Use to safely disable output without altering flow logic.
     /// </summary>
-    public void Absorb(params object[] data) { }
+    public object[] Absorb(params object[] data) { return data; }
 }

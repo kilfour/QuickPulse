@@ -1,2 +1,3 @@
 * Create a reference doc.
-* doc support for slnx
+* Composable Arteries
+  * maybe abstract class to avoid `return data` in every artery.
