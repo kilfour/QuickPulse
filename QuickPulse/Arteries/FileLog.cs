@@ -27,22 +27,16 @@ public static class FileLog
 /// An artery that writes every absorbed value to a file on disk,
 /// providing persistent tracing and audit logging for flows.
 /// </summary>
-public class FileLogArtery : IArtery
+/// <remarks>
+/// Creates a new <see cref="FileLogArtery"/> that writes absorbed data to a log file.
+/// Relative paths are resolved against the solution root when <paramref name="relativeToSolution"/> is <see langword="true"/>.
+/// </remarks>
+public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution = true) : IArtery
 {
     /// <summary>
     /// The full file path where this log writes its data.
     /// </summary>
-    public string FilePath { get; init; }
-
-    /// <summary>
-    /// Creates a new <see cref="FileLogArtery"/> that writes absorbed data to a log file.
-    /// Relative paths are resolved against the solution root when <paramref name="relativeToSolution"/> is <see langword="true"/>.
-    /// </summary>
-    public FileLogArtery(string? maybeFileName = null, bool relativeToSolution = true)
-    {
-        FilePath = GetFilePath(maybeFileName, relativeToSolution);
-        EnsureDirectoryExists();
-    }
+    public string FilePath { get; init; } = GetFilePath(maybeFileName, relativeToSolution);
 
     private static string GetFilePath(string? maybeFileName, bool relativeToSolution)
     {
@@ -52,11 +46,14 @@ public class FileLogArtery : IArtery
         return Path.GetFullPath(fileName);
     }
 
+    private bool checkedDirectoryExistence = false;
     private void EnsureDirectoryExists()
     {
+        if (checkedDirectoryExistence) return;
         var directory = Path.GetDirectoryName(FilePath);
         if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             Directory.CreateDirectory(directory);
+        checkedDirectoryExistence = true;
     }
 
     private static string GetDefaultFileName()
@@ -85,5 +82,8 @@ public class FileLogArtery : IArtery
     /// Use for durable recording of emitted flow values.
     /// </summary>
     public void Absorb(params object[] data)
-        => File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
+    {
+        EnsureDirectoryExists();
+        File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
+    }
 }

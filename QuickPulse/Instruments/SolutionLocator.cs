@@ -7,7 +7,7 @@ public static class SolutionLocator
         var dir = new DirectoryInfo(startDirectory ?? Directory.GetCurrentDirectory());
         while (dir != null)
         {
-            if (dir.GetFiles("*.sln").Length != 0)
+            if (dir.EnumerateFiles().Any(f => f.Extension is ".sln" or ".slnx"))
                 return dir.FullName;
 
             dir = dir.Parent;
