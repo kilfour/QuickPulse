@@ -6,4 +6,4 @@ namespace QuickPulse.Arteries;
 /// such as recording, displaying, or discarding it.
 /// Each call to <see cref="Absorb(object[])"/> represents one pulse traveling through the heart.
 /// </summary>
-public interface IArtery { public object[] Absorb(params object[] data); }
+public interface IArtery { public void Absorb(params object[] data); }

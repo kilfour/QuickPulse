@@ -25,11 +25,10 @@ namespace QuickPulse.Arteries
         /// Absorbs data and appends each item's string representation to the internal buffer.
         /// Use to record or inspect flow output as text.
         /// </summary>
-        public object[] Absorb(params object[] data)
+        public void Absorb(params object[] data)
         {
             foreach (var item in data)
                 builder.Append(item?.ToString());
-            return data;
         }
 
         /// <summary>

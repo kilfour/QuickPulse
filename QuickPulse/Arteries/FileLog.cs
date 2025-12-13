@@ -101,10 +101,9 @@ public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution
     /// Appends all absorbed data as new lines to the log file.
     /// Use for durable recording of emitted flow values.
     /// </summary>
-    public object[] Absorb(params object[] data)
+    public void Absorb(params object[] data)
     {
         EnsureDirectoryExists();
         File.AppendAllLines(FilePath, data.Select(a => a.ToString()!));
-        return data;
     }
 }
