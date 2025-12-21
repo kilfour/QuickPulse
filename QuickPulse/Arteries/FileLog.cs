@@ -95,7 +95,11 @@ public class FileLogArtery(string? maybeFileName = null, bool relativeToSolution
     /// Use to reset logging between runs.
     /// </summary>
     public FileLogArtery ClearFile()
-        => Chain.It(() => File.WriteAllText(FilePath, ""), this);
+    {
+        if (File.Exists(FilePath))
+            File.WriteAllText(FilePath, "");
+        return this;
+    }
 
     /// <summary>
     /// Appends all absorbed data as new lines to the log file.
