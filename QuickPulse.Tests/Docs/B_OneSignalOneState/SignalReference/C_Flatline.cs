@@ -23,12 +23,11 @@ public class C_Flatline
     [CodeRemove(".SetArtery(latch)")]
     private static void FlatLine_runs_on_terminal_state_example(Latch<int> latch)
     {
-        var flow =
-            from _ in Pulse.Start<Flow>()
+        static Flow<Flow> flow(Flow _) =>
             from __ in Pulse.Prime(() => 0)
             from ___ in Pulse.Manipulate<int>(a => a + 1)
             select Flow.Continue;
-        Signal.From(flow)
+        Signal.From<Flow>(flow)
             .SetArtery(latch)
             .Pulse().Pulse().Pulse()
             .FlatLine(Pulse.Trace<int>(a => a));

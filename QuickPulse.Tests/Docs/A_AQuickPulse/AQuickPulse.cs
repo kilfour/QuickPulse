@@ -8,25 +8,6 @@ namespace QuickPulse.Tests.Docs.A_AQuickPulse;
 [DocContent("To explain how QuickPulse works (not least to myself), let's build up a flow step by step.")]
 public class AQuickPulse
 {
-    [DocHeader("The Minimal Flow")]
-    [DocContent(
-@"The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
-**Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.")]
-    [Fact]
-    [DocExample(typeof(AQuickPulse), nameof(Minimal_definition_start_example))]
-    public void Minimal_definition_start()
-    {
-        Assert.IsType<Flow<int>>(Minimal_definition_start_example());
-    }
-
-    [CodeSnippet]
-    [CodeRemove("return")]
-    private static Flow<int> Minimal_definition_start_example()
-    {
-        return
-            from anInt in Pulse.Start<int>()
-            select anInt;
-    }
 
     [DocHeader("A Mental Map", 1)]
     [DocContent(
@@ -50,16 +31,13 @@ Arteries are the *output channels* of a signal. They collect, display, or record
     [DocContent("Let's trace the values as they pass through:")]
     [DocExample(typeof(AQuickPulse), nameof(Adding_a_trace_example))]
     public void Adding_a_trace()
-        => Assert.IsType<Flow<int>>(Adding_a_trace_example());
+        => Assert.IsType<Func<int, Flow<Flow>>>(Adding_a_trace_example());
 
     [CodeSnippet]
     [CodeRemove("return")]
-    private static Flow<int> Adding_a_trace_example()
+    private static Func<int, Flow<Flow>> Adding_a_trace_example()
     {
-        return
-            from anInt in Pulse.Start<int>()
-            from trace in Pulse.Trace(anInt)
-            select anInt;
+        return a => Pulse.Trace(a);
     }
 
     [DocHeader("Executing a Flow")]
@@ -76,11 +54,7 @@ Example:")]
     [CodeRemove("return signal;")]
     private static Signal<int> Adding_a_signal_example()
     {
-        var flow =
-            from anInt in Pulse.Start<int>()
-            from trace in Pulse.Trace(anInt)
-            select anInt;
-        var signal = Signal.From(flow);
+        var signal = Signal.From<int>(a => Pulse.Trace(a));
         return signal;
     }
 
@@ -101,10 +75,7 @@ For example, sending the value `42` into the flow:")]
     [CodeRemove("return")]
     private static Signal<int> Adding_a_pulse_example()
     {
-        return Signal.From(
-                from anInt in Pulse.Start<int>()
-                from trace in Pulse.Trace(anInt)
-                select anInt)
+        return Signal.From<int>(a => Pulse.Trace(a))
             .Pulse(42);
     }
 
@@ -129,10 +100,7 @@ Example:")]
     private static Collector<int> Adding_an_artery_example()
     {
         var collector = Collect.ValuesOf<int>();
-        Signal.From(
-                from anInt in Pulse.Start<int>()
-                from trace in Pulse.Trace(anInt)
-                select anInt)
+        Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(collector)
             .Pulse([42, 43, 44]);
         // collector.Values now holds => [42, 43, 44]."

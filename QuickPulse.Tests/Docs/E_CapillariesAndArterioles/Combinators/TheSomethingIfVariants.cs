@@ -48,6 +48,12 @@ public class TheSomethingIfVariants
             from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
             from __ in Pulse.ToFlowIf(input == 3, three, () => input)
             select input;
+        // Flow<Flow> even(int _) => Pulse.Trace("even");
+        // Flow<Flow> three(int _) => Pulse.Trace("three");
+        // Flow<Flow> flow(int input) =>
+        //     from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
+        //     from __ in Pulse.ToFlowIf(input == 3, three, () => input)
+        //     select Flow.Continue;
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
         return flow;
     }

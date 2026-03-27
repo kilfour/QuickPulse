@@ -46,5 +46,10 @@ public static partial class Pulse
     // -- Flow Factory
     // --
     internal static Flow<TValue> GetFlowFromFactory<TValue>(Func<TValue, Flow<Flow>> flowFactory) =>
-        from i in Start<TValue>() from _ in flowFactory(i) select i;
+        state =>
+        {
+            var value = state.GetValue<TValue>();
+            var result = flowFactory(value)(state);
+            return Beat.Some(state, value);
+        };
 }
