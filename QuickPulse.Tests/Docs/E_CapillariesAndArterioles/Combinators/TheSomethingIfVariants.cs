@@ -14,12 +14,10 @@ public class TheSomethingIfVariants
 {
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> TraceIf_flow()
+    private static Func<int, Flow<Flow>> TraceIf_flow()
     {
-        var flow =
-            from input in Pulse.Start<int>()
-            from _ in Pulse.TraceIf(input % 2 == 0, () => "even")
-            select input;
+        static Flow<Flow> flow(int input) =>
+            Pulse.TraceIf(input % 2 == 0, () => "even");
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
         return flow;
     }
@@ -39,21 +37,14 @@ public class TheSomethingIfVariants
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> ToFlowIf_flow()
+    private static Func<int, Flow<Flow>> ToFlowIf_flow()
     {
-        var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
-        var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
-        var flow =
-            from input in Pulse.Start<int>()
+        static Flow<Flow> even(int _) => Pulse.Trace("even");
+        static Flow<Flow> three(int _) => Pulse.Trace("three");
+        static Flow<Flow> flow(int input) =>
             from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
             from __ in Pulse.ToFlowIf(input == 3, three, () => input)
-            select input;
-        // Flow<Flow> even(int _) => Pulse.Trace("even");
-        // Flow<Flow> three(int _) => Pulse.Trace("three");
-        // Flow<Flow> flow(int input) =>
-        //     from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
-        //     from __ in Pulse.ToFlowIf(input == 3, three, () => input)
-        //     select Flow.Continue;
+            select Flow.Continue;
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
         return flow;
     }
@@ -72,16 +63,13 @@ public class TheSomethingIfVariants
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> ManipulateIf_flow()
+    private static Func<int, Flow<Flow>> ManipulateIf_flow()
     {
-        var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
-        var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
-        var flow =
-            from input in Pulse.Start<int>()
+        static Flow<Flow> flow(int input) =>
             from _ in Pulse.Prime(() => 0)
             from __ in Pulse.ManipulateIf<int>(input % 2 == 0, a => a + 1)
             from ___ in Pulse.Trace<int>(a => $"{input}: {a}")
-            select input;
+            select Flow.Continue;
         // Pulse [1, 2, 3, 4, 5] => results in ["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"].
         return flow;
     }

@@ -13,14 +13,13 @@ public class FirstOfTests
 {
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> FirstOf_flow()
+    private static Func<int, Flow<Flow>> FirstOf_flow()
     {
-        var flow =
-            from input in Pulse.Start<int>()
+        static Flow<Flow> flow(int input) =>
             from _ in Pulse.FirstOf(
                 (() => input % 2 == 0, () => Pulse.Trace("even")),
                 (() => input == 3, () => Pulse.Trace("three")))
-            select input;
+            select Flow.Continue;
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
         return flow;
     }

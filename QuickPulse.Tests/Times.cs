@@ -16,7 +16,7 @@ public static class TimesExtensions
 
     public static IEnumerable<T> TimesUntil<T>(this int times, Predicate<T> predicate, Func<T> func) =>
         Signal.From<Flow>(a =>
-                from _ in Pulse.Start<Flow>()
+                from _ in Pulse.NoOp()
                 let value = func()
                 let stop = predicate(value)
                 from _1 in Pulse.TraceIf(!stop, () => value)

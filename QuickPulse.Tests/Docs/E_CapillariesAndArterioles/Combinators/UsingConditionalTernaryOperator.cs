@@ -9,16 +9,12 @@ public class UsingConditionalTernaryOperator
 {
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> TernaryConditionalOperator_flow()
+    private static Func<int, Flow<Flow>> TernaryConditionalOperator_flow()
     {
-        var flow =
-            from input in Pulse.Start<int>()
-            let conditional =
-                input % 2 == 0
+        static Flow<Flow> flow(int input) =>
+            input % 2 == 0
                 ? Pulse.Trace("even")
-                : Pulse.Trace("uneven")
-            from _ in conditional
-            select input;
+                : Pulse.Trace("uneven");
         // Pulse [1, 2, 3, 4, 5] => results in ["uneven", "even", "uneven", "even", "uneven"].
         return flow;
     }
@@ -36,16 +32,12 @@ public class UsingConditionalTernaryOperator
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> TernaryConditionalOperator_flow_noop()
+    private static Func<int, Flow<Flow>> TernaryConditionalOperator_flow_noop()
     {
-        var flow =
-            from input in Pulse.Start<int>()
-            let conditional =
-                input % 2 == 0
+        static Flow<Flow> flow(int input) =>
+            input % 2 == 0
                 ? Pulse.Trace("even")
-                : Pulse.NoOp()
-            from _ in conditional
-            select input;
+                : Pulse.NoOp();
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
         return flow;
     }

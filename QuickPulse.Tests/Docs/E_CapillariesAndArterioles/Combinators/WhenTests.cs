@@ -8,12 +8,10 @@ public class WhenTests
 {
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> When_flow()
+    private static Func<int, Flow<Flow>> When_flow()
     {
-        var flow =
-            from input in Pulse.Start<int>()
-            from _ in Pulse.When(input % 2 == 0, Pulse.Trace("even"))
-            select input;
+        static Flow<Flow> flow(int input) =>
+            Pulse.When(input % 2 == 0, Pulse.Trace("even"));
         // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
         return flow;
     }

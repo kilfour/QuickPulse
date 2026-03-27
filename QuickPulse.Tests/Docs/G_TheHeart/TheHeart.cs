@@ -103,15 +103,14 @@ Suppose we have the following flow: ")]
     [DocExample(typeof(TheHeart), nameof(Grafting_starting_flow))]
     [CodeSnippet]
 
-    private Flow<char> Grafting_starting_flow()
+    private Func<char, Flow<Flow>> Grafting_starting_flow()
     {
-        return
-            from ch in Pulse.Start<char>()
+        return ch =>
             from depth in Pulse.Prime(() => -1)
             from _ in Pulse.TraceIf(depth >= 0, () => ch)
             from __ in Pulse.ManipulateIf<int>(ch == '{', x => x + 1)
             from ___ in Pulse.ManipulateIf<int>(ch == '}', x => x - 1)
-            select ch;
+            select Flow.Continue;
     }
 
     [DocContent(
@@ -172,10 +171,9 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
     [DocExample(typeof(TheHeart), nameof(Grafting_inspected_flow))]
     [CodeSnippet]
     [CodeReplace("return", "var flow = ")]
-    private Flow<char> Grafting_inspected_flow()
+    private Func<char, Flow<Flow>> Grafting_inspected_flow()
     {
-        return
-            from ch in Pulse.Start<char>()
+        return ch =>
             from depth in Pulse.Prime(() => -1)
             let enter = depth
             let emit = depth >= 0
@@ -185,7 +183,7 @@ Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
             from exit in Pulse.Draw<int>()
             from diag in Pulse.TraceTo<Diagnostic>(
                 $"char='{ch}', enter={enter}, emit={emit}, exit={exit}")
-            select ch;
+            select Flow.Continue;
     }
 
     [Fact]

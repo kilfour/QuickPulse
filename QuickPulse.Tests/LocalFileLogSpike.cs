@@ -9,10 +9,7 @@ public class LocalFileLogSpike
     public void WriteHere()
     {
         var log = FileLog.WriteHere();
-        Signal.From(
-                from anInt in Pulse.Start<int>()
-                from trace in Pulse.Trace(anInt)
-                select anInt)
+        Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(log)
             .Pulse([1, 2, 3]);
     }
@@ -21,10 +18,7 @@ public class LocalFileLogSpike
     public void AppendHere()
     {
         var log = FileLog.AppendHere();
-        Signal.From(
-                from anInt in Pulse.Start<int>()
-                from trace in Pulse.Trace(anInt)
-                select anInt)
+        Signal.From<int>(a => Pulse.Trace(a))
             .SetArtery(log)
             .Pulse([42, 43, 44]);
     }

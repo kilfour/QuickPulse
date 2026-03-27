@@ -170,22 +170,18 @@ Use the static helper `Text.Capture()` to create a new catcher.")]
     [DocContent("You can get a hold of the string through the `.Content()` method.")]
     [DocExample(typeof(ArteriesIncluded), nameof(TheStringSink_Content_Example))]
     public void TheStringSink_Content()
-        => Assert.Equal("x = 42", TheStringSink_Content_Example());
+        => Assert.Equal("a = 42", TheStringSink_Content_Example());
 
     [CodeSnippet]
     [CodeRemove("return result;")]
     private static string TheStringSink_Content_Example()
     {
         var stringSink = Text.Capture();
-        Signal.From(
-            from x in Pulse.Start<int>()
-            from _ in Pulse.Trace("x = ")
-            from __ in Pulse.Trace(42)
-            select x)
+        Signal.From<int>(a => Pulse.Trace($"a = {a}"))
         .SetArtery(stringSink)
         .Pulse(42);
         var result = stringSink.Content(); // <=
-        // result now equals "x = 42"
+        // result now equals "a = 42"
         return result;
     }
 
@@ -195,16 +191,12 @@ Use the static helper `Text.Capture()` to create a new catcher.")]
     {
         var stringSink = Text.Capture();
         var signal =
-            Signal.From(
-                    from x in Pulse.Start<int>()
-                    from _ in Pulse.Trace("x = ")
-                    from __ in Pulse.Trace(42)
-                    select x)
+            Signal.From<int>(a => Pulse.Trace($"a = {a}"))
                 .SetArtery(stringSink)
                 .Pulse(1);
         stringSink.Clear();
         signal.Pulse(42);
-        Assert.Equal("x = 42", stringSink.Content());
+        Assert.Equal("a = 42", stringSink.Content());
     }
 }
 

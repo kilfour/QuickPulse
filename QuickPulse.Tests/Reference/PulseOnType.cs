@@ -27,16 +27,12 @@ public class PulseOnType
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<Animal> Pulse_OnType_Flow()
+    private static Func<Animal, Flow<Flow>> Pulse_OnType_Flow()
     {
-        var dogFlow =
-            from dog in Pulse.Start<Dog>()
-            from _ in Pulse.Trace(dog.Name)
-            select dog;
-        var flow =
-            from animal in Pulse.Start<Animal>()
-            from _ in Pulse.OnType(dogFlow, () => animal)
-            select animal;
+        static Flow<Flow> dogFlow(Dog dog) =>
+            Pulse.Trace(dog.Name);
+        static Flow<Flow> flow(Animal animal) =>
+            Pulse.OnType((Dog a) => dogFlow(a), () => animal);
         return flow;
     }
 
@@ -62,16 +58,10 @@ public class PulseOnType
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<Animal> Pulse_OnType_Inline_Flow()
+    private static Func<Animal, Flow<Flow>> Pulse_OnType_Inline_Flow()
     {
-        var dogFlow =
-            from dog in Pulse.Start<Dog>()
-            from _ in Pulse.Trace(dog.Name)
-            select dog;
-        var flow =
-            from animal in Pulse.Start<Animal>()
-            from _ in Pulse.OnType((Dog a) => Pulse.Trace(a.Name), () => animal)
-            select animal;
+        static Flow<Flow> flow(Animal animal) =>
+            Pulse.OnType((Dog a) => Pulse.Trace(a.Name), () => animal);
         return flow;
     }
 
