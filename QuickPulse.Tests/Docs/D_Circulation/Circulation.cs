@@ -32,15 +32,14 @@ It's the flow-level equivalent of saying *do this, then that*.")]
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> Then_get_flow()
+    private static Func<int, Flow<Flow>> Then_get_flow()
     {
         var dot = Pulse.Trace(".");
         var space = Pulse.Trace(" ");
-        var flow =
-            from input in Pulse.Start<int>()
+        Flow<Flow> flow(int input) =>
             from _1 in dot.Then(dot).Then(dot).Then(space) // <=
             from _2 in Pulse.Trace(input)
-            select input;
+            select Flow.Continue;
         // Pulse 42 => results in '... 42'.
         return flow;
     }
@@ -63,17 +62,14 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<int> ToFlow_get_flow()
+    private static Func<int, Flow<Flow>> ToFlow_get_flow()
     {
-        var subflow =
-            from input in Pulse.Start<int>()
-            from _ in Pulse.Trace<int>(a => input + a)
-            select input;
-        var flow =
-            from input in Pulse.Start<int>()
+        Flow<Flow> subflow(int input) =>
+            Pulse.Trace<int>(a => input + a);
+        Flow<Flow> flow(int input) =>
             from _ in Pulse.Prime(() => 1)
             from __ in Pulse.ToFlow(subflow, input)    // <=
-            select input;
+            select Flow.Continue;
         // Pulse 41 => results in 42.
         return flow;
     }
@@ -93,18 +89,15 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
 
     [CodeSnippet]
     [CodeRemove("return flow;")]
-    private static Flow<List<int>> ToFlow_get_collection_flow()
+    private static Func<List<int>, Flow<Flow>> ToFlow_get_collection_flow()
     {
-        var subflow =
-            from input in Pulse.Start<int>()
-            from result in Pulse.Manipulate<int>(a => a + input)
-            select input;
-        var flow =
-            from input in Pulse.Start<List<int>>()
+        Flow<Flow> subflow(int input) =>
+            Pulse.Manipulate<int>(a => a + input).Dissipate();
+        Flow<Flow> flow(List<int> input) =>
             from _1 in Pulse.Prime(() => 0)
             from _2 in Pulse.ToFlow(subflow, input)
             from _3 in Pulse.Trace<int>(a => $"Sum = {a}")
-            select input;
+            select Flow.Continue;
         // Pulse [1, 2, 3] => results in "Sum = 6".
         return flow;
     }
@@ -112,12 +105,10 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
     [Fact]
     public void Pulse_to_flow_factory()
     {
-        var flow =
-            from input in Pulse.Start<int>()
-            from _ in Pulse.ToFlow(a => Pulse.Trace(a + 1), input)    // <=
-            select input;
+        static Flow<Flow> flow(int input) =>
+            Pulse.ToFlow(a => Pulse.Trace(a + 1), input);
         var latch = TheLatch.Holds<int>();
-        var signal = Signal.From(flow).SetArtery(latch);
+        var signal = Signal.From<int>(flow).SetArtery(latch);
         signal.Pulse(41);
         Assert.Equal(42, latch.Q);
     }
@@ -125,12 +116,10 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
     [Fact]
     public void Pulse_to_flow_factory_collection()
     {
-        var flow =
-            from input in Pulse.Start<List<int>>()
-            from _ in Pulse.ToFlow(a => Pulse.Trace(a + 1), input)    // <=
-            select input;
+        static Flow<Flow> flow(List<int> input) =>
+            Pulse.ToFlow(a => Pulse.Trace(a + 1), input);
         var collector = Collect.ValuesOf<int>();
-        var signal = Signal.From(flow).SetArtery(collector);
+        var signal = Signal.From<List<int>>(flow).SetArtery(collector);
         signal.Pulse([41, 41]);
         Assert.Equal([42, 42], collector.Values);
     }
@@ -172,31 +161,31 @@ Here are the same examples rewritten using **method syntax**:")]
 
     [CodeSnippet]
     [CodeRemove("return ")]
-    private static Flow<int> Then_get_flow_method()
+    private static Func<int, Flow<Flow>> Then_get_flow_method()
     {
         var dot = Pulse.Trace(".");
         var space = Pulse.Trace(" ");
-        return Pulse.Start<int>(a =>
-            dot.Then(dot).Then(dot).Then(space).Then(Pulse.Trace(a)));
+        return a =>
+            dot.Then(dot).Then(dot).Then(space).Then(Pulse.Trace(a));
     }
 
     [CodeSnippet]
     [CodeRemove("return ")]
-    private static Flow<int> ToFlow_get_flow_method()
+    private static Func<int, Flow<Flow>> ToFlow_get_flow_method()
     {
-        return Pulse.Start<int>(a =>
+        return a =>
             Pulse.Prime(() => 1)
-                .Then(Pulse.ToFlow(b => Pulse.Trace<int>(c => b + c), a)));
+                .Then(Pulse.ToFlow(b => Pulse.Trace<int>(c => b + c), a));
     }
 
     [CodeSnippet]
     [CodeRemove("return ")]
-    private static Flow<List<int>> ToFlow_get_collection_flow_method()
+    private static Func<List<int>, Flow<Flow>> ToFlow_get_collection_flow_method()
     {
-        return Pulse.Start<List<int>>(numbers =>
+        return numbers =>
             Pulse.Prime(() => 0)
                 .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), numbers))
-                .Then(Pulse.Trace<int>(a => $"Sum = {a}")));
+                .Then(Pulse.Trace<int>(a => $"Sum = {a}"));
     }
 
     [Fact]
@@ -209,8 +198,8 @@ while method syntax can offer a more functional, compositional style that some d
 It's often used in method syntax to glue flows together seamlessly.")]
     public void Dissipate()
     {
-        var flow = Pulse.Start<int>(a => Pulse.NoOp());
-        Assert.IsType<Flow<int>>(flow);
-        Assert.IsType<Flow<Flow>>(flow.Dissipate());
+        static Flow<int> flow(int input) => from _ in Pulse.NoOp() select input;
+        Assert.IsType<Flow<int>>(flow(42));
+        Assert.IsType<Flow<Flow>>(flow(42).Dissipate());
     }
 }
