@@ -39,13 +39,12 @@ In the following section we will discuss how to set up one particular use case:
 
 Suppose we have the following flow:   
 ```csharp
-return
-    from ch in Pulse.Start<char>()
+return ch =>
     from depth in Pulse.Prime(() => -1)
     from _ in Pulse.TraceIf(depth >= 0, () => ch)
     from __ in Pulse.ManipulateIf<int>(ch == '{', x => x + 1)
     from ___ in Pulse.ManipulateIf<int>(ch == '}', x => x - 1)
-    select ch;
+    select Flow.Continue;
 ```
 This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:  
@@ -77,8 +76,7 @@ In this case, we could just Graft a `Collector<string>`, but creating a derived 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
   
 ```csharp
-var flow = 
-    from ch in Pulse.Start<char>()
+var flow =  ch =>
     from depth in Pulse.Prime(() => -1)
     let enter = depth
     let emit = depth >= 0
@@ -88,7 +86,7 @@ var flow =
     from exit in Pulse.Draw<int>()
     from diag in Pulse.TraceTo<Diagnostic>(
         $"char='{ch}', enter={enter}, emit={emit}, exit={exit}")
-    select ch;
+    select Flow.Continue;
 ```
 When executing this, the `StringSink` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
 ```csharp

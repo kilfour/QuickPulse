@@ -27,12 +27,6 @@ This design lets you model streaming behaviour, accumulate context, or isolate r
 ## From
 `Signal.From(...)` is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.  
-```csharp
-var flow =
-    from anInt in Pulse.Start<int>()
-    select anInt;
-var signal = Signal.From(flow);
-```
 `Signal.From<T>(Func<T, Flow<Flow>>` is a useful overload that allows for inlining simple flows upon Signal creation.  
 ```csharp
 var signal = Signal.From<int>(a => Pulse.Trace(a));
@@ -59,10 +53,10 @@ Lastly, in some rare circumstances, a flow does not take any input. In `QuickPul
 So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse()` overload.  
 ```csharp
 var flow =
-    from _ in Pulse.Start<Flow>()
-    from _1 in Pulse.Prime(() => 42)
-    from _2 in Pulse.Trace<int>(a => a)
-    from _3 in Pulse.Manipulate<int>(a => a + 1)
+    from i in Pulse.Prime(() => 42)
+    from _ in Pulse
+        .Trace(i)
+        .Manipulate<int>(a => a + 1)
     select Flow.Continue;
 Signal.From(flow)
     .Pulse()
@@ -76,13 +70,12 @@ It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.
 
 The following example does use some features fully explained in the chapter **'Memory And Manipulation'**.  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
+static Flow<Flow> flow(Flow _) =>
     from __ in Pulse.Prime(() => 0)
     from ___ in Pulse.Manipulate<int>(a => a + 1)
     select Flow.Continue;
-Signal.From(flow)
+Signal.From<Flow>(flow)
     .Pulse().Pulse().Pulse()
-    .FlatLine(Pulse.Trace<int>(a => a));
+    .FlatLine(Pulse.Draw<int>().Trace(a => a));
 // Results in => 3
 ```

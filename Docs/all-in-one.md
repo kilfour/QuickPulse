@@ -1,12 +1,5 @@
 ## A Quick Pulse
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.  
-### The Minimal Flow
-The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
-**Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.  
-```csharp
-    from anInt in Pulse.Start<int>()
-    select anInt;
-```
 #### A Mental Map
 Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
 
@@ -24,31 +17,22 @@ Arteries are the *output channels* of a signal. They collect, display, or record
 ### Doing Something with the Input
 Let's trace the values as they pass through:  
 ```csharp
-    from anInt in Pulse.Start<int>()
-    from trace in Pulse.Trace(anInt)
-    select anInt;
+a => Pulse.Trace(a);
 ```
 ### Executing a Flow
 To execute a flow, we need a `Signal<T>`, which is created via: `Signal.From<T>(Flow<T> flow)`.
 
 Example:  
 ```csharp
-var flow =
-    from anInt in Pulse.Start<int>()
-    from trace in Pulse.Trace(anInt)
-    select anInt;
-var signal = Signal.From(flow);
+var signal = Signal.From<int>(a => Pulse.Trace(a));
 ```
 ### Sending Values Through the Flow
 Once you have a signal, you can push values into the flow by calling: `Signal.Pulse(...)`.
 
 For example, sending the value `42` into the flow:  
 ```csharp
- Signal.From(
-        from anInt in Pulse.Start<int>()
-        from trace in Pulse.Trace(anInt)
-        select anInt)
-    .Pulse(42);
+Signal.From<int>(a => Pulse.Trace(a))
+   .Pulse(42);
 ```
 ### Capturing the Trace
 To observe what flows through, we can add an `IArtery` by using `SetArtery` directly on the signal.
@@ -56,10 +40,7 @@ To observe what flows through, we can add an `IArtery` by using `SetArtery` dire
 Example:  
 ```csharp
 var collector = Collect.ValuesOf<int>();
-Signal.From(
-        from anInt in Pulse.Start<int>()
-        from trace in Pulse.Trace(anInt)
-        select anInt)
+Signal.From<int>(a => Pulse.Trace(a))
     .SetArtery(collector)
     .Pulse([42, 43, 44]);
 // collector.Values now holds => [42, 43, 44]."
@@ -93,12 +74,6 @@ This design lets you model streaming behaviour, accumulate context, or isolate r
 ### From
 `Signal.From(...)` is a simple factory method used to get hold of a `Signal<T>` instance
 that wraps the passed in `Flow<T>`.  
-```csharp
-var flow =
-    from anInt in Pulse.Start<int>()
-    select anInt;
-var signal = Signal.From(flow);
-```
 `Signal.From<T>(Func<T, Flow<Flow>>` is a useful overload that allows for inlining simple flows upon Signal creation.  
 ```csharp
 var signal = Signal.From<int>(a => Pulse.Trace(a));
@@ -125,10 +100,10 @@ Lastly, in some rare circumstances, a flow does not take any input. In `QuickPul
 So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse()` overload.  
 ```csharp
 var flow =
-    from _ in Pulse.Start<Flow>()
-    from _1 in Pulse.Prime(() => 42)
-    from _2 in Pulse.Trace<int>(a => a)
-    from _3 in Pulse.Manipulate<int>(a => a + 1)
+    from i in Pulse.Prime(() => 42)
+    from _ in Pulse
+        .Trace(i)
+        .Manipulate<int>(a => a + 1)
     select Flow.Continue;
 Signal.From(flow)
     .Pulse()
@@ -142,31 +117,33 @@ It's useful for summarizing, tracing, or cleaning up after a sequence of pulses.
 
 The following example does use some features fully explained in the chapter **'Memory And Manipulation'**.  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
+static Flow<Flow> flow(Flow _) =>
     from __ in Pulse.Prime(() => 0)
     from ___ in Pulse.Manipulate<int>(a => a + 1)
     select Flow.Continue;
-Signal.From(flow)
+Signal.From<Flow>(flow)
     .Pulse().Pulse().Pulse()
-    .FlatLine(Pulse.Trace<int>(a => a));
+    .FlatLine(Pulse.Draw<int>().Trace(a => a));
 // Results in => 3
 ```
 ## Memory And Manipulation
 Each signal maintains **gathered cells** (keyed by *type identity*), that store and process specific data types.  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
-    from _1 in Pulse.Prime(() => 1)
-    from _2 in Pulse.Trace<int>(a => $"outer: {a}")
-    from _3 in Pulse.Scoped<int>(a => a + 1,
-        from __1 in Pulse.Trace<int>(a => $"inner: {a}")
-        from __2 in Pulse.Manipulate<int>(a => a + 1)
-        from __3 in Pulse.Trace<int>(a => $"inner manipulated: {a}")
-        select Flow.Continue)
-    from _4 in Pulse.Trace<int>(a => $"restored: {a}")
+static Flow<Flow> flow(Flow _) =>
+    from outer in Pulse
+        .Prime(() => 1)
+        .Trace(a => $"outer: {a}")
+    from inner in Pulse.Scoped<int>(a => a + 1,
+        Pulse
+            .Draw<int>()
+            .Trace(a => $"inner: {a}")
+            .Manipulate<int>(a => a + 1)
+            .Trace(a => $"inner manipulated: {a}"))
+    from restored in Pulse
+        .Draw<int>()
+        .Trace(a => $"restored: {a}")
     select Flow.Continue;
-Signal.From(flow).Pulse(Flow.Continue);
+Signal.From<Flow>(flow).Pulse(Flow.Continue);
 // Results in => 
 //     [ "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" ]
 ```
@@ -180,10 +157,9 @@ Most `Pulse` methods have one or more utility overloads that combines `.Draw()` 
 with the overloaded method's functionality.  
 It can be seen in the example at the top, but here's another one, showing a more focused usage:  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
+static Flow<Flow> flow(Flow _) =>
     from __ in Pulse.Prime(() => 41)
-    from ___ in Pulse.Trace<int>(a => a + 1)
+    from ___ in Pulse.Draw<int>().Trace(a => a + 1)
     select Flow.Continue;
 // Pulse() => results in 42
 ```
@@ -191,13 +167,12 @@ var flow =
 `Manipulate<T>(Func<T,T>)` updates the current value of the *gathered cell* for type `T`.  
 The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
+static Flow<Flow> flow(int input) =>
     from _1 in Pulse.Prime(() => 0)
     from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
     from _2 in Pulse.Trace(i + input)            // <= use the new value
-    select input;
-Signal.From(flow).Pulse(32);
+    select Flow.Continue;
+Signal.From<int>(flow).Pulse(32);
 ```
 ### Scoped: temporary overrides with automatic restore.
 `Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.  
@@ -211,23 +186,24 @@ public record Int1(int Number) { }
 public record Int2(int Number) { }
 ```
 ```csharp
- from _ in Pulse.Start<Flow>()
-       from _1 in Pulse.Prime(() => new Int1(1))
-       from _2 in Pulse.Prime(() => new Int2(2))
-       from _3 in Pulse.Trace(_1.Number + _2.Number)
-       select Flow.Continue;
+_ =>
+   from _1 in Pulse.Prime(() => new Int1(1))
+   from _2 in Pulse.Prime(() => new Int2(2))
+   from _3 in Pulse.Trace(_1.Number + _2.Number)
+   select Flow.Continue;
 ```
 ### Postfix Operators
 Although the behaviour is logical once you think about it, it can feel a bit unintuitive,
 but when using Postfix operators, beware that they return the *old* value.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.Prime(() => 0)
-    from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
-    from now in Pulse.Trace<int>(a => a + input)
-    select input;
-Signal.From(flow).Pulse(41);
+static Flow<Flow> flow(int input) =>
+    from cell in Pulse
+        .Prime(() => 0).Dissipate()
+        .Manipulate<int>(a => a++).Dissipate()
+        .Draw<int>()
+    from _ in Pulse.Trace(cell + input)
+    select Flow.Continue;
+Signal.From<int>(flow).SetArtery(latch).Pulse(41);
 // Result => 41. Not 42!
 ```
 Use prefix form or pure expressions instead.  
@@ -246,41 +222,34 @@ It's the flow-level equivalent of saying *do this, then that*.
 ```csharp
 var dot = Pulse.Trace(".");
 var space = Pulse.Trace(" ");
-var flow =
-    from input in Pulse.Start<int>()
+Flow<Flow> flow(int input) =>
     from _1 in dot.Then(dot).Then(dot).Then(space) // <=
     from _2 in Pulse.Trace(input)
-    select input;
+    select Flow.Continue;
 // Pulse 42 => results in '... 42'.
 ```
 ### ToFlow
 If `Then` is about sequence, `ToFlow` is about delegation. It executes another flow *as part* of the current one.  
 ```csharp
-var subflow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.Trace<int>(a => input + a)
-    select input;
-var flow =
-    from input in Pulse.Start<int>()
+Flow<Flow> subflow(int input) =>
+    Pulse.Draw<int>().Trace(a => input + a);
+Flow<Flow> flow(int input) =>
     from _ in Pulse.Prime(() => 1)
     from __ in Pulse.ToFlow(subflow, input)    // <=
-    select input;
+    select Flow.Continue;
 // Pulse 41 => results in 42.
 ```
 This lets you reuse a named or shared flow inside another.
 The subflow inherits the same signal state, so memory cells and arteries are visible across layers.  
 `ToFlow` can also iterate through collections:  
 ```csharp
-var subflow =
-    from input in Pulse.Start<int>()
-    from result in Pulse.Manipulate<int>(a => a + input)
-    select input;
-var flow =
-    from input in Pulse.Start<List<int>>()
+Flow<Flow> subflow(int input) =>
+    Pulse.Manipulate<int>(a => a + input).Dissipate();
+Flow<Flow> flow(List<int> input) =>
     from _1 in Pulse.Prime(() => 0)
     from _2 in Pulse.ToFlow(subflow, input)
-    from _3 in Pulse.Trace<int>(a => $"Sum = {a}")
-    select input;
+    from _3 in Pulse.Draw<int>().Trace(a => $"Sum = {a}")
+    select Flow.Continue;
 // Pulse [1, 2, 3] => results in "Sum = 6".
 ```
 This version of `ToFlow` is the declarative way to write what would otherwise be a `loop`, `foreach`, `for`, etcetera.  
@@ -296,19 +265,19 @@ Here are the same examples rewritten using **method syntax**:
 ```csharp
 var dot = Pulse.Trace(".");
 var space = Pulse.Trace(" ");
-Pulse.Start<int>(a =>
-    dot.Then(dot).Then(dot).Then(space).Then(Pulse.Trace(a)));
+a =>
+    dot.Then(dot).Then(dot).Then(space).Then(Pulse.Trace(a));
 ```
 ```csharp
-Pulse.Start<int>(a =>
+a =>
     Pulse.Prime(() => 1)
-        .Then(Pulse.ToFlow(b => Pulse.Trace<int>(c => b + c), a)));
+        .Then(Pulse.ToFlow(b => Pulse.Draw<int>().Trace(c => b + c), a));
 ```
 ```csharp
-Pulse.Start<List<int>>(numbers =>
+numbers =>
     Pulse.Prime(() => 0)
         .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), numbers))
-        .Then(Pulse.Trace<int>(a => $"Sum = {a}")));
+        .Then(Pulse.Draw<int>().Trace(a => $"Sum = {a}"));
 ```
 Ultimately, the choice between query syntax and method syntax comes down to readability and personal preference.
 Query syntax often provides a more declarative, linear flow that clearly expresses the sequence of operations,
@@ -327,36 +296,26 @@ but where would we be without the ability to branch off an Artery into an Arteri
 QuickPulse provides the following ways to control the *direction and branching* of a flow.  
 ### Using a Ternary Conditional Operator (*If/Then/Else*)
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    let conditional =
-        input % 2 == 0
+static Flow<Flow> flow(int input) =>
+    input % 2 == 0
         ? Pulse.Trace("even")
-        : Pulse.Trace("uneven")
-    from _ in conditional
-    select input;
+        : Pulse.Trace("uneven");
 // Pulse [1, 2, 3, 4, 5] => results in ["uneven", "even", "uneven", "even", "uneven"].
 ```
 Prefer `Pulse.NoOp()` when you want an if/then without an else-branch:  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    let conditional =
-        input % 2 == 0
+static Flow<Flow> flow(int input) =>
+    input % 2 == 0
         ? Pulse.Trace("even")
-        : Pulse.NoOp()
-    from _ in conditional
-    select input;
+        : Pulse.NoOp();
 // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
 ```
 *Note:* While the ternary operator works, QuickPulse provides more idiomatic ways to deal with conditional statemens, which we will look at below.  
 ### When
 `Pulse.When` is the declarative equivalent of the ternary operator combined with `.NoOp()`.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.When(input % 2 == 0, Pulse.Trace("even"))
-    select input;
+static Flow<Flow> flow(int input) =>
+    Pulse.When(input % 2 == 0, Pulse.Trace("even"));
 // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
 ```
 ### The `Pulse.{SomeMethod}If()` Variants
@@ -368,33 +327,27 @@ most `Pulse` methods have an `If` variant that allows for conditional execution.
   
 *Conditional tracing:*  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.TraceIf(input % 2 == 0, () => "even")
-    select input;
+static Flow<Flow> flow(int input) =>
+    Pulse.TraceIf(input % 2 == 0, () => "even");
 // Pulse [1, 2, 3, 4, 5] => results in ["even", "even"].
 ```
 *Branching a flow:*  
 ```csharp
-var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
-var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
-var flow =
-    from input in Pulse.Start<int>()
+static Flow<Flow> even(int _) => Pulse.Trace("even");
+static Flow<Flow> three(int _) => Pulse.Trace("three");
+static Flow<Flow> flow(int input) =>
     from _ in Pulse.ToFlowIf(input % 2 == 0, even, () => input)
     from __ in Pulse.ToFlowIf(input == 3, three, () => input)
-    select input;
+    select Flow.Continue;
 // Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
 ```
 *Counting even numbers using `ManipulateIf()`:*  
 ```csharp
-var even = Pulse.Start<int>(_ => Pulse.Trace("even"));
-var three = Pulse.Start<int>(_ => Pulse.Trace("three"));
-var flow =
-    from input in Pulse.Start<int>()
+static Flow<Flow> flow(int input) =>
     from _ in Pulse.Prime(() => 0)
     from __ in Pulse.ManipulateIf<int>(input % 2 == 0, a => a + 1)
-    from ___ in Pulse.Trace<int>(a => $"{input}: {a}")
-    select input;
+    from ___ in Pulse.Draw<int>().Trace(a => $"{input}: {a}")
+    select Flow.Continue;
 // Pulse [1, 2, 3, 4, 5] => results in ["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"].
 ```
 ### FirstOf
@@ -402,12 +355,11 @@ Pulse.FirstOf(...) lets you chain multiple conditional flows and automatically
 runs the first one whose condition evaluates to true.
 It's like a compact, declarative if / else if / else ladder for flows.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
+static Flow<Flow> flow(int input) =>
     from _ in Pulse.FirstOf(
         (() => input % 2 == 0, () => Pulse.Trace("even")),
         (() => input == 3, () => Pulse.Trace("three")))
-    select input;
+    select Flow.Continue;
 // Pulse [1, 2, 3, 4, 5] => results in ["even", "three", "even"].
 ```
 ## Arteries Included
@@ -475,15 +427,11 @@ Use the static helper `Text.Capture()` to create a new catcher.
 You can get a hold of the string through the `.Content()` method.  
 ```csharp
 var stringSink = Text.Capture();
-Signal.From(
-    from x in Pulse.Start<int>()
-    from _ in Pulse.Trace("x = ")
-    from __ in Pulse.Trace(42)
-    select x)
+Signal.From<int>(a => Pulse.Trace($"a = {a}"))
 .SetArtery(stringSink)
 .Pulse(42);
 var result = stringSink.Content(); // <=
-// result now equals "x = 42"
+// result now equals "a = 42"
 ```
 You can also reset/clear the *caught* values using the `.Clear()` method.  
 ## The Heart
@@ -527,13 +475,12 @@ In the following section we will discuss how to set up one particular use case:
 
 Suppose we have the following flow:   
 ```csharp
-return
-    from ch in Pulse.Start<char>()
+return ch =>
     from depth in Pulse.Prime(() => -1)
     from _ in Pulse.TraceIf(depth >= 0, () => ch)
     from __ in Pulse.ManipulateIf<int>(ch == '{', x => x + 1)
     from ___ in Pulse.ManipulateIf<int>(ch == '}', x => x - 1)
-    select ch;
+    select Flow.Continue;
 ```
 This is a simple flow that returns the text between braces, even if there are other braces inside said text.  
 **An Example**:  
@@ -565,8 +512,7 @@ In this case, we could just Graft a `Collector<string>`, but creating a derived 
 Lastly we add a `Pulse.TraceTo<TArtery>(...)` to the flow:
   
 ```csharp
-var flow = 
-    from ch in Pulse.Start<char>()
+var flow =  ch =>
     from depth in Pulse.Prime(() => -1)
     let enter = depth
     let emit = depth >= 0
@@ -576,7 +522,7 @@ var flow =
     from exit in Pulse.Draw<int>()
     from diag in Pulse.TraceTo<Diagnostic>(
         $"char='{ch}', enter={enter}, emit={emit}, exit={exit}")
-    select ch;
+    select Flow.Continue;
 ```
 When executing this, the `StringSink` Artery contains the same as before, but now we have the following in the `Diagnostic` Artery:  
 ```csharp

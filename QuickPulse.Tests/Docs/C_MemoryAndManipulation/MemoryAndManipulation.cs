@@ -211,6 +211,8 @@ but when using Postfix operators, beware that they return the *old* value.")]
         Assert.Equal(41, latch.Q);
     }
 
+    [CodeSnippet]
+    [CodeRemove(".SetArtery(collector)")]
     private static void Manipulate_postfix_operators_example(Latch<int> latch)
     {
         static Flow<Flow> flow(int input) =>

@@ -63,14 +63,10 @@ Use the static helper `Text.Capture()` to create a new catcher.
 You can get a hold of the string through the `.Content()` method.  
 ```csharp
 var stringSink = Text.Capture();
-Signal.From(
-    from x in Pulse.Start<int>()
-    from _ in Pulse.Trace("x = ")
-    from __ in Pulse.Trace(42)
-    select x)
+Signal.From<int>(a => Pulse.Trace($"a = {a}"))
 .SetArtery(stringSink)
 .Pulse(42);
 var result = stringSink.Content(); // <=
-// result now equals "x = 42"
+// result now equals "a = 42"
 ```
 You can also reset/clear the *caught* values using the `.Clear()` method.  

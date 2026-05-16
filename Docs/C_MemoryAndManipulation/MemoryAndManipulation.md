@@ -1,18 +1,21 @@
 # Memory And Manipulation
 Each signal maintains **gathered cells** (keyed by *type identity*), that store and process specific data types.  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
-    from _1 in Pulse.Prime(() => 1)
-    from _2 in Pulse.Trace<int>(a => $"outer: {a}")
-    from _3 in Pulse.Scoped<int>(a => a + 1,
-        from __1 in Pulse.Trace<int>(a => $"inner: {a}")
-        from __2 in Pulse.Manipulate<int>(a => a + 1)
-        from __3 in Pulse.Trace<int>(a => $"inner manipulated: {a}")
-        select Flow.Continue)
-    from _4 in Pulse.Trace<int>(a => $"restored: {a}")
+static Flow<Flow> flow(Flow _) =>
+    from outer in Pulse
+        .Prime(() => 1)
+        .Trace(a => $"outer: {a}")
+    from inner in Pulse.Scoped<int>(a => a + 1,
+        Pulse
+            .Draw<int>()
+            .Trace(a => $"inner: {a}")
+            .Manipulate<int>(a => a + 1)
+            .Trace(a => $"inner manipulated: {a}"))
+    from restored in Pulse
+        .Draw<int>()
+        .Trace(a => $"restored: {a}")
     select Flow.Continue;
-Signal.From(flow).Pulse(Flow.Continue);
+Signal.From<Flow>(flow).Pulse(Flow.Continue);
 // Results in => 
 //     [ "outer: 1", "inner: 2", "inner manipulated: 3", "restored: 1" ]
 ```
@@ -26,10 +29,9 @@ Most `Pulse` methods have one or more utility overloads that combines `.Draw()` 
 with the overloaded method's functionality.  
 It can be seen in the example at the top, but here's another one, showing a more focused usage:  
 ```csharp
-var flow =
-    from _ in Pulse.Start<Flow>()
+static Flow<Flow> flow(Flow _) =>
     from __ in Pulse.Prime(() => 41)
-    from ___ in Pulse.Trace<int>(a => a + 1)
+    from ___ in Pulse.Draw<int>().Trace(a => a + 1)
     select Flow.Continue;
 // Pulse() => results in 42
 ```
@@ -37,13 +39,12 @@ var flow =
 `Manipulate<T>(Func<T,T>)` updates the current value of the *gathered cell* for type `T`.  
 The return value of `Manipulate` is the **new value**, which can be used immediately in the flow.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
+static Flow<Flow> flow(int input) =>
     from _1 in Pulse.Prime(() => 0)
     from i in Pulse.Manipulate<int>(x => x + 10) // <= update int cell
     from _2 in Pulse.Trace(i + input)            // <= use the new value
-    select input;
-Signal.From(flow).Pulse(32);
+    select Flow.Continue;
+Signal.From<int>(flow).Pulse(32);
 ```
 ## Scoped: temporary overrides with automatic restore.
 `Scoped<T>(enter, innerFlow)` runs `innerFlow` with a **temporary** value for the *gathered cell* of type `T`. On exit, the outer value is restored.  
@@ -57,23 +58,24 @@ public record Int1(int Number) { }
 public record Int2(int Number) { }
 ```
 ```csharp
- from _ in Pulse.Start<Flow>()
-       from _1 in Pulse.Prime(() => new Int1(1))
-       from _2 in Pulse.Prime(() => new Int2(2))
-       from _3 in Pulse.Trace(_1.Number + _2.Number)
-       select Flow.Continue;
+_ =>
+   from _1 in Pulse.Prime(() => new Int1(1))
+   from _2 in Pulse.Prime(() => new Int2(2))
+   from _3 in Pulse.Trace(_1.Number + _2.Number)
+   select Flow.Continue;
 ```
 ## Postfix Operators
 Although the behaviour is logical once you think about it, it can feel a bit unintuitive,
 but when using Postfix operators, beware that they return the *old* value.  
 ```csharp
-var flow =
-    from input in Pulse.Start<int>()
-    from _ in Pulse.Prime(() => 0)
-    from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
-    from now in Pulse.Trace<int>(a => a + input)
-    select input;
-Signal.From(flow).Pulse(41);
+static Flow<Flow> flow(int input) =>
+    from cell in Pulse
+        .Prime(() => 0).Dissipate()
+        .Manipulate<int>(a => a++).Dissipate()
+        .Draw<int>()
+    from _ in Pulse.Trace(cell + input)
+    select Flow.Continue;
+Signal.From<int>(flow).SetArtery(latch).Pulse(41);
 // Result => 41. Not 42!
 ```
 Use prefix form or pure expressions instead.  

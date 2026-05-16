@@ -10,6 +10,13 @@ public static partial class Pulse
         Emit(Flag(flag), _ => data(), IntoArtery);
 
     /// <summary>
+    /// Emits a trace when the flag is true after the current flow completes.
+    /// Use for conditional chaining of static traces or messages.
+    /// </summary>
+    public static Flow<Flow> TraceIf(this Flow<Flow> other, bool flag, Func<object> data) =>
+        other.Then(TraceIf(flag, data));
+
+    /// <summary>
     /// Conditionally emits a formatted representation of the value currently carried
     /// by the flow into the current artery.
     /// </summary>

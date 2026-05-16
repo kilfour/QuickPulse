@@ -1,12 +1,5 @@
 # A Quick Pulse
 To explain how QuickPulse works (not least to myself), let's build up a flow step by step.  
-## The Minimal Flow
-The type generic in `Pulse.Start<T>` defines the **input type** to the flow.  
-**Note:** It is required to select the result of `Pulse.Start(...)` at the end of the LINQ chain for the flow to be considered well-formed.  
-```csharp
-    from anInt in Pulse.Start<int>()
-    select anInt;
-```
 ### A Mental Map
 Before diving deeper, it helps to understand the three pillars that make up QuickPulse's core.
 
@@ -24,31 +17,22 @@ Arteries are the *output channels* of a signal. They collect, display, or record
 ## Doing Something with the Input
 Let's trace the values as they pass through:  
 ```csharp
-    from anInt in Pulse.Start<int>()
-    from trace in Pulse.Trace(anInt)
-    select anInt;
+a => Pulse.Trace(a);
 ```
 ## Executing a Flow
 To execute a flow, we need a `Signal<T>`, which is created via: `Signal.From<T>(Flow<T> flow)`.
 
 Example:  
 ```csharp
-var flow =
-    from anInt in Pulse.Start<int>()
-    from trace in Pulse.Trace(anInt)
-    select anInt;
-var signal = Signal.From(flow);
+var signal = Signal.From<int>(a => Pulse.Trace(a));
 ```
 ## Sending Values Through the Flow
 Once you have a signal, you can push values into the flow by calling: `Signal.Pulse(...)`.
 
 For example, sending the value `42` into the flow:  
 ```csharp
- Signal.From(
-        from anInt in Pulse.Start<int>()
-        from trace in Pulse.Trace(anInt)
-        select anInt)
-    .Pulse(42);
+Signal.From<int>(a => Pulse.Trace(a))
+   .Pulse(42);
 ```
 ## Capturing the Trace
 To observe what flows through, we can add an `IArtery` by using `SetArtery` directly on the signal.
@@ -56,10 +40,7 @@ To observe what flows through, we can add an `IArtery` by using `SetArtery` dire
 Example:  
 ```csharp
 var collector = Collect.ValuesOf<int>();
-Signal.From(
-        from anInt in Pulse.Start<int>()
-        from trace in Pulse.Trace(anInt)
-        select anInt)
+Signal.From<int>(a => Pulse.Trace(a))
     .SetArtery(collector)
     .Pulse([42, 43, 44]);
 // collector.Values now holds => [42, 43, 44]."
