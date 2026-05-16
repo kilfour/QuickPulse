@@ -65,7 +65,7 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
     private static Func<int, Flow<Flow>> ToFlow_get_flow()
     {
         Flow<Flow> subflow(int input) =>
-            Pulse.Trace<int>(a => input + a);
+            Pulse.Draw<int>().Trace(a => input + a);
         Flow<Flow> flow(int input) =>
             from _ in Pulse.Prime(() => 1)
             from __ in Pulse.ToFlow(subflow, input)    // <=
@@ -96,7 +96,7 @@ The subflow inherits the same signal state, so memory cells and arteries are vis
         Flow<Flow> flow(List<int> input) =>
             from _1 in Pulse.Prime(() => 0)
             from _2 in Pulse.ToFlow(subflow, input)
-            from _3 in Pulse.Trace<int>(a => $"Sum = {a}")
+            from _3 in Pulse.Draw<int>().Trace(a => $"Sum = {a}")
             select Flow.Continue;
         // Pulse [1, 2, 3] => results in "Sum = 6".
         return flow;
@@ -175,7 +175,7 @@ Here are the same examples rewritten using **method syntax**:")]
     {
         return a =>
             Pulse.Prime(() => 1)
-                .Then(Pulse.ToFlow(b => Pulse.Trace<int>(c => b + c), a));
+                .Then(Pulse.ToFlow(b => Pulse.Draw<int>().Trace(c => b + c), a));
     }
 
     [CodeSnippet]
@@ -185,7 +185,7 @@ Here are the same examples rewritten using **method syntax**:")]
         return numbers =>
             Pulse.Prime(() => 0)
                 .Then(Pulse.ToFlow(a => Pulse.Manipulate<int>(b => a + b).Dissipate(), numbers))
-                .Then(Pulse.Trace<int>(a => $"Sum = {a}"));
+                .Then(Pulse.Draw<int>().Trace(a => $"Sum = {a}"));
     }
 
     [Fact]

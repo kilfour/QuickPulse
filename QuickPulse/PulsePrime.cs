@@ -8,4 +8,10 @@ public static partial class Pulse
     /// Lazily creates and stores a value once per signal lifetime. Use for one-time initialization or memoized state.
     /// </summary>
     public static Flow<TCell> Prime<TCell>(Func<TCell> factory) => s => Beat.Some(s, s.GetTheCell(factory).Value);
+
+    /// <summary>
+    /// Lazily creates and stores a value once per signal lifetime. Use for one-time initialization or memoized state.
+    /// </summary>
+    public static Flow<TCell> Prime<TCell>(this Flow<Flow> other, Func<TCell> factory) =>
+        other.Then(Prime(factory));
 }

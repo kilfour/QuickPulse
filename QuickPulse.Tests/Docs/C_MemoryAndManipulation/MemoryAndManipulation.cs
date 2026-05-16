@@ -75,7 +75,7 @@ It can be seen in the example at the top, but here's another one, showing a more
     {
         static Flow<Flow> flow(Flow _) =>
             from __ in Pulse.Prime(() => 41)
-            from ___ in Pulse.Trace<int>(a => a + 1)
+            from ___ in Pulse.Draw<int>().Trace(a => a + 1)
             select Flow.Continue;
         // Pulse() => results in 42
         return flow;
@@ -89,7 +89,7 @@ It can be seen in the example at the top, but here's another one, showing a more
         static Flow<Flow> flow(int input) =>
             from _ in Pulse.Prime(() => 0)
             from __ in Pulse.Manipulate<int>(x => x + 10)
-            from now in Pulse.Trace<int>(a => a + input)
+            from now in Pulse.Draw<int>().Trace(a => a + input)
             select Flow.Continue;
         var latch = TheLatch.Holds<int>();
         Signal.From<int>(flow).SetArtery(latch).Pulse(32);
@@ -126,9 +126,9 @@ It can be seen in the example at the top, but here's another one, showing a more
         var seen = Collect.ValuesOf<string>();
         static Flow<Flow> flow(Flow _) =>
             from _1 in Pulse.Prime(() => 1)
-            from _2 in Pulse.Trace<int>(a => $"outer: {a}")
-            from _3 in Pulse.Scoped<int>(a => a + 1, Pulse.Trace<int>(a => $"inner: {a}"))
-            from _4 in Pulse.Trace<int>(a => $"restored: {a}")
+            from _2 in Pulse.Draw<int>().Trace(a => $"outer: {a}")
+            from _3 in Pulse.Scoped<int>(a => a + 1, Pulse.Draw<int>().Trace(a => $"inner: {a}"))
+            from _4 in Pulse.Draw<int>().Trace(a => $"restored: {a}")
             select Flow.Continue;
         Signal.From<Flow>(flow).SetArtery(seen).Pulse(Flow.Continue);
         Assert.Equal(new object[] { "outer: 1", "inner: 2", "restored: 1" }, seen.Values);
@@ -148,14 +148,18 @@ It can be seen in the example at the top, but here's another one, showing a more
     private static void Scoped_with_Manipulate_example(Collector<string> collector)
     {
         static Flow<Flow> flow(Flow _) =>
-            from _1 in Pulse.Prime(() => 1)
-            from _2 in Pulse.Trace<int>(a => $"outer: {a}")
-            from _3 in Pulse.Scoped<int>(a => a + 1,
-                from __1 in Pulse.Trace<int>(a => $"inner: {a}")
-                from __2 in Pulse.Manipulate<int>(a => a + 1)
-                from __3 in Pulse.Trace<int>(a => $"inner manipulated: {a}")
-                select Flow.Continue)
-            from _4 in Pulse.Trace<int>(a => $"restored: {a}")
+            from outer in Pulse
+                .Prime(() => 1)
+                .Trace(a => $"outer: {a}")
+            from inner in Pulse.Scoped<int>(a => a + 1,
+                Pulse
+                    .Draw<int>()
+                    .Trace(a => $"inner: {a}")
+                    .Manipulate<int>(a => a + 1)
+                    .Trace(a => $"inner manipulated: {a}"))
+            from restored in Pulse
+                .Draw<int>()
+                .Trace(a => $"restored: {a}")
             select Flow.Continue;
         Signal.From<Flow>(flow).SetArtery(collector).Pulse(Flow.Continue);
         // Results in => 
@@ -207,14 +211,14 @@ but when using Postfix operators, beware that they return the *old* value.")]
         Assert.Equal(41, latch.Q);
     }
 
-    [CodeSnippet]
-    [CodeRemove(".SetArtery(latch)")]
     private static void Manipulate_postfix_operators_example(Latch<int> latch)
     {
         static Flow<Flow> flow(int input) =>
-            from _ in Pulse.Prime(() => 0)
-            from __ in Pulse.Manipulate<int>(a => a++) // <= int is still 0 in memory cell
-            from now in Pulse.Trace<int>(a => a + input)
+            from cell in Pulse
+                .Prime(() => 0).Dissipate()
+                .Manipulate<int>(a => a++).Dissipate()
+                .Draw<int>()
+            from _ in Pulse.Trace(cell + input)
             select Flow.Continue;
         Signal.From<int>(flow).SetArtery(latch).Pulse(41);
         // Result => 41. Not 42!

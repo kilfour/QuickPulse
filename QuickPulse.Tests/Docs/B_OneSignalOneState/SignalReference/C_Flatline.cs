@@ -30,7 +30,7 @@ public class C_Flatline
         Signal.From<Flow>(flow)
             .SetArtery(latch)
             .Pulse().Pulse().Pulse()
-            .FlatLine(Pulse.Trace<int>(a => a));
+            .FlatLine(Pulse.Draw<int>().Trace(a => a));
         // Results in => 3
     }
 }

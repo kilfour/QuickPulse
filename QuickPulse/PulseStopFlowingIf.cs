@@ -9,8 +9,20 @@ public static partial class Pulse
         condition ? StopFlowing() : NoOp();
 
     /// <summary>
+    /// Stops the current flow when the condition is true. Use for simple termination guards.
+    /// </summary>
+    public static Flow<Flow> StopFlowingIf(this Flow<Flow> other, bool condition) =>
+        other.Then(StopFlowingIf(condition));
+
+    /// <summary>
     /// Stops the current flow when the predicate evaluates to true for the current state. Use for data-driven termination.
     /// </summary>
     public static Flow<Flow> StopFlowingIf<TCell>(Func<TCell, bool> predicate) =>
         When(predicate, StopFlowing());
+
+    /// <summary>
+    /// Stops the current flow when the predicate evaluates to true for the current state. Use for data-driven termination.
+    /// </summary>
+    public static Flow<Flow> StopFlowingIf<TCell>(this Flow<Flow> other, Func<TCell, bool> predicate) =>
+        other.Then(StopFlowingIf(predicate));
 }

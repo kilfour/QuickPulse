@@ -10,16 +10,9 @@ public static partial class Pulse
         Emit(Flag(flag), _ => data(), IntoArtery);
 
     /// <summary>
-    /// Emits a trace when the predicate evaluates to true for the current state. 
-    /// Use for state-aware conditional traces.
+    /// Conditionally emits a formatted representation of the value currently carried
+    /// by the flow into the current artery.
     /// </summary>
-    public static Flow<Flow> TraceIf<TCell>(Func<TCell, bool> predicate, Func<object> data) =>
-        Emit(Gate(predicate), _ => data(), IntoArtery);
-
-    /// <summary>
-    /// Emits a trace derived from the current state when the predicate is true. 
-    /// Use for context-sensitive diagnostic output.
-    /// </summary>
-    public static Flow<Flow> TraceIf<TCell>(Func<TCell, bool> predicate, Func<TCell, object> extractor) =>
-        Emit(Gate(predicate), ExtractDataFromCell(extractor), IntoArtery);
+    public static Flow<Flow> TraceIf<T>(this Flow<T> other, bool flag, Func<T, object> formatter) =>
+        other.SelectMany(a => TraceIf(flag, () => formatter(a)));
 }

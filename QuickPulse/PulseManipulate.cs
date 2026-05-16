@@ -7,4 +7,10 @@ public static partial class Pulse
     /// </summary>
     public static Flow<TCell> Manipulate<TCell>(Func<TCell, TCell> manipulate) =>
         Transduce(Always, ManipulatedValue(manipulate), SetTheCell<TCell>());
+
+    /// <summary>
+    /// Updates the stored value of type TCell using the given function and emits the new value. Use to evolve state between pulses.
+    /// </summary>
+    public static Flow<TCell> Manipulate<TCell>(this Flow<Flow> other, Func<TCell, TCell> manipulate) =>
+        other.Then(Manipulate(manipulate));
 }

@@ -75,12 +75,13 @@ So in order to advance a flow of type `Flow<Flow>` you can use the `Signal.Pulse
     [CodeRemove(".SetArtery(collector)")]
     private static void Signal_pulse_unit_example(Collector<int> collector)
     {
-        static Flow<Flow> flow(Flow _) =>
-            from _1 in Pulse.Prime(() => 42)
-            from _2 in Pulse.Trace<int>(a => a)
-            from _3 in Pulse.Manipulate<int>(a => a + 1)
+        var flow =
+            from i in Pulse.Prime(() => 42)
+            from _ in Pulse
+                .Trace(i)
+                .Manipulate<int>(a => a + 1)
             select Flow.Continue;
-        Signal.From<Flow>(flow)
+        Signal.From(flow)
             .SetArtery(collector)
             .Pulse()
             .Pulse()

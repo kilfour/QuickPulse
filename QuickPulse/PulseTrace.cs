@@ -10,16 +10,17 @@ public static partial class Pulse
         Emit(Always, _ => data, IntoArtery);
 
     /// <summary>
-    /// Emits a value extracted from the current state into the artery. 
-    /// Use for dynamic or computed traces.
+    /// Emits the given objects into the current artery. 
+    /// Use to record static traces or messages.
     /// </summary>
-    public static Flow<Flow> Trace<TCell>(Func<TCell, object> extractor) =>
-        Emit(Always, ExtractDataFromCell(extractor), IntoArtery);
+    public static Flow<Flow> Trace(this Flow<Flow> other, params object[] data) =>
+        other.Then(Trace(data));
 
     /// <summary>
-    /// Emits the current value of type <typeparamref name="TCell"/> from memory into the artery.  
-    /// Use to trace stored state directly, without computing or transforming it.
+    /// Continues the flow by emitting a value derived from the previous flow result
+    /// into the current artery.
+    /// Use to trace the value currently being carried by the flow.
     /// </summary>
-    public static Flow<Flow> Trace<TCell>() =>
-        Emit(Always, s => s.GetTheCell<TCell>().Value!, IntoArtery);
+    public static Flow<Flow> Trace<T>(this Flow<T> other, Func<T, object> formatter) =>
+        other.SelectMany(a => Trace(formatter(a)));
 }

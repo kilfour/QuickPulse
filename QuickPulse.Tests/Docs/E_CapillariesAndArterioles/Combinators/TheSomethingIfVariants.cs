@@ -68,7 +68,7 @@ public class TheSomethingIfVariants
         static Flow<Flow> flow(int input) =>
             from _ in Pulse.Prime(() => 0)
             from __ in Pulse.ManipulateIf<int>(input % 2 == 0, a => a + 1)
-            from ___ in Pulse.Trace<int>(a => $"{input}: {a}")
+            from ___ in Pulse.Draw<int>().Trace(a => $"{input}: {a}")
             select Flow.Continue;
         // Pulse [1, 2, 3, 4, 5] => results in ["1: 0", "2: 1", "3: 1", "4: 2", "5: 2"].
         return flow;
