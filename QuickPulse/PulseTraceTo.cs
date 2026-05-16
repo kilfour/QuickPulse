@@ -24,4 +24,11 @@ public static partial class Pulse
     /// </summary>
     public static Flow<Flow> TraceTo<TArtery, T>(this Flow<T> other, Func<T, object> formatter) where TArtery : IArtery =>
         other.SelectMany(a => TraceTo<TArtery>(formatter(a)));
+
+    /// <summary>
+    /// Emits the value currently carried by the flow into the specified artery.
+    /// Use to trace the carried value unchanged to a custom or secondary output channel.
+    /// </summary>
+    public static Flow<Flow> TraceTo<TArtery, T>(this Flow<T> other) where TArtery : IArtery =>
+        other.SelectMany(a => TraceTo<TArtery>(a!));
 }

@@ -23,4 +23,11 @@ public static partial class Pulse
     /// </summary>
     public static Flow<Flow> Trace<T>(this Flow<T> other, Func<T, object> formatter) =>
         other.SelectMany(a => Trace(formatter(a)));
+
+    /// <summary>
+    /// Continues the flow by emitting the previous flow result into the current artery.
+    /// Use to trace the value currently being carried by the flow without formatting it.
+    /// </summary>
+    public static Flow<Flow> Trace<T>(this Flow<T> other) =>
+        other.SelectMany(a => Trace(a!));
 }
