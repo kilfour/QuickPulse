@@ -15,4 +15,11 @@ public static partial class Pulse
     /// </summary>
     public static Flow<Flow> TraceIf<T>(this Flow<T> other, bool flag, Func<T, object> formatter) =>
         other.SelectMany(a => TraceIf(flag, () => formatter(a)));
+
+    /// <summary>
+    /// Conditionally emits a formatted representation of the value currently carried
+    /// by the flow into the current artery when the predicate is true.
+    /// </summary>
+    public static Flow<Flow> TraceIf<T>(this Flow<T> other, Func<T, bool> predicate, Func<T, object> formatter) =>
+        other.SelectMany(a => TraceIf(predicate(a), () => formatter(a)));
 }
